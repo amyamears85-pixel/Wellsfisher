@@ -1,16 +1,67 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { Search, Shield, Phone, MessageSquare, Mail, ChevronRight, Loader2 } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { Search, Shield, User, Calendar, CreditCard, ChevronRight, Loader2, Lock, Check } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import heroBg from "@/assets/images/hero-bg.jpg";
 
+const verificationMethods = [
+  {
+    id: "username",
+    icon: User,
+    title: "Username",
+    description: "Verify using your account username",
+    placeholder: "Enter your username",
+  },
+  {
+    id: "dateOfBirth",
+    icon: Calendar,
+    title: "Date of Birth",
+    description: "Verify using your date of birth",
+    placeholder: "YYYY-MM-DD",
+  },
+  {
+    id: "ssn",
+    icon: CreditCard,
+    title: "Social Security Number",
+    description: "Verify using the last 4 digits of your SSN",
+    placeholder: "Last 4 digits",
+  },
+];
+
+const verificationSchema = z.object({
+  value: z.string().min(1, "This field is required"),
+});
+
+const passwordSchema = z.object({
+  newPassword: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+type VerificationFormData = z.infer<typeof verificationSchema>;
+type PasswordFormData = z.infer<typeof passwordSchema>;
+
 export default function VerifyPage() {
+  const [step, setStep] = useState<"choose" | "verify" | "password" | "success">("choose");
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
-  const [codeSent, setCodeSent] = useState(false);
-  const [code, setCode] = useState("");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
@@ -26,26 +77,66 @@ export default function VerifyPage() {
 
   const user = (authData as any)?.user;
 
-  const verificationMethods = [
-    {
-      id: "text",
-      icon: MessageSquare,
-      title: "Text message",
-      description: user?.phone ? `We'll text a code to ${user.phone.slice(0, 3)}***${user.phone.slice(-4)}` : "Add a phone number to use this option",
+  const verifyForm = useForm<VerificationFormData>({
+    resolver: zodResolver(verificationSchema),
+    defaultValues: {
+      value: "",
     },
-    {
-      id: "call",
-      icon: Phone,
-      title: "Phone call",
-      description: user?.phone ? `We'll call you at ${user.phone.slice(0, 3)}***${user.phone.slice(-4)}` : "Add a phone number to use this option",
+  });
+
+  const passwordForm = useForm<PasswordFormData>({
+    resolver: zodResolver(passwordSchema),
+    defaultValues: {
+      newPassword: "",
+      confirmPassword: "",
     },
-    {
-      id: "email",
-      icon: Mail,
-      title: "Email",
-      description: user?.email ? `We'll email a code to ${user.email.slice(0, 2)}***@${user.email.split("@")[1]}` : "Add an email to use this option",
+  });
+
+  const verifyMutation = useMutation({
+    mutationFn: async (data: { verificationType: string; value: string }) => {
+      const response = await apiRequest("POST", "/api/auth/verify-identity", data);
+      return response;
     },
-  ];
+    onSuccess: () => {
+      toast({
+        title: "Identity Verified",
+        description: "You can now reset your password.",
+      });
+      setStep("password");
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Verification Failed",
+        description: error.message || "The information provided does not match our records.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: async (data: { newPassword: string; confirmPassword: string }) => {
+      const response = await apiRequest("POST", "/api/auth/reset-password", data);
+      return response;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Password Updated",
+        description: "Your password has been successfully changed.",
+      });
+      setStep("success");
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Password Reset Failed",
+        description: error.message || "Failed to update password.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const skipVerification = () => {
+    setLocation("/dashboard");
+  };
 
   if (isLoading) {
     return (
@@ -59,33 +150,29 @@ export default function VerifyPage() {
     return null;
   }
 
-  const handleSendCode = () => {
-    setCodeSent(true);
-    toast({
-      title: "Code Sent",
-      description: "Please check your device for the verification code.",
-    });
+  const handleMethodSelect = (methodId: string) => {
+    setSelectedMethod(methodId);
+    setStep("verify");
+    verifyForm.reset();
   };
 
-  const handleVerify = () => {
-    if (code.length === 6) {
-      toast({
-        title: "Verified Successfully",
-        description: "Redirecting to your account...",
-      });
-      setLocation("/dashboard");
-    } else {
-      toast({
-        title: "Invalid Code",
-        description: "Please enter a valid 6-digit code.",
-        variant: "destructive",
+  const handleVerify = (data: VerificationFormData) => {
+    if (selectedMethod) {
+      verifyMutation.mutate({
+        verificationType: selectedMethod,
+        value: data.value,
       });
     }
   };
 
+  const handlePasswordReset = (data: PasswordFormData) => {
+    resetPasswordMutation.mutate(data);
+  };
+
+  const selectedMethodData = verificationMethods.find(m => m.id === selectedMethod);
+
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Red header bar */}
       <header className="bg-[#d71e28] text-white">
         <div className="max-w-7xl mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
@@ -121,10 +208,8 @@ export default function VerifyPage() {
         </div>
       </header>
 
-      {/* Yellow accent bar */}
       <div className="bg-[#ffcd41] h-1"></div>
 
-      {/* Main content */}
       <main
         className="flex-1 relative"
         style={{
@@ -139,49 +224,39 @@ export default function VerifyPage() {
             data-testid="card-verify"
           >
             <CardContent className="p-6 sm:p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-[#d71e28]/10 rounded-full flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-[#d71e28]" />
-                </div>
-                <div>
-                  <h1
-                    className="text-xl text-gray-800 font-semibold"
-                    data-testid="text-title"
-                  >
-                    Verify your identity
-                  </h1>
-                  <p className="text-sm text-gray-500">
-                    For your security, we need to verify it's you
-                  </p>
-                </div>
-              </div>
-
-              {!codeSent ? (
+              {step === "choose" && (
                 <>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 bg-[#d71e28]/10 rounded-full flex items-center justify-center">
+                      <Shield className="w-6 h-6 text-[#d71e28]" />
+                    </div>
+                    <div>
+                      <h1
+                        className="text-xl text-gray-800 font-semibold"
+                        data-testid="text-title"
+                      >
+                        Verify your identity
+                      </h1>
+                      <p className="text-sm text-gray-500">
+                        To reset your password, verify your identity first
+                      </p>
+                    </div>
+                  </div>
+
                   <p className="text-gray-600 text-sm mb-4">
-                    Choose how you'd like to receive your verification code:
+                    Choose a verification method:
                   </p>
 
                   <div className="space-y-3 mb-6">
                     {verificationMethods.map((method) => (
                       <button
                         key={method.id}
-                        onClick={() => setSelectedMethod(method.id)}
-                        className={`w-full p-4 border rounded-md text-left transition-colors ${
-                          selectedMethod === method.id
-                            ? "border-[#d71e28] bg-red-50"
-                            : "border-gray-300 hover:border-gray-400"
-                        }`}
+                        onClick={() => handleMethodSelect(method.id)}
+                        className="w-full p-4 border border-gray-300 rounded-md text-left hover:border-[#d71e28] hover:bg-red-50 transition-colors"
                         data-testid={`button-method-${method.id}`}
                       >
                         <div className="flex items-center gap-3">
-                          <div
-                            className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                              selectedMethod === method.id
-                                ? "bg-[#d71e28] text-white"
-                                : "bg-gray-100 text-gray-600"
-                            }`}
-                          >
+                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600">
                             <method.icon className="w-5 h-5" />
                           </div>
                           <div className="flex-1">
@@ -192,63 +267,219 @@ export default function VerifyPage() {
                               {method.description}
                             </p>
                           </div>
-                          <ChevronRight
-                            className={`w-5 h-5 ${
-                              selectedMethod === method.id
-                                ? "text-[#d71e28]"
-                                : "text-gray-400"
-                            }`}
-                          />
+                          <ChevronRight className="w-5 h-5 text-gray-400" />
                         </div>
                       </button>
                     ))}
                   </div>
 
                   <Button
-                    onClick={handleSendCode}
-                    disabled={!selectedMethod}
-                    className="w-full h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full disabled:bg-gray-200 disabled:text-gray-500"
-                    data-testid="button-send-code"
+                    onClick={skipVerification}
+                    variant="outline"
+                    className="w-full h-11 rounded-full"
+                    data-testid="button-skip"
                   >
-                    Send code
+                    Skip and go to Dashboard
                   </Button>
                 </>
-              ) : (
-                <>
-                  <p className="text-gray-600 text-sm mb-4">
-                    Enter the 6-digit code we sent to your{" "}
-                    {selectedMethod === "email" ? "email" : "phone"}:
-                  </p>
+              )}
 
-                  <div className="mb-6">
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={code}
-                      onChange={(e) =>
-                        setCode(e.target.value.replace(/\D/g, ""))
-                      }
-                      placeholder="000000"
-                      className="w-full h-14 text-center text-2xl tracking-[0.5em] border border-gray-300 rounded-md focus:border-[#d71e28] focus:ring-1 focus:ring-[#d71e28] outline-none"
-                      data-testid="input-code"
-                    />
+              {step === "verify" && selectedMethodData && (
+                <>
+                  <button
+                    onClick={() => setStep("choose")}
+                    className="flex items-center gap-2 text-[#d71e28] text-sm mb-4 hover:underline"
+                    data-testid="button-back"
+                  >
+                    <ChevronRight className="w-4 h-4 rotate-180" />
+                    Back to options
+                  </button>
+
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 bg-[#d71e28]/10 rounded-full flex items-center justify-center">
+                      <selectedMethodData.icon className="w-6 h-6 text-[#d71e28]" />
+                    </div>
+                    <div>
+                      <h1
+                        className="text-xl text-gray-800 font-semibold"
+                        data-testid="text-verify-title"
+                      >
+                        Verify with {selectedMethodData.title}
+                      </h1>
+                      <p className="text-sm text-gray-500">
+                        Enter your information to continue
+                      </p>
+                    </div>
                   </div>
 
-                  <Button
-                    onClick={handleVerify}
-                    className="w-full h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full mb-4"
-                    data-testid="button-verify"
-                  >
-                    Verify
-                  </Button>
+                  <Form {...verifyForm}>
+                    <form
+                      onSubmit={verifyForm.handleSubmit(handleVerify)}
+                      className="space-y-4"
+                    >
+                      <FormField
+                        control={verifyForm.control}
+                        name="value"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700">
+                              {selectedMethodData.title}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder={selectedMethodData.placeholder}
+                                className="h-12 border-gray-300"
+                                data-testid="input-verify-value"
+                                maxLength={selectedMethod === "ssn" ? 4 : undefined}
+                                type={selectedMethod === "ssn" ? "password" : "text"}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                  <button
-                    onClick={handleSendCode}
-                    className="w-full text-center text-[#d71e28] text-sm hover:underline"
-                    data-testid="button-resend"
+                      <Button
+                        type="submit"
+                        className="w-full h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full"
+                        disabled={verifyMutation.isPending}
+                        data-testid="button-verify-submit"
+                      >
+                        {verifyMutation.isPending ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Verifying...
+                          </>
+                        ) : (
+                          "Verify"
+                        )}
+                      </Button>
+                    </form>
+                  </Form>
+                </>
+              )}
+
+              {step === "password" && (
+                <>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                      <Lock className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h1
+                        className="text-xl text-gray-800 font-semibold"
+                        data-testid="text-password-title"
+                      >
+                        Reset your password
+                      </h1>
+                      <p className="text-sm text-gray-500">
+                        Identity verified! Create a new password.
+                      </p>
+                    </div>
+                  </div>
+
+                  <Form {...passwordForm}>
+                    <form
+                      onSubmit={passwordForm.handleSubmit(handlePasswordReset)}
+                      className="space-y-4"
+                    >
+                      <FormField
+                        control={passwordForm.control}
+                        name="newPassword"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700">
+                              New Password
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                placeholder="Enter new password"
+                                className="h-12 border-gray-300"
+                                data-testid="input-new-password"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={passwordForm.control}
+                        name="confirmPassword"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700">
+                              Confirm Password
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                placeholder="Confirm new password"
+                                className="h-12 border-gray-300"
+                                data-testid="input-confirm-password"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <Button
+                        type="submit"
+                        className="w-full h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full"
+                        disabled={resetPasswordMutation.isPending}
+                        data-testid="button-reset-password"
+                      >
+                        {resetPasswordMutation.isPending ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Updating...
+                          </>
+                        ) : (
+                          "Reset Password"
+                        )}
+                      </Button>
+                    </form>
+                  </Form>
+
+                  <Button
+                    onClick={skipVerification}
+                    variant="outline"
+                    className="w-full h-11 rounded-full mt-4"
+                    data-testid="button-skip-password"
                   >
-                    Didn't receive a code? Send again
-                  </button>
+                    Skip and go to Dashboard
+                  </Button>
+                </>
+              )}
+
+              {step === "success" && (
+                <>
+                  <div className="flex flex-col items-center text-center py-4">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                      <Check className="w-8 h-8 text-green-600" />
+                    </div>
+                    <h1
+                      className="text-xl text-gray-800 font-semibold mb-2"
+                      data-testid="text-success-title"
+                    >
+                      Password Updated
+                    </h1>
+                    <p className="text-gray-500 mb-6">
+                      Your password has been successfully changed. You can now continue to your account.
+                    </p>
+                    <Button
+                      onClick={() => setLocation("/dashboard")}
+                      className="w-full h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full"
+                      data-testid="button-continue-dashboard"
+                    >
+                      Continue to Dashboard
+                    </Button>
+                  </div>
                 </>
               )}
 
@@ -266,7 +497,6 @@ export default function VerifyPage() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="bg-white border-t border-gray-200 py-4">
         <div className="max-w-7xl mx-auto px-4">
           <p

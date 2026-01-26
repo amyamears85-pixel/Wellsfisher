@@ -10,6 +10,8 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean>;
+  verifyUserIdentity(userId: string, verificationType: string, value: string): Promise<boolean>;
+  updatePassword(userId: string, newPassword: string): Promise<boolean>;
 }
 
 export class DbStorage implements IStorage {
@@ -34,6 +36,35 @@ export class DbStorage implements IStorage {
 
   async verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
     return bcrypt.compare(plainPassword, hashedPassword);
+  }
+
+  async verifyUserIdentity(userId: string, verificationType: string, value: string): Promise<boolean> {
+    const user = await this.getUser(userId);
+    if (!user) return false;
+
+    switch (verificationType) {
+      case "username":
+        return user.username.toLowerCase() === value.toLowerCase();
+      case "dateOfBirth":
+        if (!user.dateOfBirth) return false;
+        const userDob = typeof user.dateOfBirth === 'string' 
+          ? user.dateOfBirth 
+          : new Date(user.dateOfBirth).toISOString().split('T')[0];
+        return userDob === value;
+      case "ssn":
+        return user.ssn === value;
+      default:
+        return false;
+    }
+  }
+
+  async updatePassword(userId: string, newPassword: string): Promise<boolean> {
+    const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+    const result = await db.update(users)
+      .set({ password: hashedPassword })
+      .where(eq(users.id, userId))
+      .returning();
+    return result.length > 0;
   }
 }
 

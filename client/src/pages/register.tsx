@@ -26,6 +26,8 @@ const registerSchema = z.object({
   confirmPassword: z.string().min(6, "Please confirm your password"),
   email: z.string().email("Please enter a valid email"),
   phone: z.string().optional(),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  ssn: z.string().length(4, "Please enter the last 4 digits of your SSN"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -46,6 +48,8 @@ export default function RegisterPage() {
       confirmPassword: "",
       email: "",
       phone: "",
+      dateOfBirth: "",
+      ssn: "",
     },
   });
 
@@ -56,6 +60,8 @@ export default function RegisterPage() {
         password: data.password,
         email: data.email,
         phone: data.phone,
+        dateOfBirth: data.dateOfBirth,
+        ssn: data.ssn,
       });
       return response;
     },
@@ -220,6 +226,46 @@ export default function RegisterPage() {
                             placeholder="(555) 555-5555"
                             className="h-12 border-gray-300"
                             data-testid="input-phone"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="dateOfBirth"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700">Date of Birth</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="date"
+                            className="h-12 border-gray-300"
+                            data-testid="input-dob"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="ssn"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-gray-700">Last 4 digits of SSN</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="XXXX"
+                            maxLength={4}
+                            className="h-12 border-gray-300"
+                            data-testid="input-ssn"
                             {...field}
                           />
                         </FormControl>

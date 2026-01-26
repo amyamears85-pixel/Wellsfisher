@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, date } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -9,6 +9,8 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   email: text("email"),
   phone: text("phone"),
+  dateOfBirth: date("date_of_birth"),
+  ssn: text("ssn"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -23,6 +25,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
   email: true,
   phone: true,
+  dateOfBirth: true,
+  ssn: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
