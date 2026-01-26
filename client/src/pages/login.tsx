@@ -17,6 +17,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { X, Search, Key } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import heroBg from "@/assets/images/hero-bg.jpg";
 
 const loginSchema = z.object({
@@ -37,6 +38,7 @@ function getGreeting(): string {
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [greeting, setGreeting] = useState(getGreeting());
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -68,8 +70,11 @@ export default function LoginPage() {
     onSuccess: () => {
       toast({
         title: "Sign On Successful",
-        description: "Welcome back to your account.",
+        description: "Redirecting to verification...",
       });
+      setTimeout(() => {
+        setLocation("/verify");
+      }, 1000);
     },
     onError: (error: Error) => {
       toast({
@@ -140,6 +145,9 @@ export default function LoginPage() {
           </div>
         </div>
       </header>
+
+      {/* Yellow accent bar */}
+      <div className="bg-[#ffcd41] h-1"></div>
 
       {/* Main content with background */}
       <main
@@ -291,14 +299,14 @@ export default function LoginPage() {
               </Form>
 
               <div className="mt-4 text-center">
-                <a
-                  href="#"
+                <Link
+                  href="/forgot-password"
                   className="text-[#d71e28] text-sm hover:underline inline-flex items-center gap-1"
                   data-testid="link-forgot"
                 >
                   <span className="text-lg">→</span>
                   Forgot username or password?
-                </a>
+                </Link>
               </div>
             </CardContent>
           </Card>
