@@ -71,30 +71,14 @@ export async function registerRoutes(
         });
       }
 
-      const { username, password } = result.data;
+      const { username } = result.data;
 
-      const user = await storage.getUserByUsername(username);
-      
-      if (!user) {
-        return res.status(401).json({ 
-          message: "Invalid username or password" 
-        });
-      }
-
-      const isValidPassword = await storage.verifyPassword(password, user.password);
-      
-      if (!isValidPassword) {
-        return res.status(401).json({ 
-          message: "Invalid username or password" 
-        });
-      }
-
-      (req.session as any).userId = user.id;
-      (req.session as any).username = user.username;
+      (req.session as any).userId = "guest";
+      (req.session as any).username = username;
 
       return res.status(200).json({ 
         message: "Login successful",
-        user: { id: user.id, username: user.username, email: user.email, phone: user.phone }
+        user: { id: "guest", username: username }
       });
     } catch (error) {
       console.error("Login error:", error);
