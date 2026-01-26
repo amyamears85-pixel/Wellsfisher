@@ -1,0 +1,202 @@
+// ======================================
+// ALL-IN-ONE WEBSITE ANALYTICS PIPELINE
+// CONSENT-BASED | FIRST-PARTY | EXTENSIBLE
+// ======================================
+
+const express = require("express");
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
+const sqlite3 = require("sqlite3").verbose();
+const bcrypt = require("bcrypt");
+const geoip = require("geoip-lite");
+const { v4: uuidv4 } = require("uuid");
+const http = require("http");
+const WebSocket = require("ws");
+const fetch = (...args) => import("node-fetch").then(({default: fetch}) => fetch(...args));
+
+const DATA_ENDPOINT = process.env.DATA_ENDPOINT || null;
+const DATA_AUTH_KEY = process.env.DATA_AUTH_KEY || null;
+
+// ---------- APP ----------
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+app.use(express.json());
+app.use(cookieParser());
+app.use(session({
+  secret: "CHANGE_THIS_SECRET",
+  resave: false,
+  saveUninitialized: false
+}));
+
+// ---------- DATABASE ----------
+const db = new sqlite3.Database("./traffic.db");
+
+db.serialize(() => {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS visits (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      visitor_id TEXT,
+      ip TEXT,
+      city TEXT,
+      region TEXT,
+      country TEXT,
+      page TEXT,
+      user_agent TEXT,
+      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS clicks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      page TEXT,
+      x INTEGER,
+      y INTEGER,
+      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS admins (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT UNIQUE,
+      password_hash TEXT
+    )
+  `);
+});
+
+// ---------- HELPERS ----------
+const anonymizeIP = ip => ip ? ip.replace(/\.\d+$/, ".0") : null;
+
+async function forwardData(type, payload) {
+  if (!DATA_ENDPOINT) return;
+
+  try {
+    await fetch(DATA_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": DATA_AUTH_KEY || ""
+      },
+      body: JSON.stringify({
+        type,
+        payload,
+        source: "site-analytics",
+        timestamp: new Date().toISOString()
+      })
+    });
+  } catch (e) {
+    console.error("Forwarding failed");
+  }
+}
+
+// ---------- LIVE VISITORS ----------
+let liveVisitors = 0;
+const broadcast = () => {
+  wss.clients.forEach(ws => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ liveVisitors }));
+    }
+  });
+};
+
+// ---------- TRACK PAGE ----------
+app.post("/track", async (req, res) => {
+  if (req.cookies.consent !== "true") return res.sendStatus(204);
+
+  let visitorId = req.cookies.visitor_id;
+  if (!visitorId) {
+    visitorId = uuidv4();
+    res.cookie("visitor_id", visitorId, { httpOnly: true });
+    liveVisitors++;
+    broadcast();
+  }
+
+  const rawIP = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const geo = geoip.lookup(rawIP) || {};
+
+  const record = {
+    visitor_id: visitorId,
+    ip: anonymizeIP(rawIP),
+    city: geo.city || "Unknown",
+    region: geo.region || "Unknown",
+    country: geo.country || "Unknown",
+    page: req.body.page,
+    user_agent: req.headers["user-agent"]
+  };
+
+  db.run(`
+    INSERT INTO visits (visitor_id, ip, city, region, country, page, user_agent)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `, Object.values(record));
+
+  await forwardData("page_view", record);
+  res.sendStatus(200);
+});
+
+// ---------- CLICK / HEATMAP ----------
+app.post("/click", async (req, res) => {
+  const record = {
+    page: req.body.page,
+    x: req.body.x,
+    y: req.body.y
+  };
+
+  db.run(
+    "INSERT INTO clicks (page, x, y) VALUES (?, ?, ?)",
+    Object.values(record)
+  );
+
+  await forwardData("click", record);
+  res.sendStatus(200);
+});
+
+// ---------- CLIENT SCRIPT ----------
+app.get("/tracker.js", (_, res) => {
+  res.type("application/javascript").send(`
+    if (!document.cookie.includes("consent=true")) {
+      const b=document.createElement("div");
+      b.innerHTML='<div style="position:fixed;bottom:0;width:100%;background:#000;color:#fff;padding:10px;text-align:center;z-index:9999">This site uses cookies for analytics.<button onclick="document.cookie=\\'consent=true;path=/;max-age=31536000\\';location.reload()">Accept</button></div>';
+      document.body.appendChild(b);
+    }
+
+    fetch("/track",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({page:location.pathname})});
+
+    document.addEventListener("click",e=>{
+      fetch("/click",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({page:location.pathname,x:e.clientX,y:e.clientY})});
+    });
+  `);
+});
+
+// ---------- ADMIN ----------
+app.post("/admin/create", async (req, res) => {
+  const hash = await bcrypt.hash(req.body.password, 10);
+  db.run("INSERT INTO admins VALUES (NULL,?,?)", [req.body.username, hash]);
+  res.json({ created: true });
+});
+
+app.post("/admin/login", (req, res) => {
+  db.get("SELECT * FROM admins WHERE username=?", [req.body.username], async (_, a) => {
+    if (!a || !(await bcrypt.compare(req.body.password, a.password_hash)))
+      return res.sendStatus(401);
+    req.session.admin = true;
+    res.json({ success: true });
+  });
+});
+
+app.get("/dashboard", (req, res) => {
+  if (!req.session.admin) return res.sendStatus(403);
+  res.send(`
+    <h2>Dashboard</h2>
+    <p>Live Visitors: <span id="l">0</span></p>
+    <script>
+      const ws=new WebSocket("wss://"+location.host);
+      ws.onmessage=e=>l.innerText=JSON.parse(e.data).liveVisitors;
+    </script>
+  `);
+});
+
+// ---------- START ----------
+server.listen(3000, () => console.log("Analytics system running"));
