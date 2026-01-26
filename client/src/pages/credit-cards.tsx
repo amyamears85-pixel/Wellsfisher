@@ -1,8 +1,9 @@
 import { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, ChevronDown, MapPin, Phone, Globe, Menu, Search, CreditCard, Percent, Gift, ShoppingBag, Plane, DollarSign, Shield, Star, Clock, HelpCircle, X } from "lucide-react";
+import { Check, ChevronDown, MapPin, Phone, Globe, Search, CreditCard, Percent, Gift, ShoppingBag, Plane, DollarSign, Shield, Star, Clock, HelpCircle, X } from "lucide-react";
 import { Link } from "wouter";
+import { MobileMenu } from "@/components/mobile-menu";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -286,7 +287,7 @@ export default function CreditCardsPage() {
               <Input placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-56 h-9 bg-white border-0 text-gray-800 text-sm rounded-sm pr-10" />
               <button type="submit" className="absolute right-0 top-0 h-full px-3 bg-[#b91c23]"><Search className="w-4 h-4 text-white" /></button>
             </form>
-            <button className="lg:hidden text-white p-2"><Menu className="w-5 h-5" /></button>
+            <MobileMenu currentPage="Credit Cards" />
           </div>
         </div>
         <nav className="bg-[#c41e24] border-t border-[#b91c23]">

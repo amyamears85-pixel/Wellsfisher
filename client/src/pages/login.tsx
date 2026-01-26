@@ -16,8 +16,9 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { X, Search, Key, Shield, Lock, ChevronDown, MapPin, Phone, MessageCircle, Smartphone, CreditCard, Home, PiggyBank, Car, Menu, Globe } from "lucide-react";
+import { X, Search, Key, Shield, Lock, ChevronDown, MapPin, Phone, MessageCircle, Smartphone, CreditCard, Home, PiggyBank, Car, Globe } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { MobileMenu } from "@/components/mobile-menu";
 import heroBg from "@/assets/images/hero-bg.jpg";
 
 const loginSchema = z.object({
@@ -171,9 +172,7 @@ export default function LoginPage() {
               <button className="lg:hidden text-white p-2 hover:bg-white/10 rounded">
                 <Search className="w-5 h-5" />
               </button>
-              <button className="lg:hidden text-white p-2 hover:bg-white/10 rounded">
-                <Menu className="w-5 h-5" />
-              </button>
+              <MobileMenu />
             </div>
           </div>
         </div>

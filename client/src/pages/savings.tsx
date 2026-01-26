@@ -1,8 +1,9 @@
 import { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, ChevronDown, MapPin, Phone, Globe, Menu, Search, PiggyBank, TrendingUp, Clock, Shield, Calculator, ChevronRight, Lock, Percent, Target, Building, HelpCircle, ArrowRight } from "lucide-react";
+import { Check, ChevronDown, MapPin, Phone, Globe, Search, PiggyBank, TrendingUp, Clock, Shield, Calculator, ChevronRight, Lock, Percent, Target, Building, HelpCircle, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
+import { MobileMenu } from "@/components/mobile-menu";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -319,7 +320,7 @@ export default function SavingsPage() {
                 <Input placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-56 h-9 bg-white border-0 text-gray-800 text-sm rounded-sm pr-10" />
                 <button type="submit" className="absolute right-0 top-0 h-full px-3 bg-[#b91c23]"><Search className="w-4 h-4 text-white" /></button>
               </form>
-              <button className="lg:hidden text-white p-2"><Menu className="w-5 h-5" /></button>
+              <MobileMenu currentPage="Savings & CDs" />
             </div>
           </div>
         </div>

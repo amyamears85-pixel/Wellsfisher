@@ -1,8 +1,9 @@
 import { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, ChevronDown, MapPin, Phone, Globe, Menu, Search, Smartphone, ArrowRight, Shield, DollarSign, Zap, CreditCard, X, HelpCircle, Building, Wallet, Clock, Users, CheckCircle2, AlertCircle, ChevronRight } from "lucide-react";
+import { Check, ChevronDown, MapPin, Phone, Globe, Search, Smartphone, ArrowRight, Shield, DollarSign, Zap, CreditCard, X, HelpCircle, Building, Wallet, Clock, Users, CheckCircle2, AlertCircle, ChevronRight } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { MobileMenu } from "@/components/mobile-menu";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -346,7 +347,7 @@ export default function CheckingPage() {
                 <Input placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-56 h-9 bg-white border-0 text-gray-800 placeholder:text-gray-500 text-sm rounded-sm pr-10" />
                 <button type="submit" className="absolute right-0 top-0 h-full px-3 bg-[#b91c23] hover:bg-[#a01820] transition-colors rounded-r-sm"><Search className="w-4 h-4 text-white" /></button>
               </form>
-              <button className="lg:hidden text-white p-2"><Menu className="w-5 h-5" /></button>
+              <MobileMenu currentPage="Checking" />
             </div>
           </div>
         </div>
