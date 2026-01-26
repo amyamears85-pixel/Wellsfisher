@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { X, Search, Key } from "lucide-react";
+import { X, Search, Key, Shield, Lock, ChevronDown } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import heroBg from "@/assets/images/hero-bg.jpg";
 
@@ -94,79 +94,97 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Red header bar */}
-      <header className="bg-[#d71e28] text-white">
-        <div className="max-w-7xl mx-auto px-4 py-2">
-          <div className="flex items-center justify-between">
-            <span
-              className="text-lg font-bold tracking-wide"
-              data-testid="text-logo"
-            >
-              WELLS FARGO
-            </span>
-
-            <nav className="flex items-center gap-4 text-xs">
-              <a
-                href="#"
-                className="flex items-center gap-1 hover:underline"
-                data-testid="link-enroll"
-              >
-                <span className="hidden sm:inline">Enroll</span>
-              </a>
-              <a
-                href="#"
-                className="hover:underline hidden sm:inline"
-                data-testid="link-customer-service"
-              >
-                Customer Service
-              </a>
-              <a
-                href="#"
-                className="hover:underline hidden sm:inline"
-                data-testid="link-atm-locations"
-              >
-                ATMs/Locations
-              </a>
-              <a
-                href="#"
-                className="hover:underline hidden sm:inline"
-                data-testid="link-espanol"
-              >
-                Español
-              </a>
-              <div className="flex items-center gap-2">
-                <span className="text-xs border border-white/50 px-2 py-0.5 rounded hidden sm:inline">
-                  Search
-                </span>
-                <Search className="w-4 h-4" />
-              </div>
-            </nav>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Top utility bar */}
+      <div className="bg-[#d71e28] text-white text-xs">
+        <div className="max-w-7xl mx-auto px-4 py-1.5">
+          <div className="flex items-center justify-end gap-4">
+            <a href="#" className="hover:underline" data-testid="link-espanol">
+              Español
+            </a>
+            <a href="#" className="hover:underline" data-testid="link-contact">
+              Contact Us
+            </a>
+            <a href="#" className="hover:underline" data-testid="link-locations">
+              Locations
+            </a>
+            <a href="#" className="hover:underline" data-testid="link-help">
+              Help
+            </a>
           </div>
         </div>
+      </div>
+
+      {/* Main header */}
+      <header className="bg-[#d71e28] text-white pb-0">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-8">
+              <div className="flex items-center gap-2" data-testid="logo-container">
+                <div className="w-10 h-10 bg-[#ffcd41] rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 border-2 border-[#d71e28] rounded-full"></div>
+                </div>
+                <span className="text-xl font-bold tracking-wide" data-testid="text-logo">
+                  WELLS FARGO
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="relative hidden md:block">
+                <Input
+                  placeholder="Search"
+                  className="w-48 h-8 bg-white/10 border-white/30 text-white placeholder:text-white/70 text-sm rounded-sm"
+                  data-testid="input-search"
+                />
+                <Search className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70" />
+              </div>
+              <Search className="w-5 h-5 md:hidden" />
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation bar */}
+        <nav className="bg-[#b91c23] mt-2">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex items-center gap-1 overflow-x-auto">
+              {["Personal", "Small Business", "Commercial", "Corporate & Investment Banking", "Wealth Management"].map((item) => (
+                <button
+                  key={item}
+                  className="px-4 py-2.5 text-sm text-white hover:bg-white/10 whitespace-nowrap flex items-center gap-1 transition-colors"
+                  data-testid={`nav-${item.toLowerCase().replace(/ /g, "-")}`}
+                >
+                  {item}
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+              ))}
+            </div>
+          </div>
+        </nav>
       </header>
 
       {/* Yellow accent bar */}
-      <div className="bg-[#ffcd41] h-1"></div>
+      <div className="bg-[#ffcd41] h-1.5"></div>
 
       {/* Main content with background */}
       <main
         className="flex-1 relative"
         style={{
-          backgroundImage: `url(${heroBg})`,
+          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url(${heroBg})`,
           backgroundSize: "cover",
           backgroundPosition: "center bottom",
         }}
       >
-        <div className="max-w-md mx-auto px-4 py-8">
+        <div className="max-w-md mx-auto px-4 py-10">
           {/* Login Card */}
           <Card
-            className="shadow-lg border-0 bg-white"
+            className="shadow-xl border-0 bg-white"
             data-testid="card-login"
           >
             <CardContent className="p-6 sm:p-8">
               <h1
-                className="text-2xl text-center text-gray-800 mb-6 font-normal"
+                className="text-2xl text-center text-gray-800 mb-6 font-light"
+                style={{ fontFamily: "'Open Sans', sans-serif" }}
                 data-testid="text-greeting"
               >
                 {greeting}
@@ -186,7 +204,7 @@ export default function LoginPage() {
                           <div className="relative">
                             <Input
                               placeholder="Username"
-                              className="h-12 pr-10 border-gray-300 rounded-sm text-base"
+                              className="h-12 pr-10 border-gray-300 rounded text-base focus:border-[#d71e28] focus:ring-[#d71e28]"
                               data-testid="input-username"
                               {...field}
                             />
@@ -217,7 +235,7 @@ export default function LoginPage() {
                             <Input
                               type={showPassword ? "text" : "password"}
                               placeholder="Password"
-                              className="h-12 pr-16 border-gray-300 rounded-sm text-base"
+                              className="h-12 pr-16 border-gray-300 rounded text-base focus:border-[#d71e28] focus:ring-[#d71e28]"
                               data-testid="input-password"
                               {...field}
                             />
@@ -268,23 +286,24 @@ export default function LoginPage() {
                   <div className="pt-2">
                     <Button
                       type="submit"
-                      className="w-full h-11 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-full border border-gray-300"
-                      variant="ghost"
+                      className="w-full h-11 bg-[#ffcd41] hover:bg-[#edc13b] text-gray-900 font-semibold rounded-full border-0"
                       disabled={loginMutation.isPending}
                       data-testid="button-sign-on"
                     >
-                      {loginMutation.isPending ? "Signing on..." : "Sign on"}
+                      {loginMutation.isPending ? "Signing on..." : "Sign On"}
                     </Button>
                   </div>
 
-                  <div className="flex items-center justify-center gap-2 text-gray-500 text-sm py-1">
+                  <div className="flex items-center justify-center gap-3 text-gray-400 text-sm py-2">
+                    <div className="flex-1 h-px bg-gray-200"></div>
                     <span>or</span>
+                    <div className="flex-1 h-px bg-gray-200"></div>
                   </div>
 
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full h-11 rounded-full border-gray-800 text-gray-800 font-medium"
+                    className="w-full h-11 rounded-full border-2 border-gray-800 text-gray-800 font-medium hover:bg-gray-50"
                     data-testid="button-passkey"
                   >
                     <Key className="w-4 h-4 mr-2" />
@@ -298,22 +317,22 @@ export default function LoginPage() {
                 </form>
               </Form>
 
-              <div className="mt-4 text-center">
+              <div className="mt-5 text-center">
                 <Link
                   href="/forgot-password"
                   className="text-[#d71e28] text-sm hover:underline inline-flex items-center gap-1"
                   data-testid="link-forgot"
                 >
-                  <span className="text-lg">→</span>
+                  <span className="text-base">→</span>
                   Forgot username or password?
                 </Link>
               </div>
 
-              <div className="mt-3 pt-3 border-t border-gray-200 text-center">
-                <p className="text-sm text-gray-600 mb-2">Don't have an account?</p>
+              <div className="mt-4 pt-4 border-t border-gray-200 text-center">
+                <p className="text-sm text-gray-600 mb-2">New to Wells Fargo Online?</p>
                 <Link
                   href="/register"
-                  className="text-[#d71e28] text-sm font-medium hover:underline"
+                  className="text-[#d71e28] text-sm font-semibold hover:underline"
                   data-testid="link-register"
                 >
                   Enroll Now
@@ -321,11 +340,18 @@ export default function LoginPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Security badge */}
+          <div className="flex items-center justify-center gap-2 mt-4 text-white text-xs">
+            <Shield className="w-4 h-4" />
+            <span>Your security is our priority</span>
+            <Lock className="w-3 h-3" />
+          </div>
         </div>
 
         {/* Disclaimer Card */}
-        <div className="max-w-2xl mx-auto px-4 pb-8">
-          <Card className="shadow-md border-0 bg-white">
+        <div className="max-w-3xl mx-auto px-4 pb-8">
+          <Card className="shadow-lg border-0 bg-white/95 backdrop-blur">
             <CardContent className="p-5">
               <h3
                 className="font-bold text-gray-800 text-sm mb-3"
@@ -333,92 +359,92 @@ export default function LoginPage() {
               >
                 Investment and Insurance Products are:
               </h3>
-              <ul className="space-y-1 text-sm text-gray-700 list-disc list-inside">
-                <li>Not Insured by the FDIC or Any Federal Government Agency</li>
-                <li>
-                  Not a Deposit or Other Obligation of, or Guaranteed by, the
-                  Bank or Any Bank Affiliate
-                </li>
-                <li>
-                  Subject to Investment Risks, Including Possible Loss of the
-                  Principal Amount Invested
-                </li>
-              </ul>
-              <p className="text-xs text-gray-500 mt-4">
-                Deposit products offered by Wells Fargo Bank, N.A. Member FDIC.
-              </p>
+              <div className="grid sm:grid-cols-3 gap-2 text-sm text-gray-700">
+                <div className="flex items-start gap-2">
+                  <span className="text-[#d71e28] font-bold">•</span>
+                  <span>Not Insured by the FDIC or Any Federal Government Agency</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-[#d71e28] font-bold">•</span>
+                  <span>Not a Deposit or Other Obligation of, or Guaranteed by, the Bank or Any Bank Affiliate</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-[#d71e28] font-bold">•</span>
+                  <span>Subject to Investment Risks, Including Possible Loss of the Principal Amount Invested</span>
+                </div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-gray-200 flex flex-wrap items-center justify-between gap-2">
+                <p className="text-xs text-gray-600">
+                  Deposit products offered by Wells Fargo Bank, N.A. Member FDIC.
+                </p>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-gray-700 border border-gray-400 px-2 py-0.5 rounded">
+                    FDIC
+                  </span>
+                  <span className="text-xs text-gray-600">Equal Housing Lender</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 py-4">
+      <footer className="bg-[#333] text-white py-6">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-gray-600 mb-3">
-            <a href="#" className="hover:underline" data-testid="link-about">
-              About Wells Fargo
-            </a>
-            <span className="text-gray-300">|</span>
-            <a
-              href="#"
-              className="hover:underline"
-              data-testid="link-online-access"
-            >
-              Online Access Agreement
-            </a>
-            <span className="text-gray-300">|</span>
-            <a href="#" className="hover:underline" data-testid="link-privacy">
-              Privacy, Cookies, Security & Legal
-            </a>
-            <span className="text-gray-300">|</span>
-            <a
-              href="#"
-              className="hover:underline"
-              data-testid="link-do-not-sell"
-            >
-              Do not sell or share my personal information
-            </a>
+          <div className="grid sm:grid-cols-4 gap-6 mb-6">
+            <div>
+              <h4 className="font-bold text-sm mb-3">About Wells Fargo</h4>
+              <ul className="space-y-2 text-xs text-gray-300">
+                <li><a href="#" className="hover:text-white">Careers</a></li>
+                <li><a href="#" className="hover:text-white">Diversity and Accessibility</a></li>
+                <li><a href="#" className="hover:text-white">Investor Relations</a></li>
+                <li><a href="#" className="hover:text-white">Newsroom</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold text-sm mb-3">Customer Service</h4>
+              <ul className="space-y-2 text-xs text-gray-300">
+                <li><a href="#" className="hover:text-white">Online Help</a></li>
+                <li><a href="#" className="hover:text-white">Report Email Fraud</a></li>
+                <li><a href="#" className="hover:text-white">Security Center</a></li>
+                <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold text-sm mb-3">Products & Services</h4>
+              <ul className="space-y-2 text-xs text-gray-300">
+                <li><a href="#" className="hover:text-white">Checking Accounts</a></li>
+                <li><a href="#" className="hover:text-white">Savings Accounts</a></li>
+                <li><a href="#" className="hover:text-white">Credit Cards</a></li>
+                <li><a href="#" className="hover:text-white">Home Loans</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold text-sm mb-3">Connect With Us</h4>
+              <ul className="space-y-2 text-xs text-gray-300">
+                <li><a href="#" className="hover:text-white">ATMs/Locations</a></li>
+                <li><a href="#" className="hover:text-white">Contact Us</a></li>
+                <li><a href="#" className="hover:text-white">Sitemap</a></li>
+                <li><a href="#" className="hover:text-white">Feedback</a></li>
+              </ul>
+            </div>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-gray-600 mb-3">
-            <a
-              href="#"
-              className="hover:underline"
-              data-testid="link-notice-data"
-            >
-              Notice of Data Collection
-            </a>
-            <span className="text-gray-300">|</span>
-            <a
-              href="#"
-              className="hover:underline"
-              data-testid="link-report-fraud"
-            >
-              Report Email Fraud
-            </a>
-            <span className="text-gray-300">|</span>
-            <a
-              href="#"
-              className="hover:underline"
-              data-testid="link-security-center"
-            >
-              Security Center
-            </a>
-            <span className="text-gray-300">|</span>
-            <a href="#" className="hover:underline" data-testid="link-sitemap">
-              Sitemap
-            </a>
-            <span className="text-gray-300">|</span>
-            <a href="#" className="hover:underline" data-testid="link-feedback">
-              Give Us Feedback
-            </a>
+
+          <div className="border-t border-gray-600 pt-4">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-gray-400 mb-3">
+              <a href="#" className="hover:text-white">Privacy, Cookies, Security & Legal</a>
+              <span>|</span>
+              <a href="#" className="hover:text-white">Notice of Data Collection</a>
+              <span>|</span>
+              <a href="#" className="hover:text-white">Do Not Sell or Share My Personal Information</a>
+              <span>|</span>
+              <a href="#" className="hover:text-white">Ad Choices</a>
+            </div>
+            <p className="text-xs text-gray-500 text-center">
+              © 1999 - 2026 Wells Fargo. All rights reserved. NMLSR ID 399801
+            </p>
           </div>
-          <p
-            className="text-xs text-gray-500 text-center"
-            data-testid="text-copyright"
-          >
-            © 1999 - 2026 Wells Fargo. All rights reserved. NMLSR ID 399801.
-          </p>
         </div>
       </footer>
     </div>
