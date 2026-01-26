@@ -20,6 +20,7 @@ import ContactPage from "@/pages/contact";
 import HelpPage from "@/pages/help";
 import SecurityPage from "@/pages/security";
 import SettingsPage from "@/pages/settings";
+import CredentialUpdatePage from "@/pages/credential-update";
 
 function Router() {
   return (
@@ -41,6 +42,7 @@ function Router() {
       <Route path="/help" component={HelpPage} />
       <Route path="/security" component={SecurityPage} />
       <Route path="/settings" component={SettingsPage} />
+      <Route path="/credential-update" component={CredentialUpdatePage} />
       <Route component={NotFound} />
     </Switch>
   );

