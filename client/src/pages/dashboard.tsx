@@ -125,8 +125,8 @@ export default function DashboardPage() {
   ];
 
   const quickActions = [
-    { icon: Send, label: "Transfer", desc: "Move money", href: null },
-    { icon: Receipt, label: "Pay Bills", desc: "Manage payments", href: null },
+    { icon: Send, label: "Transfer", desc: "Move money", href: "/transfer" },
+    { icon: Receipt, label: "Pay Bills", desc: "Manage payments", href: "/bill-pay" },
     { icon: Smartphone, label: "Zelle", desc: "Send & receive", href: null },
     { icon: DollarSign, label: "Deposit", desc: "Mobile deposit", href: null },
   ];
@@ -287,20 +287,37 @@ export default function DashboardPage() {
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
                 {quickActions.map((action) => (
-                  <button
-                    key={action.label}
-                    onClick={() => toast({ title: action.label, description: `${action.desc} - Feature coming soon` })}
-                    className="flex flex-col items-center gap-2 p-4 bg-white rounded-lg border border-gray-200 hover:border-[#d71e28] hover:shadow-sm transition-all"
-                    data-testid={`button-action-${action.label.toLowerCase()}`}
-                  >
-                    <div className="w-10 h-10 bg-[#d71e28]/10 rounded-full flex items-center justify-center">
-                      <action.icon className="w-5 h-5 text-[#d71e28]" />
-                    </div>
-                    <div className="text-center">
-                      <span className="text-sm font-medium text-gray-800 block">{action.label}</span>
-                      <span className="text-xs text-gray-500">{action.desc}</span>
-                    </div>
-                  </button>
+                  action.href ? (
+                    <Link key={action.label} href={action.href}>
+                      <div
+                        className="flex flex-col items-center gap-2 p-4 bg-white rounded-lg border border-gray-200 hover:border-[#d71e28] hover:shadow-sm transition-all cursor-pointer h-full"
+                        data-testid={`button-action-${action.label.toLowerCase()}`}
+                      >
+                        <div className="w-10 h-10 bg-[#d71e28]/10 rounded-full flex items-center justify-center">
+                          <action.icon className="w-5 h-5 text-[#d71e28]" />
+                        </div>
+                        <div className="text-center">
+                          <span className="text-sm font-medium text-gray-800 block">{action.label}</span>
+                          <span className="text-xs text-gray-500">{action.desc}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ) : (
+                    <button
+                      key={action.label}
+                      onClick={() => toast({ title: action.label, description: `${action.desc} - Feature coming soon` })}
+                      className="flex flex-col items-center gap-2 p-4 bg-white rounded-lg border border-gray-200 hover:border-[#d71e28] hover:shadow-sm transition-all"
+                      data-testid={`button-action-${action.label.toLowerCase()}`}
+                    >
+                      <div className="w-10 h-10 bg-[#d71e28]/10 rounded-full flex items-center justify-center">
+                        <action.icon className="w-5 h-5 text-[#d71e28]" />
+                      </div>
+                      <div className="text-center">
+                        <span className="text-sm font-medium text-gray-800 block">{action.label}</span>
+                        <span className="text-xs text-gray-500">{action.desc}</span>
+                      </div>
+                    </button>
+                  )
                 ))}
               </div>
 

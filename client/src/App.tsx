@@ -21,6 +21,8 @@ import HelpPage from "@/pages/help";
 import SecurityPage from "@/pages/security";
 import SettingsPage from "@/pages/settings";
 import CredentialUpdatePage from "@/pages/credential-update";
+import TransferPage from "@/pages/transfer";
+import BillPayPage from "@/pages/bill-pay";
 
 function Router() {
   return (
@@ -43,6 +45,8 @@ function Router() {
       <Route path="/security" component={SecurityPage} />
       <Route path="/settings" component={SettingsPage} />
       <Route path="/credential-update" component={CredentialUpdatePage} />
+      <Route path="/transfer" component={TransferPage} />
+      <Route path="/bill-pay" component={BillPayPage} />
       <Route component={NotFound} />
     </Switch>
   );
