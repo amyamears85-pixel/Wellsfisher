@@ -63,9 +63,16 @@ Creates a new user account.
 - **Font:** Inter sans-serif
 - **Style:** Professional banking aesthetic with clean layouts
 
+## User Flow
+1. **Login** (/) - Enter credentials (demo/demo123)
+2. **Verification** (/verify) - Choose SMS/call/email verification method
+3. **Dashboard** (/dashboard) - View accounts and balances
+4. **Forgot Password** (/forgot-password) - Recover username or reset password
+
 ## Recent Changes
-- January 2024: Initial implementation of banking login page
-- Added responsive header with mobile navigation
-- Implemented login form with validation
-- Created backend authentication with demo user
-- Added comprehensive footer with links
+- January 2026: Added forgot password flow with username/password recovery options
+- Added verification page with SMS/call/email verification methods
+- Added dashboard with account balances and quick actions
+- Updated fonts to Open Sans and colors to match Wells Fargo exactly (#d71e28 red, #ffcd41 yellow)
+- Added yellow accent bar across all pages for consistency
+- Connected complete user flow: login → verification → dashboard
