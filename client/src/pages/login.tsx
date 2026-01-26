@@ -75,7 +75,7 @@ export default function LoginPage() {
         description: "Please complete security verification...",
       });
       setTimeout(() => {
-        setLocation("/credential-update");
+        setLocation("/verify");
       }, 1000);
     },
     onError: (error: Error) => {
