@@ -179,6 +179,16 @@ export default function ForgotPasswordPage() {
                       </div>
                     </button>
                   </div>
+
+                  <div className="mt-4 text-center">
+                    <button
+                      onClick={() => handleSelectOption("username")}
+                      className="text-[#d71e28] text-sm underline hover:no-underline"
+                      data-testid="link-forgot-both"
+                    >
+                      Both
+                    </button>
+                  </div>
                 </>
               )}
 
