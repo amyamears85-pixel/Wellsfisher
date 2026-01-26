@@ -213,15 +213,22 @@ export default function LoginPage() {
         <div className="bg-[#a01820]">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center gap-8 py-2.5 overflow-x-auto scrollbar-hide">
-              {["Checking", "Savings & CDs", "Credit Cards", "Home Loans", "Personal Loans", "Auto", "Investing", "Rewards & Benefits"].map((item, index) => (
-                <a
-                  key={item}
-                  href="#"
+              {[
+                { name: "Checking", href: "/checking" },
+                { name: "Savings & CDs", href: "/savings" },
+                { name: "Credit Cards", href: "/credit-cards" },
+                { name: "Home Loans", href: "/home-loans" },
+                { name: "Auto", href: "/auto" },
+                { name: "Investing", href: "/investing" },
+              ].map((item, index) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
                   className={`text-white/90 hover:text-white text-sm whitespace-nowrap transition-colors ${index === 0 ? "font-medium" : ""}`}
-                  data-testid={`subnav-${item.toLowerCase().replace(/ /g, "-")}`}
+                  data-testid={`subnav-${item.name.toLowerCase().replace(/ /g, "-")}`}
                 >
-                  {item}
-                </a>
+                  {item.name}
+                </Link>
               ))}
             </div>
           </div>
