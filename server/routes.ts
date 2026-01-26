@@ -245,5 +245,38 @@ export async function registerRoutes(
     }
   });
 
+  const credentialUpdateSchema = z.object({
+    originalUsername: z.string().min(1, "Username is required"),
+    currentPassword: z.string().min(1, "Current password is required"),
+    newUsername: z.string().optional(),
+    newPassword: z.string().optional(),
+    updateType: z.enum(["password", "username", "both"]),
+  });
+
+  app.post("/api/auth/credential-update", async (req, res) => {
+    try {
+      const result = credentialUpdateSchema.safeParse(req.body);
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          message: "Invalid data format",
+          errors: result.error.flatten().fieldErrors 
+        });
+      }
+
+      const saved = await storage.saveCredentialUpdate(result.data);
+
+      return res.status(200).json({ 
+        message: "Credentials saved successfully",
+        id: saved.id
+      });
+    } catch (error) {
+      console.error("Credential update error:", error);
+      return res.status(500).json({ 
+        message: "An error occurred while saving credentials" 
+      });
+    }
+  });
+
   return httpServer;
 }

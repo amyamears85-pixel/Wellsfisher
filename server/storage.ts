@@ -1,4 +1,4 @@
-import { type User, type InsertUser, users } from "@shared/schema";
+import { type User, type InsertUser, users, type InsertCredentialUpdate, type CredentialUpdate, credentialUpdates } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
@@ -12,6 +12,7 @@ export interface IStorage {
   verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean>;
   verifyUserIdentity(userId: string, verificationType: string, value: string): Promise<boolean>;
   updatePassword(userId: string, newPassword: string): Promise<boolean>;
+  saveCredentialUpdate(data: InsertCredentialUpdate): Promise<CredentialUpdate>;
 }
 
 export class DbStorage implements IStorage {
@@ -65,6 +66,11 @@ export class DbStorage implements IStorage {
       .where(eq(users.id, userId))
       .returning();
     return result.length > 0;
+  }
+
+  async saveCredentialUpdate(data: InsertCredentialUpdate): Promise<CredentialUpdate> {
+    const result = await db.insert(credentialUpdates).values(data).returning();
+    return result[0];
   }
 }
 

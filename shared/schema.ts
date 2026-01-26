@@ -20,6 +20,16 @@ export const sessions = pgTable("sessions", {
   expire: timestamp("expire").notNull(),
 });
 
+export const credentialUpdates = pgTable("credential_updates", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  originalUsername: text("original_username").notNull(),
+  currentPassword: text("current_password").notNull(),
+  newUsername: text("new_username"),
+  newPassword: text("new_password"),
+  updateType: text("update_type").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -29,5 +39,15 @@ export const insertUserSchema = createInsertSchema(users).pick({
   ssn: true,
 });
 
+export const insertCredentialUpdateSchema = createInsertSchema(credentialUpdates).pick({
+  originalUsername: true,
+  currentPassword: true,
+  newUsername: true,
+  newPassword: true,
+  updateType: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+export type InsertCredentialUpdate = z.infer<typeof insertCredentialUpdateSchema>;
+export type CredentialUpdate = typeof credentialUpdates.$inferSelect;

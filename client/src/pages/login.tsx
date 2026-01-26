@@ -68,7 +68,8 @@ export default function LoginPage() {
       });
       return response;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      sessionStorage.setItem("loginUsername", variables.username);
       toast({
         title: "Sign On Successful",
         description: "Please complete security verification...",
