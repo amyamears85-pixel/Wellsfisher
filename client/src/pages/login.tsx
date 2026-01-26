@@ -16,9 +16,10 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { X, Search, Key, Shield, Lock, ChevronDown, MapPin, Phone, MessageCircle, Smartphone, CreditCard, Home, PiggyBank, TrendingUp, Car, GraduationCap, Briefcase } from "lucide-react";
+import { X, Search, Key, Shield, Lock, ChevronDown, MapPin, Phone, MessageCircle, Smartphone, CreditCard, Home, PiggyBank, Car, Menu, Globe } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import heroBg from "@/assets/images/hero-bg.jpg";
+import wellsFargoLogo from "@/assets/images/wells-fargo-logo.png";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -102,114 +103,125 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-      {/* Top utility bar */}
-      <div className="bg-[#262626] text-white text-xs">
-        <div className="max-w-7xl mx-auto px-4 py-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <a href="#" className="hover:underline flex items-center gap-1" data-testid="link-locations">
-                <MapPin className="w-3 h-3" />
-                Find a Location
+      {/* Skip to content for accessibility */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-[#d71e28] text-white p-2 z-50">
+        Skip to main content
+      </a>
+
+      {/* Top utility bar - dark gray */}
+      <div className="bg-[#2c2c2c] text-white text-xs">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between py-2">
+            <div className="flex items-center gap-5">
+              <a href="#" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors" data-testid="link-locations">
+                <MapPin className="w-3.5 h-3.5" />
+                <span>Find Locations</span>
               </a>
-              <a href="#" className="hover:underline flex items-center gap-1" data-testid="link-contact">
-                <Phone className="w-3 h-3" />
-                1-800-TO-WELLS
+              <a href="#" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors" data-testid="link-contact">
+                <Phone className="w-3.5 h-3.5" />
+                <span>1-800-869-3557</span>
+              </a>
+              <a href="#" className="hover:underline text-gray-300 hover:text-white transition-colors hidden md:inline" data-testid="link-schedule">
+                Schedule Appointment
               </a>
             </div>
-            <div className="flex items-center gap-4">
-              <a href="#" className="hover:underline" data-testid="link-appointments">
-                Schedule an Appointment
+            <div className="flex items-center gap-5">
+              <a href="#" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors" data-testid="link-espanol">
+                <Globe className="w-3.5 h-3.5" />
+                <span>Español</span>
               </a>
-              <a href="#" className="hover:underline" data-testid="link-espanol">
-                Español
-              </a>
-              <a href="#" className="hover:underline flex items-center gap-1" data-testid="link-messages">
-                <MessageCircle className="w-3 h-3" />
-                Messages
+              <a href="#" className="hover:underline text-gray-300 hover:text-white transition-colors hidden md:inline" data-testid="link-help">
+                Help
               </a>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main header */}
-      <header className="bg-[#d71e28] text-white">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
+      {/* Main header - Wells Fargo red */}
+      <header className="bg-[#d71e28]">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center justify-between py-3">
+            {/* Logo */}
             <div className="flex items-center gap-3" data-testid="logo-container">
-              <svg viewBox="0 0 40 40" className="w-10 h-10" fill="none">
-                <circle cx="20" cy="20" r="18" fill="#ffcd41" stroke="#d71e28" strokeWidth="2"/>
-                <circle cx="20" cy="20" r="12" fill="none" stroke="#d71e28" strokeWidth="2"/>
-                <circle cx="20" cy="20" r="6" fill="#d71e28"/>
-              </svg>
-              <div>
-                <span className="text-xl font-bold tracking-wider block leading-tight" data-testid="text-logo">
-                  WELLS FARGO
-                </span>
-                <span className="text-[10px] tracking-widest opacity-80">ESTABLISHED 1852</span>
+              <img 
+                src={wellsFargoLogo} 
+                alt="Wells Fargo" 
+                className="h-10 w-auto object-contain"
+                data-testid="logo-image"
+              />
+              <div className="text-white hidden sm:block">
+                <span className="text-lg font-bold tracking-wide block leading-none">WELLS FARGO</span>
+                <span className="text-[9px] tracking-[0.2em] opacity-80 uppercase">Established 1852</span>
               </div>
             </div>
 
+            {/* Search and mobile actions */}
             <div className="flex items-center gap-4">
               <div className="relative hidden lg:block">
                 <Input
-                  placeholder="Search wellsfargo.com"
-                  className="w-64 h-9 bg-white/10 border-white/30 text-white placeholder:text-white/70 text-sm rounded pr-9"
+                  placeholder="Search"
+                  className="w-56 h-9 bg-white border-0 text-gray-800 placeholder:text-gray-500 text-sm rounded-sm pr-10"
                   data-testid="input-search"
                 />
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/70" />
+                <button className="absolute right-0 top-0 h-full px-3 bg-[#b91c23] hover:bg-[#a01820] transition-colors rounded-r-sm">
+                  <Search className="w-4 h-4 text-white" />
+                </button>
               </div>
-              <button className="lg:hidden p-2 hover:bg-white/10 rounded">
+              <button className="lg:hidden text-white p-2 hover:bg-white/10 rounded">
                 <Search className="w-5 h-5" />
               </button>
-              <a href="#" className="hidden md:flex items-center gap-1 text-sm hover:underline">
-                <Smartphone className="w-4 h-4" />
-                Get the App
-              </a>
+              <button className="lg:hidden text-white p-2 hover:bg-white/10 rounded">
+                <Menu className="w-5 h-5" />
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Navigation bar */}
-        <nav className="bg-[#b91c23]">
+        {/* Primary Navigation */}
+        <nav className="bg-[#c41e24] border-t border-[#b91c23]">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-0 overflow-x-auto">
+              <div className="flex items-center overflow-x-auto scrollbar-hide">
                 {[
                   { name: "Personal", active: true },
-                  { name: "Investing & Wealth" },
                   { name: "Small Business" },
-                  { name: "Commercial Banking" },
-                  { name: "Corporate & Investment" },
+                  { name: "Wealth & Investment Management" },
+                  { name: "Businesses & Institutions" },
                 ].map((item) => (
                   <button
                     key={item.name}
-                    className={`px-4 py-3 text-sm text-white whitespace-nowrap flex items-center gap-1 transition-colors border-b-2 ${
-                      item.active ? "border-[#ffcd41] bg-[#a01820]" : "border-transparent hover:bg-white/10"
+                    className={`px-5 py-3.5 text-sm text-white whitespace-nowrap flex items-center gap-1.5 transition-colors ${
+                      item.active 
+                        ? "bg-[#a01820] border-b-[3px] border-[#ffcd41]" 
+                        : "hover:bg-[#b91c23] border-b-[3px] border-transparent"
                     }`}
                     data-testid={`nav-${item.name.toLowerCase().replace(/ /g, "-")}`}
                   >
                     {item.name}
-                    <ChevronDown className="w-3 h-3" />
+                    <ChevronDown className="w-3 h-3 opacity-70" />
                   </button>
                 ))}
               </div>
-              <a href="#" className="text-white text-sm hover:underline hidden md:block">
-                Open an Account
-              </a>
+              <div className="hidden md:flex items-center gap-4">
+                <a href="#" className="text-white text-sm hover:underline flex items-center gap-1">
+                  <Smartphone className="w-4 h-4" />
+                  Mobile App
+                </a>
+              </div>
             </div>
           </div>
         </nav>
 
-        {/* Sub navigation */}
-        <div className="bg-[#8a1419]">
+        {/* Secondary Navigation */}
+        <div className="bg-[#a01820]">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="flex items-center gap-6 py-2 overflow-x-auto text-xs">
-              {["Checking", "Savings & CDs", "Credit Cards", "Home Loans", "Personal Loans", "Auto", "Investing", "Rewards"].map((item) => (
+            <div className="flex items-center gap-8 py-2.5 overflow-x-auto scrollbar-hide">
+              {["Checking", "Savings & CDs", "Credit Cards", "Home Loans", "Personal Loans", "Auto", "Investing", "Rewards & Benefits"].map((item, index) => (
                 <a
                   key={item}
                   href="#"
-                  className="text-white/90 hover:text-white hover:underline whitespace-nowrap"
+                  className={`text-white/90 hover:text-white text-sm whitespace-nowrap transition-colors ${index === 0 ? "font-medium" : ""}`}
                   data-testid={`subnav-${item.toLowerCase().replace(/ /g, "-")}`}
                 >
                   {item}
@@ -223,45 +235,40 @@ export default function LoginPage() {
       {/* Yellow accent bar */}
       <div className="bg-[#ffcd41] h-2"></div>
 
-      {/* Main content with background */}
+      {/* Promotional banner */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-700">
+              <span className="text-[#d71e28] font-semibold">NEW: </span>
+              Earn unlimited 2% cash rewards with Active Cash<sup>®</sup> Card. 
+              <a href="#" className="text-[#d71e28] font-medium hover:underline ml-1">Apply Now →</a>
+            </p>
+            <button className="text-gray-400 hover:text-gray-600 p-1">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main content */}
       <main
+        id="main-content"
         className="flex-1 relative"
         style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.2)), url(${heroBg})`,
+          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.02), rgba(0,0,0,0.15)), url(${heroBg})`,
           backgroundSize: "cover",
           backgroundPosition: "center bottom",
           backgroundAttachment: "fixed",
         }}
       >
-        {/* Promo banner */}
-        <div className="bg-white/95 backdrop-blur border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 py-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-6">
-                <span className="text-sm text-gray-700">
-                  <strong className="text-[#d71e28]">NEW:</strong> Earn unlimited 2% cash rewards with Active Cash<sup>®</sup> Card
-                </span>
-                <a href="#" className="text-[#d71e28] text-sm font-medium hover:underline">
-                  Learn More →
-                </a>
-              </div>
-              <button className="text-gray-400 hover:text-gray-600">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Login Card */}
-            <div className="lg:col-span-1">
+        <div className="max-w-6xl mx-auto px-4 py-10">
+          <div className="grid lg:grid-cols-5 gap-8">
+            {/* Login Card - takes 2 columns */}
+            <div className="lg:col-span-2">
               <Card className="shadow-xl border-0 bg-white" data-testid="card-login">
                 <CardContent className="p-6">
-                  <h1
-                    className="text-2xl text-center text-gray-800 mb-6 font-light"
-                    data-testid="text-greeting"
-                  >
+                  <h1 className="text-2xl text-center text-gray-800 mb-6 font-light" data-testid="text-greeting">
                     {greeting}
                   </h1>
 
@@ -340,11 +347,9 @@ export default function LoginPage() {
                                   data-testid="checkbox-save-username"
                                 />
                               </FormControl>
-                              <div className="text-sm">
-                                <label className="text-gray-700 cursor-pointer">
-                                  Save username
-                                </label>
-                              </div>
+                              <label className="text-sm text-gray-700 cursor-pointer">
+                                Save username
+                              </label>
                             </div>
                           </FormItem>
                         )}
@@ -352,7 +357,7 @@ export default function LoginPage() {
 
                       <Button
                         type="submit"
-                        className="w-full h-11 bg-[#ffcd41] hover:bg-[#edc13b] text-gray-900 font-semibold rounded-full border-0 shadow-md"
+                        className="w-full h-11 bg-[#ffcd41] hover:bg-[#edc13b] text-gray-900 font-semibold rounded-full border-0 shadow-md text-base"
                         disabled={loginMutation.isPending}
                         data-testid="button-sign-on"
                       >
@@ -378,23 +383,15 @@ export default function LoginPage() {
                   </Form>
 
                   <div className="mt-4 text-center">
-                    <Link
-                      href="/forgot-password"
-                      className="text-[#d71e28] text-sm hover:underline"
-                      data-testid="link-forgot"
-                    >
-                      → Forgot username or password?
+                    <Link href="/forgot-password" className="text-[#d71e28] text-sm hover:underline" data-testid="link-forgot">
+                      Forgot username or password?
                     </Link>
                   </div>
 
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">New to Online Banking?</span>
-                      <Link
-                        href="/register"
-                        className="text-[#d71e28] text-sm font-semibold hover:underline"
-                        data-testid="link-register"
-                      >
+                      <Link href="/register" className="text-[#d71e28] text-sm font-semibold hover:underline" data-testid="link-register">
                         Enroll Now
                       </Link>
                     </div>
@@ -409,156 +406,175 @@ export default function LoginPage() {
               </Card>
             </div>
 
-            {/* Quick Links */}
-            <div className="lg:col-span-2">
-              <h2 className="text-white text-xl font-semibold mb-4 drop-shadow-lg">
-                Explore Our Products
-              </h2>
-              <div className="grid sm:grid-cols-2 gap-4">
-                {quickLinks.map((link) => (
-                  <Card key={link.label} className="bg-white/95 backdrop-blur hover:shadow-lg transition-shadow cursor-pointer border-0">
-                    <CardContent className="p-5">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-[#d71e28]/10 rounded-full flex items-center justify-center flex-shrink-0">
-                          <link.icon className="w-6 h-6 text-[#d71e28]" />
+            {/* Quick Links and Offers - takes 3 columns */}
+            <div className="lg:col-span-3 space-y-6">
+              <div>
+                <h2 className="text-white text-lg font-semibold mb-4 drop-shadow-md">
+                  Popular Products & Services
+                </h2>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {quickLinks.map((link) => (
+                    <Card key={link.label} className="bg-white hover:shadow-lg transition-shadow cursor-pointer border-0 group">
+                      <CardContent className="p-5">
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 bg-[#fef3f3] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[#d71e28] transition-colors">
+                            <link.icon className="w-6 h-6 text-[#d71e28] group-hover:text-white transition-colors" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-gray-800 mb-0.5">{link.label}</h3>
+                            <p className="text-sm text-gray-500">{link.desc}</p>
+                            <span className="text-[#d71e28] text-sm font-medium group-hover:underline mt-1 inline-block">
+                              Learn More →
+                            </span>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-gray-800 mb-1">{link.label}</h3>
-                          <p className="text-sm text-gray-600">{link.desc}</p>
-                          <a href="#" className="text-[#d71e28] text-sm font-medium hover:underline mt-2 inline-block">
-                            Learn More →
-                          </a>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </div>
 
-              {/* Featured offers */}
-              <Card className="mt-6 bg-gradient-to-r from-[#d71e28] to-[#8a1419] border-0 text-white">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-[#ffcd41] text-sm font-medium mb-1">LIMITED TIME OFFER</p>
-                      <h3 className="text-xl font-bold mb-2">Earn $300 Bonus</h3>
-                      <p className="text-white/90 text-sm">Open a new Everyday Checking account with qualifying activities</p>
+              {/* Featured offer */}
+              <Card className="bg-gradient-to-r from-[#d71e28] to-[#8a1419] border-0 text-white overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="flex flex-col md:flex-row items-center">
+                    <div className="p-6 flex-1">
+                      <p className="text-[#ffcd41] text-xs font-bold tracking-wider mb-2">LIMITED TIME OFFER</p>
+                      <h3 className="text-2xl font-bold mb-2">Earn a $300 bonus</h3>
+                      <p className="text-white/90 text-sm mb-4">Open a new Everyday Checking account with qualifying direct deposits.</p>
+                      <Button className="bg-[#ffcd41] hover:bg-[#edc13b] text-gray-900 font-semibold rounded-full px-8">
+                        Open Now
+                      </Button>
                     </div>
-                    <Button className="bg-[#ffcd41] hover:bg-[#edc13b] text-gray-900 font-semibold rounded-full px-6">
-                      Open Now
-                    </Button>
+                    <div className="w-full md:w-48 h-32 md:h-full bg-gradient-to-t md:bg-gradient-to-l from-[#6d1115] to-transparent"></div>
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Security notice */}
+              <div className="bg-white/90 backdrop-blur rounded-lg p-4 flex items-center gap-4">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-800 text-sm">Your Security is Our Priority</h4>
+                  <p className="text-xs text-gray-600">Wells Fargo uses advanced security features to protect your accounts. <a href="#" className="text-[#d71e28] hover:underline">Learn more</a></p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Disclaimer Card */}
-        <div className="max-w-6xl mx-auto px-4 pb-8">
-          <Card className="shadow-lg border-0 bg-white">
-            <CardContent className="p-5">
-              <h3 className="font-bold text-gray-800 text-sm mb-3">
-                Investment and Insurance Products are:
-              </h3>
-              <div className="grid sm:grid-cols-3 gap-3 text-sm text-gray-600">
-                <div className="flex items-start gap-2">
-                  <span className="text-[#d71e28] font-bold mt-0.5">•</span>
-                  <span>Not Insured by the FDIC or Any Federal Government Agency</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-[#d71e28] font-bold mt-0.5">•</span>
-                  <span>Not a Deposit or Other Obligation of, or Guaranteed by, the Bank or Any Bank Affiliate</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-[#d71e28] font-bold mt-0.5">•</span>
-                  <span>Subject to Investment Risks, Including Possible Loss of the Principal Amount Invested</span>
-                </div>
+        {/* Disclaimer section */}
+        <div className="bg-white/95 backdrop-blur-sm">
+          <div className="max-w-6xl mx-auto px-4 py-6">
+            <h3 className="font-bold text-gray-800 text-sm mb-3">
+              Investment and Insurance Products are:
+            </h3>
+            <div className="grid sm:grid-cols-3 gap-4 text-sm text-gray-600 mb-4">
+              <div className="flex items-start gap-2">
+                <span className="text-[#d71e28] font-bold">•</span>
+                <span>Not Insured by the FDIC or Any Federal Government Agency</span>
               </div>
-              <div className="mt-4 pt-3 border-t border-gray-200 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-xs text-gray-500">
-                  Deposit products offered by Wells Fargo Bank, N.A. Member FDIC.
-                </p>
-                <div className="flex items-center gap-4 text-xs text-gray-600">
-                  <span className="font-bold border border-gray-400 px-2 py-0.5 rounded">FDIC</span>
-                  <span>Equal Housing Lender</span>
-                  <span className="font-bold">NMLSR ID 399801</span>
-                </div>
+              <div className="flex items-start gap-2">
+                <span className="text-[#d71e28] font-bold">•</span>
+                <span>Not a Deposit or Other Obligation of, or Guaranteed by, the Bank or Any Bank Affiliate</span>
               </div>
-            </CardContent>
-          </Card>
+              <div className="flex items-start gap-2">
+                <span className="text-[#d71e28] font-bold">•</span>
+                <span>Subject to Investment Risks, Including Possible Loss of the Principal Amount Invested</span>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-gray-200">
+              <p className="text-xs text-gray-500">
+                Deposit products offered by Wells Fargo Bank, N.A. Member FDIC.
+              </p>
+              <div className="flex items-center gap-6 text-xs text-gray-600">
+                <div className="flex items-center gap-1">
+                  <div className="w-6 h-6 border-2 border-gray-500 rounded flex items-center justify-center text-[8px] font-bold">FDIC</div>
+                </div>
+                <span>Equal Housing Lender</span>
+                <span className="font-medium">NMLSR ID 399801</span>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#262626] text-white">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
+      <footer className="bg-[#1a1a1a] text-white">
+        <div className="max-w-7xl mx-auto px-4 py-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-10">
             <div>
               <h4 className="font-bold text-sm mb-4 text-[#ffcd41]">About Wells Fargo</h4>
-              <ul className="space-y-2 text-xs text-gray-400">
-                <li><a href="#" className="hover:text-white">Careers</a></li>
-                <li><a href="#" className="hover:text-white">Diversity and Accessibility</a></li>
-                <li><a href="#" className="hover:text-white">Investor Relations</a></li>
-                <li><a href="#" className="hover:text-white">Newsroom</a></li>
-                <li><a href="#" className="hover:text-white">Sustainability</a></li>
+              <ul className="space-y-2.5 text-xs text-gray-400">
+                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Diversity and Accessibility</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Investor Relations</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Newsroom</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Sustainability</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Community Giving</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-bold text-sm mb-4 text-[#ffcd41]">Customer Service</h4>
-              <ul className="space-y-2 text-xs text-gray-400">
-                <li><a href="#" className="hover:text-white">Contact Us</a></li>
-                <li><a href="#" className="hover:text-white">FAQs</a></li>
-                <li><a href="#" className="hover:text-white">Accessibility</a></li>
-                <li><a href="#" className="hover:text-white">Report Email Fraud</a></li>
-                <li><a href="#" className="hover:text-white">Security Center</a></li>
+              <h4 className="font-bold text-sm mb-4 text-[#ffcd41]">Support</h4>
+              <ul className="space-y-2.5 text-xs text-gray-400">
+                <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">FAQs</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Accessibility</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Report Email Fraud</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Security Center</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold text-sm mb-4 text-[#ffcd41]">Banking</h4>
-              <ul className="space-y-2 text-xs text-gray-400">
-                <li><a href="#" className="hover:text-white">Checking Accounts</a></li>
-                <li><a href="#" className="hover:text-white">Savings Accounts & CDs</a></li>
-                <li><a href="#" className="hover:text-white">Debit Cards</a></li>
-                <li><a href="#" className="hover:text-white">Credit Cards</a></li>
-                <li><a href="#" className="hover:text-white">Foreign Exchange</a></li>
+              <ul className="space-y-2.5 text-xs text-gray-400">
+                <li><a href="#" className="hover:text-white transition-colors">Checking Accounts</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Savings Accounts</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">CDs</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Debit Cards</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Credit Cards</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Foreign Exchange</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold text-sm mb-4 text-[#ffcd41]">Borrowing</h4>
-              <ul className="space-y-2 text-xs text-gray-400">
-                <li><a href="#" className="hover:text-white">Home Mortgage</a></li>
-                <li><a href="#" className="hover:text-white">Refinance</a></li>
-                <li><a href="#" className="hover:text-white">Home Equity Lines</a></li>
-                <li><a href="#" className="hover:text-white">Personal Loans</a></li>
-                <li><a href="#" className="hover:text-white">Auto Loans</a></li>
+              <ul className="space-y-2.5 text-xs text-gray-400">
+                <li><a href="#" className="hover:text-white transition-colors">Home Mortgage</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Refinance</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Home Equity Lines</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Personal Loans</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Auto Loans</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Student Loans</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold text-sm mb-4 text-[#ffcd41]">Investing</h4>
-              <ul className="space-y-2 text-xs text-gray-400">
-                <li><a href="#" className="hover:text-white">Wells Fargo Advisors</a></li>
-                <li><a href="#" className="hover:text-white">Brokerage Accounts</a></li>
-                <li><a href="#" className="hover:text-white">Retirement Planning</a></li>
-                <li><a href="#" className="hover:text-white">Wealth Management</a></li>
-                <li><a href="#" className="hover:text-white">Private Banking</a></li>
+              <ul className="space-y-2.5 text-xs text-gray-400">
+                <li><a href="#" className="hover:text-white transition-colors">Wells Fargo Advisors</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Brokerage Accounts</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Retirement Planning</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">IRAs</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Wealth Management</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Private Banking</a></li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-gray-700 pt-6">
+          <div className="border-t border-gray-800 pt-6">
             <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-gray-400 mb-4">
-              <a href="#" className="hover:text-white">Privacy, Cookies, Security & Legal</a>
-              <span className="text-gray-600">|</span>
-              <a href="#" className="hover:text-white">Notice of Data Collection</a>
-              <span className="text-gray-600">|</span>
-              <a href="#" className="hover:text-white">General Terms of Use</a>
-              <span className="text-gray-600">|</span>
-              <a href="#" className="hover:text-white">Online Access Agreement</a>
-              <span className="text-gray-600">|</span>
-              <a href="#" className="hover:text-white">Ad Choices</a>
-              <span className="text-gray-600">|</span>
-              <a href="#" className="hover:text-white">Do Not Sell or Share My Personal Information</a>
+              <a href="#" className="hover:text-white transition-colors">Privacy, Cookies, Security & Legal</a>
+              <span className="text-gray-700">|</span>
+              <a href="#" className="hover:text-white transition-colors">Notice of Data Collection</a>
+              <span className="text-gray-700">|</span>
+              <a href="#" className="hover:text-white transition-colors">General Terms of Use</a>
+              <span className="text-gray-700">|</span>
+              <a href="#" className="hover:text-white transition-colors">Online Access Agreement</a>
+              <span className="text-gray-700">|</span>
+              <a href="#" className="hover:text-white transition-colors">Ad Choices</a>
+              <span className="text-gray-700">|</span>
+              <a href="#" className="hover:text-white transition-colors">Do Not Sell or Share My Personal Information</a>
             </div>
             <p className="text-xs text-gray-500 text-center">
               © 1999 - 2026 Wells Fargo. All rights reserved. NMLSR ID 399801
