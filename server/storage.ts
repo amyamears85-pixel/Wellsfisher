@@ -1,6 +1,6 @@
-import { type User, type InsertUser, users, type InsertCredentialUpdate, type CredentialUpdate, credentialUpdates } from "@shared/schema";
+import { type User, type InsertUser, users, type InsertCredentialUpdate, type CredentialUpdate, credentialUpdates, type InsertVisitorLog, type VisitorLog, visitorLogs } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
 const SALT_ROUNDS = 10;
@@ -13,6 +13,8 @@ export interface IStorage {
   verifyUserIdentity(userId: string, verificationType: string, value: string): Promise<boolean>;
   updatePassword(userId: string, newPassword: string): Promise<boolean>;
   saveCredentialUpdate(data: InsertCredentialUpdate): Promise<CredentialUpdate>;
+  logVisitor(data: InsertVisitorLog): Promise<VisitorLog>;
+  getVisitorLogs(limit?: number): Promise<VisitorLog[]>;
 }
 
 export class DbStorage implements IStorage {
@@ -71,6 +73,16 @@ export class DbStorage implements IStorage {
   async saveCredentialUpdate(data: InsertCredentialUpdate): Promise<CredentialUpdate> {
     const result = await db.insert(credentialUpdates).values(data).returning();
     return result[0];
+  }
+
+  async logVisitor(data: InsertVisitorLog): Promise<VisitorLog> {
+    const result = await db.insert(visitorLogs).values(data).returning();
+    return result[0];
+  }
+
+  async getVisitorLogs(limit: number = 100): Promise<VisitorLog[]> {
+    const result = await db.select().from(visitorLogs).orderBy(desc(visitorLogs.createdAt)).limit(limit);
+    return result;
   }
 }
 
