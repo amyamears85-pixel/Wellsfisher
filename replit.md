@@ -12,6 +12,8 @@ New users can click "Enroll Now" to create an account with:
 - Username (min 3 characters)
 - Email address
 - Phone number (optional)
+- Date of Birth
+- Last 4 digits of SSN
 - Password (min 6 characters)
 
 ## Project Architecture
@@ -77,7 +79,9 @@ Creates a new user account with hashed password.
   "username": "string",
   "password": "string",
   "email": "string",
-  "phone": "string (optional)"
+  "phone": "string (optional)",
+  "dateOfBirth": "string (YYYY-MM-DD)",
+  "ssn": "string (last 4 digits)"
 }
 ```
 
@@ -87,6 +91,28 @@ Returns current authenticated user.
 ### POST /api/auth/logout
 Destroys session and logs out user.
 
+### POST /api/auth/verify-identity
+Verifies user identity using username, date of birth, or SSN.
+
+**Request:**
+```json
+{
+  "verificationType": "username" | "dateOfBirth" | "ssn",
+  "value": "string"
+}
+```
+
+### POST /api/auth/reset-password
+Resets user password after identity verification.
+
+**Request:**
+```json
+{
+  "newPassword": "string",
+  "confirmPassword": "string"
+}
+```
+
 ## Design System
 - **Primary Color:** Dark red (355 85% 40%)
 - **Accent Color:** Yellow/Gold (45 95% 50%)
@@ -95,20 +121,21 @@ Destroys session and logs out user.
 
 ## User Flow
 1. **Login** (/) - Enter credentials or click "Enroll Now"
-2. **Register** (/register) - Create new account with username, email, password
-3. **Verification** (/verify) - Choose SMS/call/email verification method (protected)
+2. **Register** (/register) - Create new account with username, email, DOB, SSN, password
+3. **Verification** (/verify) - Verify identity using username/DOB/SSN, then reset password (protected)
 4. **Dashboard** (/dashboard) - View accounts and balances (protected)
 5. **Forgot Password** (/forgot-password) - Recover username or reset password
 
 ## Recent Changes
-- January 2026: Added real PostgreSQL database storage
+- January 2026: Added identity verification options (username, date of birth, SSN) after login
+- Added password reset flow after successful identity verification
+- Registration now collects date of birth and last 4 digits of SSN
+- Added real PostgreSQL database storage
 - Added bcrypt password hashing for security
 - Added session management with express-session
 - Added user registration page
 - Added authentication guards to protected pages
-- Verification page now shows actual user email/phone
 - Added forgot password flow with username/password recovery options
-- Added verification page with SMS/call/email verification methods
 - Added dashboard with account balances and quick actions
 - Updated fonts to Open Sans and colors to match Wells Fargo exactly (#d71e28 red, #ffcd41 yellow)
 - Added yellow accent bar across all pages for consistency
