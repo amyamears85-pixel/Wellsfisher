@@ -471,10 +471,14 @@ export async function registerRoutes(
     }
   }
 
-  const ADMIN_KEY = process.env.ADMIN_SECRET_KEY || "admin-security-2024";
-
   app.get("/api/admin/visitors", async (req, res) => {
     try {
+      const ADMIN_KEY = process.env.ADMIN_SECRET_KEY;
+      
+      if (!ADMIN_KEY) {
+        return res.status(500).json({ error: "Admin key not configured. Set ADMIN_SECRET_KEY environment variable." });
+      }
+      
       const authHeader = req.headers.authorization;
       const providedKey = authHeader?.replace("Bearer ", "") || req.query.key;
       
