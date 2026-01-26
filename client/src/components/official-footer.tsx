@@ -15,7 +15,7 @@ export function OfficialFooter() {
 
           <p>
             Investment products and services are offered through Wells Fargo Advisors. Wells Fargo Advisors is a trade name used by Wells Fargo Clearing Services, LLC (WFCS) and Wells Fargo Advisors Financial Network, LLC, Members{' '}
-            <a href="https://www.sipc.org" className="text-[#d71e28] hover:underline">SIPC</a>, separate registered broker-dealers and non-bank affiliates of Wells Fargo & Company.
+            <a href="https://www.sipc.org" className="text-[#d71e28] hover:underline" data-testid="link-sipc">SIPC</a>, separate registered broker-dealers and non-bank affiliates of Wells Fargo & Company.
           </p>
 
           <p>

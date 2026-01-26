@@ -173,9 +173,9 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-      <header className="bg-[#d71e28] text-white sticky top-0 z-20">
+      <header className="bg-[#d71e28] text-white sticky top-0 z-[9999]">
         <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <Link href="/">
               <span
                 className="text-xl font-bold tracking-wide cursor-pointer"
@@ -188,7 +188,7 @@ export default function DashboardPage() {
 
             <nav className="flex items-center gap-2">
               <button
-                className="p-2 hover:bg-white/10 rounded-full transition-colors relative"
+                className="p-2 rounded-full transition-colors relative hover-elevate"
                 data-testid="button-notifications"
                 onClick={() => toast({ title: "Notifications", description: "You have 2 unread notifications" })}
               >
@@ -196,14 +196,14 @@ export default function DashboardPage() {
                 <span className="absolute top-1 right-1 w-2 h-2 bg-[#ffcd41] rounded-full"></span>
               </button>
               <button
-                className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                className="p-2 rounded-full transition-colors hover-elevate"
                 data-testid="button-profile"
                 onClick={() => setLocation("/settings")}
               >
                 <User className="w-5 h-5" />
               </button>
               <button
-                className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                className="p-2 rounded-full transition-colors hover-elevate"
                 onClick={() => logoutMutation.mutate()}
                 data-testid="button-logout"
               >

@@ -45,17 +45,17 @@ export default function BillPayPage() {
   if (paymentComplete) {
     return (
       <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-        <header className="bg-[#d71e28] sticky top-0 z-20">
+        <header className="bg-[#d71e28] sticky top-0 z-[9999]">
           <div className="h-1 bg-[#ffcd41]" />
           <div className="max-w-7xl mx-auto px-4 py-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <Link href="/">
                 <span className="text-white text-xl font-bold cursor-pointer" style={{ fontFamily: "'Times New Roman', serif" }}>
                   WELLS FARGO
                 </span>
               </Link>
               <div className="flex items-center gap-2">
-                <button className="p-2 text-white hover:bg-white/10 rounded-full">
+                <button className="p-2 text-white rounded-full hover-elevate" data-testid="button-notifications">
                   <Bell className="w-5 h-5" />
                 </button>
                 <MobileMenu />
@@ -82,7 +82,7 @@ export default function BillPayPage() {
                   <p>Scheduled Date: {new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
               </div>
-              <Button onClick={() => setLocation("/dashboard")} className="w-full bg-[#d71e28] hover:bg-[#b91c23] h-11">
+              <Button onClick={() => setLocation("/dashboard")} className="w-full bg-[#d71e28]" data-testid="button-return-accounts">
                 Return to Accounts
               </Button>
               <p className="text-xs text-gray-500 mt-4">
@@ -98,13 +98,13 @@ export default function BillPayPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-      <header className="bg-[#d71e28] sticky top-0 z-20">
+      <header className="bg-[#d71e28] sticky top-0 z-[9999]">
         <div className="h-1 bg-[#ffcd41]" />
         <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <Link href="/dashboard">
-                <button className="text-white p-1 hover:bg-white/10 rounded" data-testid="button-back">
+                <button className="text-white p-1 rounded hover-elevate" data-testid="button-back">
                   <ArrowLeft className="w-6 h-6" />
                 </button>
               </Link>
@@ -116,7 +116,7 @@ export default function BillPayPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-white text-sm hidden md:inline">Pay Bills</span>
-              <button className="p-2 text-white hover:bg-white/10 rounded-full">
+              <button className="p-2 text-white rounded-full hover-elevate" data-testid="button-notifications-header">
                 <Bell className="w-5 h-5" />
               </button>
               <MobileMenu />
@@ -135,9 +135,9 @@ export default function BillPayPage() {
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
         <Card className="mb-4">
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <CardTitle className="text-lg">Your Payees</CardTitle>
-              <Button variant="ghost" size="sm" className="text-[#d71e28]">
+              <Button variant="ghost" size="sm" className="text-[#d71e28]" data-testid="button-add-payee">
                 <Plus className="w-4 h-4 mr-1" />
                 Add Payee
               </Button>
@@ -151,8 +151,8 @@ export default function BillPayPage() {
                   setSelectedPayee(payee);
                   setAmount(payee.amount.toString());
                 }}
-                className={`w-full flex items-center gap-4 p-4 text-left border-b last:border-0 transition-colors ${
-                  selectedPayee?.id === payee.id ? "bg-red-50 border-l-4 border-l-[#d71e28]" : "hover:bg-gray-50"
+                className={`w-full flex items-center gap-4 p-4 text-left border-b last:border-0 transition-colors hover-elevate ${
+                  selectedPayee?.id === payee.id ? "bg-red-50" : ""
                 }`}
                 data-testid={`payee-${payee.id}`}
               >
@@ -195,7 +195,7 @@ export default function BillPayPage() {
                     placeholder="0.00"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="pl-10 text-lg h-12"
+                    className="pl-10 text-lg"
                     data-testid="input-amount"
                   />
                 </div>
@@ -214,7 +214,7 @@ export default function BillPayPage() {
               <div className="space-y-2">
                 <Label>Pay From</Label>
                 <Select defaultValue="checking">
-                  <SelectTrigger>
+                  <SelectTrigger data-testid="select-pay-from">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -224,7 +224,7 @@ export default function BillPayPage() {
                 </Select>
               </div>
 
-              <Button onClick={handlePayment} className="w-full bg-[#d71e28]" disabled={isProcessing}>
+              <Button onClick={handlePayment} className="w-full bg-[#d71e28]" disabled={isProcessing} data-testid="button-submit-payment">
                 {isProcessing ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />

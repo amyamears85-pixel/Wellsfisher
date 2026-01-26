@@ -51,17 +51,17 @@ export default function TransferPage() {
   if (transferComplete) {
     return (
       <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-        <header className="bg-[#d71e28] sticky top-0 z-20">
+        <header className="bg-[#d71e28] sticky top-0 z-[9999]">
           <div className="h-1 bg-[#ffcd41]" />
           <div className="max-w-7xl mx-auto px-4 py-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
               <Link href="/">
                 <span className="text-white text-xl font-bold cursor-pointer" style={{ fontFamily: "'Times New Roman', serif" }}>
                   WELLS FARGO
                 </span>
               </Link>
               <div className="flex items-center gap-2">
-                <button className="p-2 text-white hover:bg-white/10 rounded-full">
+                <button className="p-2 text-white rounded-full hover-elevate" data-testid="button-notifications">
                   <Bell className="w-5 h-5" />
                 </button>
                 <MobileMenu />
@@ -88,7 +88,7 @@ export default function TransferPage() {
                   <p>Time: {new Date().toLocaleTimeString('en-US')}</p>
                 </div>
               </div>
-              <Button onClick={() => setLocation("/dashboard")} className="w-full bg-[#d71e28] hover:bg-[#b91c23] h-11">
+              <Button onClick={() => setLocation("/dashboard")} className="w-full bg-[#d71e28]" data-testid="button-return-accounts">
                 Return to Accounts
               </Button>
               <p className="text-xs text-gray-500 mt-4">
@@ -104,13 +104,13 @@ export default function TransferPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-      <header className="bg-[#d71e28] sticky top-0 z-20">
+      <header className="bg-[#d71e28] sticky top-0 z-[9999]">
         <div className="h-1 bg-[#ffcd41]" />
         <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <Link href="/dashboard">
-                <button className="text-white p-1 hover:bg-white/10 rounded" data-testid="button-back">
+                <button className="text-white p-1 rounded hover-elevate" data-testid="button-back">
                   <ArrowLeft className="w-6 h-6" />
                 </button>
               </Link>
@@ -122,7 +122,7 @@ export default function TransferPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-white text-sm hidden md:inline">Transfer Money</span>
-              <button className="p-2 text-white hover:bg-white/10 rounded-full">
+              <button className="p-2 text-white rounded-full hover-elevate" data-testid="button-notifications-header">
                 <Bell className="w-5 h-5" />
               </button>
               <MobileMenu />
@@ -204,6 +204,7 @@ export default function TransferPage() {
                   onClick={() => setStep(2)} 
                   className="w-full bg-[#d71e28]"
                   disabled={!formData.fromAccount || !formData.toAccount}
+                  data-testid="button-continue-step1"
                 >
                   Continue
                 </Button>
@@ -221,7 +222,7 @@ export default function TransferPage() {
                       placeholder="0.00"
                       value={formData.amount}
                       onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                      className="pl-10 text-lg h-12"
+                      className="pl-10 text-lg"
                       data-testid="input-amount"
                     />
                   </div>
@@ -248,11 +249,12 @@ export default function TransferPage() {
                 </div>
 
                 <div className="flex gap-3">
-                  <Button variant="outline" onClick={() => setStep(1)} className="flex-1">Back</Button>
+                  <Button variant="outline" onClick={() => setStep(1)} className="flex-1" data-testid="button-back-step2">Back</Button>
                   <Button 
                     onClick={() => setStep(3)} 
                     className="flex-1 bg-[#d71e28]"
                     disabled={!formData.amount || parseFloat(formData.amount) <= 0}
+                    data-testid="button-continue-step2"
                   >
                     Continue
                   </Button>
@@ -292,10 +294,10 @@ export default function TransferPage() {
                 </p>
 
                 <div className="flex gap-3">
-                  <Button variant="outline" onClick={() => setStep(2)} className="flex-1" disabled={isProcessing}>
+                  <Button variant="outline" onClick={() => setStep(2)} className="flex-1" disabled={isProcessing} data-testid="button-back-step3">
                     Back
                   </Button>
-                  <Button onClick={handleSubmit} className="flex-1 bg-[#d71e28]" disabled={isProcessing}>
+                  <Button onClick={handleSubmit} className="flex-1 bg-[#d71e28]" disabled={isProcessing} data-testid="button-submit-transfer">
                     {isProcessing ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
