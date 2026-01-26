@@ -19,7 +19,6 @@ import { apiRequest } from "@/lib/queryClient";
 import { X, Search, Key, Shield, Lock, ChevronDown, MapPin, Phone, MessageCircle, Smartphone, CreditCard, Home, PiggyBank, Car, Menu, Globe } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import heroBg from "@/assets/images/hero-bg.jpg";
-import wellsFargoLogo from "@/assets/images/wells-fargo-logo.png";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -143,17 +142,14 @@ export default function LoginPage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between py-3">
             {/* Logo */}
-            <div className="flex items-center gap-3" data-testid="logo-container">
-              <img 
-                src={wellsFargoLogo} 
-                alt="Wells Fargo" 
-                className="h-10 w-auto object-contain"
-                data-testid="logo-image"
-              />
-              <div className="text-white hidden sm:block">
-                <span className="text-lg font-bold tracking-wide block leading-none">WELLS FARGO</span>
-                <span className="text-[9px] tracking-[0.2em] opacity-80 uppercase">Established 1852</span>
-              </div>
+            <div className="flex items-center" data-testid="logo-container">
+              <span 
+                className="text-white text-2xl sm:text-3xl tracking-wide"
+                style={{ fontFamily: "'Times New Roman', 'Georgia', serif", fontWeight: 400 }}
+                data-testid="text-logo"
+              >
+                WELLS FARGO
+              </span>
             </div>
 
             {/* Search and mobile actions */}
