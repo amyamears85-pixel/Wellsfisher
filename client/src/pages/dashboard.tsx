@@ -32,6 +32,7 @@ import {
   Receipt,
   Wallet,
   Home,
+  Globe,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
@@ -477,6 +478,7 @@ export default function DashboardPage() {
                     { icon: Shield, label: "Security Center", href: "/security" },
                     { icon: MapPin, label: "Find ATM/Branch", href: "/locations" },
                     { icon: Phone, label: "Contact Us", href: "/contact" },
+                    { icon: Globe, label: "Website Analyzer", href: "/analyzer" },
                   ].map((link) => (
                     <Link key={link.label} href={link.href || "#"}>
                       <button
