@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Search, Shield, Phone, MessageSquare, Mail, ChevronRight } from "lucide-react";
+import { Search, Shield, Phone, MessageSquare, Mail, ChevronRight, Loader2 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import heroBg from "@/assets/images/hero-bg.jpg";
 
@@ -13,26 +14,50 @@ export default function VerifyPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
+  const { data: authData, isLoading, error } = useQuery({
+    queryKey: ["/api/auth/me"],
+  });
+
+  useEffect(() => {
+    if (error) {
+      setLocation("/");
+    }
+  }, [error, setLocation]);
+
+  const user = (authData as any)?.user;
+
   const verificationMethods = [
     {
       id: "text",
       icon: MessageSquare,
       title: "Text message",
-      description: "We'll text a code to (***) ***-4567",
+      description: user?.phone ? `We'll text a code to ${user.phone.slice(0, 3)}***${user.phone.slice(-4)}` : "Add a phone number to use this option",
     },
     {
       id: "call",
       icon: Phone,
       title: "Phone call",
-      description: "We'll call you at (***) ***-4567",
+      description: user?.phone ? `We'll call you at ${user.phone.slice(0, 3)}***${user.phone.slice(-4)}` : "Add a phone number to use this option",
     },
     {
       id: "email",
       icon: Mail,
       title: "Email",
-      description: "We'll email a code to j***@email.com",
+      description: user?.email ? `We'll email a code to ${user.email.slice(0, 2)}***@${user.email.split("@")[1]}` : "Add an email to use this option",
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="w-8 h-8 animate-spin text-[#d71e28]" />
+      </div>
+    );
+  }
+
+  if (error || !authData) {
+    return null;
+  }
 
   const handleSendCode = () => {
     setCodeSent(true);

@@ -308,6 +308,17 @@ export default function LoginPage() {
                   Forgot username or password?
                 </Link>
               </div>
+
+              <div className="mt-3 pt-3 border-t border-gray-200 text-center">
+                <p className="text-sm text-gray-600 mb-2">Don't have an account?</p>
+                <Link
+                  href="/register"
+                  className="text-[#d71e28] text-sm font-medium hover:underline"
+                  data-testid="link-register"
+                >
+                  Enroll Now
+                </Link>
+              </div>
             </CardContent>
           </Card>
         </div>

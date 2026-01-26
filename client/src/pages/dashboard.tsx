@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -12,11 +14,38 @@ import {
   ChevronRight,
   Bell,
   User,
+  Loader2,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function DashboardPage() {
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
+
+  const { data: authData, isLoading, error } = useQuery({
+    queryKey: ["/api/auth/me"],
+  });
+
+  useEffect(() => {
+    if (error) {
+      setLocation("/");
+    }
+  }, [error, setLocation]);
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest("POST", "/api/auth/logout");
+    },
+    onSuccess: () => {
+      toast({
+        title: "Signed Out",
+        description: "You have been signed out successfully.",
+      });
+      setLocation("/");
+    },
+  });
 
   const accounts = [
     {
@@ -51,6 +80,18 @@ export default function DashboardPage() {
     { icon: TrendingUp, label: "Investing" },
     { icon: Settings, label: "Settings" },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="w-8 h-8 animate-spin text-[#d71e28]" />
+      </div>
+    );
+  }
+
+  if (error || !authData) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -210,11 +251,12 @@ export default function DashboardPage() {
           <Button
             variant="outline"
             className="w-full h-11 rounded-full border-gray-300"
-            onClick={() => setLocation("/")}
+            onClick={() => logoutMutation.mutate()}
+            disabled={logoutMutation.isPending}
             data-testid="button-sign-out"
           >
             <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
+            {logoutMutation.isPending ? "Signing Out..." : "Sign Out"}
           </Button>
         </div>
       </main>

@@ -8,6 +8,7 @@ import LoginPage from "@/pages/login";
 import ForgotPasswordPage from "@/pages/forgot-password";
 import VerifyPage from "@/pages/verify";
 import DashboardPage from "@/pages/dashboard";
+import RegisterPage from "@/pages/register";
 
 function Router() {
   return (
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/verify" component={VerifyPage} />
       <Route path="/dashboard" component={DashboardPage} />
+      <Route path="/register" component={RegisterPage} />
       <Route component={NotFound} />
     </Switch>
   );
