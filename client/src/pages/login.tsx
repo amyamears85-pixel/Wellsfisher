@@ -116,9 +116,13 @@ export default function LoginPage() {
                 <MapPin className="w-3.5 h-3.5" />
                 <span>Find Locations</span>
               </a>
-              <a href="#" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors" data-testid="link-contact">
+              <a href="tel:1-800-869-3557" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors" data-testid="link-contact">
                 <Phone className="w-3.5 h-3.5" />
                 <span>1-800-869-3557</span>
+              </a>
+              <a href="sms:93557" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors" data-testid="link-text">
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span>Text Us: 93557</span>
               </a>
               <a href="#" className="hover:underline text-gray-300 hover:text-white transition-colors hidden md:inline" data-testid="link-schedule">
                 Schedule Appointment

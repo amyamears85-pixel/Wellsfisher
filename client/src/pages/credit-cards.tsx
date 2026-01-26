@@ -271,7 +271,8 @@ export default function CreditCardsPage() {
         <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-5">
             <button onClick={() => toast({ title: "Find Locations", description: "4,700+ branches nationwide" })} className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><MapPin className="w-3.5 h-3.5" />Find Locations</button>
-            <button onClick={() => toast({ title: "Credit Cards Support", description: "1-800-932-6736" })} className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><Phone className="w-3.5 h-3.5" />1-800-932-6736</button>
+            <a href="tel:1-800-932-6736" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><Phone className="w-3.5 h-3.5" />1-800-932-6736</a>
+            <a href="sms:93557" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white">Text Us: 93557</a>
           </div>
           <button onClick={() => toast({ title: "Español", description: "Sitio en español" })} className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><Globe className="w-3.5 h-3.5" />Español</button>
         </div>

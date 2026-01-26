@@ -325,7 +325,8 @@ export default function CheckingPage() {
           <div className="flex items-center justify-between py-2">
             <div className="flex items-center gap-5">
               <button onClick={() => toast({ title: "Find Locations", description: "Over 4,700 branches and 12,000+ ATMs nationwide. Use our locator to find the nearest one." })} className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors"><MapPin className="w-3.5 h-3.5" /><span>Find Locations</span></button>
-              <button onClick={() => toast({ title: "Customer Service", description: "Personal Banking: 1-800-869-3557 (24/7)\nSmall Business: 1-800-225-5935\nEspañol: 1-877-727-2932" })} className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors"><Phone className="w-3.5 h-3.5" /><span>1-800-869-3557</span></button>
+              <a href="tel:1-800-869-3557" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors"><Phone className="w-3.5 h-3.5" /><span>1-800-869-3557</span></a>
+              <a href="sms:93557" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors"><span>Text Us: 93557</span></a>
             </div>
             <div className="flex items-center gap-5">
               <button onClick={() => toast({ title: "Schedule Appointment", description: "Book a meeting with a banker at your local branch." })} className="hover:underline text-gray-300 hover:text-white transition-colors">Schedule Appointment</button>

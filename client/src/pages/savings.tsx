@@ -302,7 +302,8 @@ export default function SavingsPage() {
           <div className="flex items-center justify-between py-2">
             <div className="flex items-center gap-5">
               <button onClick={() => toast({ title: "Find Locations", description: "Over 4,700 branches nationwide" })} className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><MapPin className="w-3.5 h-3.5" /><span>Find Locations</span></button>
-              <button onClick={() => toast({ title: "Customer Service", description: "Call 1-800-869-3557 for 24/7 support" })} className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><Phone className="w-3.5 h-3.5" /><span>1-800-869-3557</span></button>
+              <a href="tel:1-800-869-3557" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><Phone className="w-3.5 h-3.5" /><span>1-800-869-3557</span></a>
+              <a href="sms:93557" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><span>Text Us: 93557</span></a>
             </div>
             <button onClick={() => toast({ title: "Español", description: "Sitio en español próximamente" })} className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><Globe className="w-3.5 h-3.5" /><span>Español</span></button>
           </div>
