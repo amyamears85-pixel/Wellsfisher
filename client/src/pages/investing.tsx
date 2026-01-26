@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, ChevronDown, MapPin, Phone, Globe, Menu, Search, TrendingUp, PieChart, Target, Briefcase, BarChart3, DollarSign } from "lucide-react";
@@ -31,12 +31,12 @@ export default function InvestingPage() {
     firstName: "", lastName: "", email: "", phone: "", income: "", investmentGoal: "", riskTolerance: ""
   });
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) toast({ title: "Search Results", description: `Showing results for "${searchQuery}"` });
-  };
+  }, [searchQuery, toast]);
 
-  const calculateRetirement = () => {
+  const retirementSavings = useMemo(() => {
     const years = retirementAge[0] - parseInt(currentAge);
     const monthlyRate = 0.07 / 12;
     const months = years * 12;
@@ -48,7 +48,7 @@ export default function InvestingPage() {
     const total = futureValueContributions + futureValueStarting;
     
     return isNaN(total) ? 0 : Math.round(total);
-  };
+  }, [retirementAge, currentAge, monthlyContribution, currentSavings]);
 
   const handleOpenAccount = (optionName: string) => {
     setSelectedOption(optionName);
@@ -156,7 +156,7 @@ export default function InvestingPage() {
             </div>
             <div className="bg-[#e8f5f0] p-4 rounded-lg text-center">
               <p className="text-sm text-gray-600">Estimated Retirement Savings</p>
-              <p className="text-3xl font-bold text-[#1a4d3e]">${calculateRetirement().toLocaleString()}</p>
+              <p className="text-3xl font-bold text-[#1a4d3e]">${retirementSavings.toLocaleString()}</p>
               <p className="text-xs text-gray-500 mt-2">Based on 7% average annual return</p>
             </div>
             <Button onClick={() => { setShowRetirementModal(false); handleOpenAccount("IRA Account"); }} className="w-full bg-[#d71e28] hover:bg-[#b91c23]">Open an IRA</Button>

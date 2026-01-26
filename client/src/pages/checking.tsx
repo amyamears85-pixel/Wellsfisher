@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, ChevronDown, MapPin, Phone, Globe, Menu, Search, Smartphone, ArrowRight, Shield, DollarSign, Zap, CreditCard, X } from "lucide-react";

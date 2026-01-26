@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, ChevronDown, MapPin, Phone, Globe, Menu, Search, Car, Calculator, RefreshCw, Shield } from "lucide-react";
@@ -31,18 +31,18 @@ export default function AutoPage() {
     firstName: "", lastName: "", email: "", phone: "", income: "", employment: "", vehicleInfo: ""
   });
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) toast({ title: "Search Results", description: `Showing results for "${searchQuery}"` });
-  };
+  }, [searchQuery, toast]);
 
-  const calculatePayment = () => {
+  const monthlyPayment = useMemo(() => {
     const principal = vehiclePrice[0] - downPayment[0];
     const monthlyRate = parseFloat(interestRate) / 100 / 12;
     const numPayments = parseInt(loanTerm);
     const payment = principal * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
-    return isNaN(payment) ? 0 : payment.toFixed(2);
-  };
+    return isNaN(payment) ? "0.00" : payment.toFixed(2);
+  }, [vehiclePrice, downPayment, interestRate, loanTerm]);
 
   const handleApply = (loanName: string) => {
     setSelectedLoan(loanName);
@@ -101,7 +101,7 @@ export default function AutoPage() {
             </div>
             <div className="bg-[#e8f4fc] p-4 rounded-lg text-center">
               <p className="text-sm text-gray-600">Estimated Monthly Payment</p>
-              <p className="text-3xl font-bold text-[#1a3d5c]">${calculatePayment()}</p>
+              <p className="text-3xl font-bold text-[#1a3d5c]">${monthlyPayment}</p>
               <p className="text-xs text-gray-500 mt-2">Loan Amount: ${(vehiclePrice[0] - downPayment[0]).toLocaleString()}</p>
             </div>
             <Button onClick={() => { setShowCalculatorModal(false); handleApply("Auto Loan"); }} className="w-full bg-[#d71e28] hover:bg-[#b91c23]">Apply Now</Button>

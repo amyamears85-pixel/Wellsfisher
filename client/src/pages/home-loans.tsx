@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, ChevronDown, MapPin, Phone, Globe, Menu, Search, Home, Calculator, FileText, Users, DollarSign } from "lucide-react";
@@ -36,18 +36,18 @@ export default function HomeLoansPage() {
     firstName: "", lastName: "", email: "", phone: "", income: "", employment: "", creditScore: ""
   });
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) toast({ title: "Search Results", description: `Showing results for "${searchQuery}"` });
-  };
+  }, [searchQuery, toast]);
 
-  const calculatePayment = () => {
+  const monthlyPayment = useMemo(() => {
     const principal = homePrice[0] - downPayment[0];
     const monthlyRate = parseFloat(interestRate) / 100 / 12;
     const numPayments = parseInt(loanTerm) * 12;
     const payment = principal * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
-    return isNaN(payment) ? 0 : payment.toFixed(2);
-  };
+    return isNaN(payment) ? "0.00" : payment.toFixed(2);
+  }, [homePrice, downPayment, interestRate, loanTerm]);
 
   const handlePrequalSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,7 +108,7 @@ export default function HomeLoansPage() {
             </div>
             <div className="bg-[#f5f0eb] p-4 rounded-lg text-center">
               <p className="text-sm text-gray-600">Estimated Monthly Payment</p>
-              <p className="text-3xl font-bold text-[#4a3728]">${calculatePayment()}</p>
+              <p className="text-3xl font-bold text-[#4a3728]">${monthlyPayment}</p>
               <p className="text-xs text-gray-500 mt-2">Principal & Interest only. Does not include taxes, insurance, or PMI.</p>
             </div>
             <Button onClick={() => { setShowCalculatorModal(false); setShowPrequalModal(true); }} className="w-full bg-[#d71e28] hover:bg-[#b91c23]">Get Pre-Qualified</Button>

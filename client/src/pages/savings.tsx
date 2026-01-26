@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, ChevronDown, MapPin, Phone, Globe, Menu, Search, PiggyBank, TrendingUp, Clock, Shield, Calculator } from "lucide-react";
@@ -52,27 +52,27 @@ export default function SavingsPage() {
     initialDeposit: "",
   });
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       toast({ title: "Search Results", description: `Showing results for "${searchQuery}"` });
     }
-  };
+  }, [searchQuery, toast]);
 
-  const handleOpenAccount = (productName: string) => {
+  const handleOpenAccount = useCallback((productName: string) => {
     setSelectedProduct(productName);
     setApplicationStep(1);
     setShowApplicationModal(true);
-  };
+  }, []);
 
-  const calculateInterest = () => {
+  const interestCalc = useMemo(() => {
     const principal = parseFloat(calcDeposit) || 0;
     const rate = parseFloat(calcRate) / 100;
     const months = parseInt(calcTerm) || 12;
     const interest = principal * rate * (months / 12);
     const total = principal + interest;
     return { interest: interest.toFixed(2), total: total.toFixed(2) };
-  };
+  }, [calcDeposit, calcRate, calcTerm]);
 
   const handleApplicationSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,9 +150,9 @@ export default function SavingsPage() {
             <div><Label htmlFor="rate">APY (%)</Label><Input id="rate" type="number" step="0.01" value={calcRate} onChange={(e) => setCalcRate(e.target.value)} /></div>
             <div className="bg-green-50 p-4 rounded-lg">
               <p className="text-sm text-gray-600">Interest Earned</p>
-              <p className="text-2xl font-bold text-[#1a5f2a]">${calculateInterest().interest}</p>
+              <p className="text-2xl font-bold text-[#1a5f2a]">${interestCalc.interest}</p>
               <p className="text-sm text-gray-600 mt-2">Total Balance</p>
-              <p className="text-xl font-semibold text-gray-800">${calculateInterest().total}</p>
+              <p className="text-xl font-semibold text-gray-800">${interestCalc.total}</p>
             </div>
           </div>
         </DialogContent>
