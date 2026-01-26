@@ -37,6 +37,7 @@ import { Link, useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { MobileMenu } from "@/components/mobile-menu";
+import { OfficialFooter } from "@/components/official-footer";
 
 export default function DashboardPage() {
   const [, setLocation] = useLocation();
@@ -515,21 +516,7 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      <footer className="bg-white border-t py-6 mt-auto">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-6 text-sm text-gray-500">
-              <Link href="/security" className="hover:text-[#d71e28]">Security</Link>
-              <Link href="/help" className="hover:text-[#d71e28]">Privacy</Link>
-              <Link href="/contact" className="hover:text-[#d71e28]">Contact</Link>
-              <span>Sitemap</span>
-            </div>
-            <p className="text-xs text-gray-400">
-              © 2024 Wells Fargo. All rights reserved. Member FDIC. NMLSR ID 399801
-            </p>
-          </div>
-        </div>
-      </footer>
+      <OfficialFooter />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, Building, CreditCard, DollarSign, CheckCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Building, CreditCard, DollarSign, CheckCircle, Loader2, Bell, User, LogOut, Clock, Shield, MapPin, Phone, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Link, useLocation } from "wouter";
+import { MobileMenu } from "@/components/mobile-menu";
+import { OfficialFooter } from "@/components/official-footer";
 
 export default function TransferPage() {
   const [, setLocation] = useLocation();
@@ -51,33 +53,51 @@ export default function TransferPage() {
       <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
         <header className="bg-[#d71e28] sticky top-0 z-20">
           <div className="h-1 bg-[#ffcd41]" />
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <span className="text-white text-xl font-bold" style={{ fontFamily: "'Times New Roman', serif" }}>
-              WELLS FARGO
-            </span>
+          <div className="max-w-7xl mx-auto px-4 py-3">
+            <div className="flex items-center justify-between">
+              <Link href="/">
+                <span className="text-white text-xl font-bold cursor-pointer" style={{ fontFamily: "'Times New Roman', serif" }}>
+                  WELLS FARGO
+                </span>
+              </Link>
+              <div className="flex items-center gap-2">
+                <button className="p-2 text-white hover:bg-white/10 rounded-full">
+                  <Bell className="w-5 h-5" />
+                </button>
+                <MobileMenu />
+              </div>
+            </div>
           </div>
         </header>
         
         <main className="flex-1 flex items-center justify-center p-4">
-          <Card className="max-w-md w-full text-center">
+          <Card className="max-w-md w-full text-center shadow-lg">
             <CardContent className="p-8">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-10 h-10 text-green-600" />
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-12 h-12 text-green-600" />
               </div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">Transfer Complete</h2>
               <p className="text-gray-600 mb-6">
                 Your transfer of {formatCurrency(parseFloat(formData.amount))} has been submitted successfully.
               </p>
-              <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+              <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left border">
                 <p className="text-sm text-gray-600">Confirmation Number</p>
-                <p className="font-mono font-semibold text-gray-900">WF{Date.now().toString().slice(-10)}</p>
+                <p className="font-mono font-semibold text-gray-900 text-lg">WF{Date.now().toString().slice(-10)}</p>
+                <div className="mt-3 pt-3 border-t text-xs text-gray-500">
+                  <p>Date: {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                  <p>Time: {new Date().toLocaleTimeString('en-US')}</p>
+                </div>
               </div>
-              <Button onClick={() => setLocation("/dashboard")} className="w-full bg-[#d71e28]">
+              <Button onClick={() => setLocation("/dashboard")} className="w-full bg-[#d71e28] hover:bg-[#b91c23] h-11">
                 Return to Accounts
               </Button>
+              <p className="text-xs text-gray-500 mt-4">
+                A confirmation email has been sent to your registered email address.
+              </p>
             </CardContent>
           </Card>
         </main>
+        <OfficialFooter />
       </div>
     );
   }
@@ -86,17 +106,37 @@ export default function TransferPage() {
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
       <header className="bg-[#d71e28] sticky top-0 z-20">
         <div className="h-1 bg-[#ffcd41]" />
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-4 py-4">
-            <Link href="/dashboard">
-              <button className="text-white p-1" data-testid="button-back">
-                <ArrowLeft className="w-6 h-6" />
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link href="/dashboard">
+                <button className="text-white p-1 hover:bg-white/10 rounded" data-testid="button-back">
+                  <ArrowLeft className="w-6 h-6" />
+                </button>
+              </Link>
+              <Link href="/">
+                <span className="text-white text-xl font-bold cursor-pointer hidden sm:inline" style={{ fontFamily: "'Times New Roman', serif" }}>
+                  WELLS FARGO
+                </span>
+              </Link>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-white text-sm hidden md:inline">Transfer Money</span>
+              <button className="p-2 text-white hover:bg-white/10 rounded-full">
+                <Bell className="w-5 h-5" />
               </button>
-            </Link>
-            <h1 className="text-white text-lg font-semibold">Transfer Money</h1>
+              <MobileMenu />
+            </div>
           </div>
         </div>
       </header>
+
+      <div className="bg-white border-b shadow-sm">
+        <div className="max-w-2xl mx-auto px-4 py-3">
+          <h1 className="text-xl font-semibold text-gray-800">Transfer Money</h1>
+          <p className="text-sm text-gray-500">Move funds between your Wells Fargo accounts</p>
+        </div>
+      </div>
 
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
         <div className="flex items-center gap-2 mb-6">
@@ -270,7 +310,18 @@ export default function TransferPage() {
             )}
           </CardContent>
         </Card>
+
+        <div className="mt-4 bg-blue-50 border border-blue-100 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-blue-800">
+              <p className="font-medium mb-1">Transfer Information</p>
+              <p className="text-blue-700">Transfers between Wells Fargo accounts are typically available immediately. External transfers may take 1-3 business days.</p>
+            </div>
+          </div>
+        </div>
       </main>
+      <OfficialFooter />
     </div>
   );
 }
