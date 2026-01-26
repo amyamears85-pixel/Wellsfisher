@@ -247,6 +247,16 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
+          {/* Continue to official bank button */}
+          <Button
+            className="w-full h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full mb-3"
+            onClick={() => window.open("https://www.wellsfargo.com/", "_blank")}
+            data-testid="button-continue-to-bank"
+          >
+            <CreditCard className="w-4 h-4 mr-2" />
+            Continue to Official Wells Fargo
+          </Button>
+
           {/* Sign out button */}
           <Button
             variant="outline"
