@@ -15,11 +15,17 @@ import CreditCardsPage from "@/pages/credit-cards";
 import HomeLoansPage from "@/pages/home-loans";
 import AutoPage from "@/pages/auto";
 import InvestingPage from "@/pages/investing";
+import LocationsPage from "@/pages/locations";
+import ContactPage from "@/pages/contact";
+import HelpPage from "@/pages/help";
+import SecurityPage from "@/pages/security";
+import SettingsPage from "@/pages/settings";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={LoginPage} />
+      <Route path="/login" component={LoginPage} />
       <Route path="/forgot-password" component={ForgotPasswordPage} />
       <Route path="/verify" component={VerifyPage} />
       <Route path="/dashboard" component={DashboardPage} />
@@ -30,6 +36,11 @@ function Router() {
       <Route path="/home-loans" component={HomeLoansPage} />
       <Route path="/auto" component={AutoPage} />
       <Route path="/investing" component={InvestingPage} />
+      <Route path="/locations" component={LocationsPage} />
+      <Route path="/contact" component={ContactPage} />
+      <Route path="/help" component={HelpPage} />
+      <Route path="/security" component={SecurityPage} />
+      <Route path="/settings" component={SettingsPage} />
       <Route component={NotFound} />
     </Switch>
   );
