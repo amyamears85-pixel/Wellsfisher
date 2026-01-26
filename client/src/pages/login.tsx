@@ -252,7 +252,7 @@ export default function LoginPage() {
         id="main-content"
         className="flex-1 relative"
         style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.02), rgba(0,0,0,0.15)), url(${heroBg})`,
+          backgroundImage: `url(${heroBg})`,
           backgroundSize: "cover",
           backgroundPosition: "center bottom",
           backgroundAttachment: "fixed",
@@ -353,7 +353,7 @@ export default function LoginPage() {
 
                       <Button
                         type="submit"
-                        className="w-full h-11 bg-[#ffcd41] hover:bg-[#edc13b] text-gray-900 font-semibold rounded-full border-0 shadow-md text-base"
+                        className="w-full h-11 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-full border border-gray-300 shadow-sm text-base"
                         disabled={loginMutation.isPending}
                         data-testid="button-sign-on"
                       >
