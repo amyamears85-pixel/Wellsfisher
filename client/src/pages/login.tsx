@@ -136,7 +136,7 @@ export default function LoginPage() {
               </div>
               <div className="flex flex-col">
                 <span className="text-xl font-bold text-foreground tracking-tight">
-                  SecureBank
+                  Wells Fargo
                 </span>
                 <span className="text-xs text-muted-foreground">
                   Online Banking
@@ -538,7 +538,7 @@ export default function LoginPage() {
           <div className="pt-6 border-t border-border">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
               <p data-testid="text-copyright">
-                &copy; 2024 SecureBank. All rights reserved. Member FDIC. Equal
+                &copy; 2024 Wells Fargo. All rights reserved. Member FDIC. Equal
                 Housing Lender.
               </p>
               <div className="flex items-center gap-4">

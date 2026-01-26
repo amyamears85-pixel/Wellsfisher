@@ -1,7 +1,7 @@
-# SecureBank - Online Banking Login Page
+# Wells Fargo - Online Banking Login Page
 
 ## Overview
-A professional banking-style login page with a clean, authentic design similar to traditional banking websites. Features a fully functional authentication system with form validation and user-friendly error handling.
+A professional banking-style login page with a clean, authentic design similar to the Wells Fargo banking website. Features a fully functional authentication system with form validation and user-friendly error handling.
 
 ## Test Credentials
 - **Username:** demo
