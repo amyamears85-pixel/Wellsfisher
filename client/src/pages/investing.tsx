@@ -1,9 +1,10 @@
 import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, ChevronDown, MapPin, Phone, Globe, Search, TrendingUp, PieChart, Target, Briefcase, BarChart3, DollarSign } from "lucide-react";
+import { Check, TrendingUp, PieChart, Target, Briefcase, BarChart3, DollarSign } from "lucide-react";
 import { Link } from "wouter";
-import { MobileMenu } from "@/components/mobile-menu";
+import { OfficialHeader } from "@/components/official-header";
+import { WellsFargoIcon } from "@/components/wells-fargo-logo";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -165,66 +166,7 @@ export default function InvestingPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Top utility bar */}
-      <div className="bg-[#2c2c2c] text-white text-xs">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between py-2">
-            <div className="flex items-center gap-5">
-              <button onClick={() => toast({ title: "Find Locations", description: "Over 4,700 branches and 12,000+ ATMs nationwide" })} className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><MapPin className="w-3.5 h-3.5" /><span>Find Locations</span></button>
-              <a href="tel:1-800-869-3557" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><Phone className="w-3.5 h-3.5" /><span>1-800-869-3557</span></a>
-              <a href="sms:93557" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><span>Text Us: 93557</span></a>
-            </div>
-            <button onClick={() => toast({ title: "Idioma", description: "Sitio en español próximamente" })} className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><Globe className="w-3.5 h-3.5" /><span>Español</span></button>
-          </div>
-        </div>
-      </div>
-
-      {/* Header */}
-      <header className="bg-[#cd1409]">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between py-3">
-            <Link href="/"><span className="text-white text-2xl sm:text-3xl tracking-wide cursor-pointer" style={{ fontFamily: "'Times New Roman', 'Georgia', serif" }}>WELLS FARGO</span></Link>
-            <div className="flex items-center gap-4">
-              <form onSubmit={handleSearch} className="relative hidden lg:block">
-                <Input placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-56 h-9 bg-white border-0 text-gray-800 text-sm rounded-sm pr-10" />
-                <button type="submit" className="absolute right-0 top-0 h-full px-3 bg-[#b81208]"><Search className="w-4 h-4 text-white" /></button>
-              </form>
-              <MobileMenu currentPage="Investing" />
-            </div>
-          </div>
-        </div>
-
-        <nav className="bg-[#c41e24] border-t border-[#b81208]">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex items-center overflow-x-auto">
-              {[{ name: "Personal", href: "/", active: true }, { name: "Small Business", href: "#" }].map((item) => (
-                <Link key={item.name} href={item.href}>
-                  <span className={`px-5 py-3.5 text-sm text-white whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${item.active ? "bg-[#a01820] border-b-[3px] border-[#ffcd41]" : "hover:bg-[#b81208] border-b-[3px] border-transparent"}`}>{item.name}<ChevronDown className="w-3 h-3 opacity-70" /></span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </nav>
-
-        <div className="bg-[#a01820]">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex items-center gap-8 py-2.5 overflow-x-auto">
-              {[
-                { name: "Checking", href: "/checking" },
-                { name: "Savings & CDs", href: "/savings" },
-                { name: "Credit Cards", href: "/credit-cards" },
-                { name: "Home Loans", href: "/home-loans" },
-                { name: "Auto", href: "/auto" },
-                { name: "Investing", href: "/investing", active: true },
-              ].map((item) => (
-                <Link key={item.name} href={item.href}><span className={`text-sm whitespace-nowrap cursor-pointer ${item.active ? "text-white font-semibold" : "text-white/80 hover:text-white"}`}>{item.name}</span></Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="bg-[#ffcd41] h-2"></div>
+      <OfficialHeader variant="full" showNav />
 
       {/* Hero */}
       <section className="bg-gradient-to-r from-[#1a4d3e] to-[#0d2e26] text-white py-16">

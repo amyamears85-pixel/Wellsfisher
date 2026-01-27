@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Settings, ArrowLeft, ChevronRight, User, Bell, Lock, Smartphone, Globe, Eye, CreditCard, Mail, Phone, MapPin, Shield, FileText, HelpCircle, LogOut, Palette, Moon, Sun } from "lucide-react";
+import { ChevronRight, User, Bell, Lock, Smartphone, Globe, Eye, CreditCard, Mail, Phone, MapPin, Shield, FileText, HelpCircle, LogOut, Palette, Moon, Sun } from "lucide-react";
 import { Link } from "wouter";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -10,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { OfficialHeader } from "@/components/official-header";
 
 const notificationSettings = [
   { id: "email_alerts", label: "Email Alerts", desc: "Receive account alerts via email", enabled: true },
@@ -50,19 +50,7 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-      {/* Header */}
-      <header className="bg-[#cd1409] sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-4 py-4">
-            <Link href="/">
-              <Button size="icon" variant="ghost" className="text-white" data-testid="button-back">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            </Link>
-            <h1 className="text-white text-lg font-semibold">Settings & Preferences</h1>
-          </div>
-        </div>
-      </header>
+      <OfficialHeader variant="simple" />
 
       <div className="flex-1 max-w-3xl mx-auto w-full px-4 py-6 space-y-6">
         {/* Account Settings */}

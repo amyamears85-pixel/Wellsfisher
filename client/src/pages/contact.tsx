@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Phone, MessageCircle, Mail, Clock, ArrowLeft, ChevronRight, Headphones, FileText, CreditCard, Home, Car, Shield, HelpCircle, ExternalLink } from "lucide-react";
+import { Phone, MessageCircle, Mail, Clock, ChevronRight, Headphones, CreditCard, Home, Car, Shield, HelpCircle } from "lucide-react";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { OfficialHeader } from "@/components/official-header";
 
 const phoneNumbers = [
   { name: "General Banking", number: "1-800-869-3557", hours: "24/7", icon: Headphones },
@@ -56,19 +57,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-      {/* Header */}
-      <header className="bg-[#cd1409] sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-4 py-4">
-            <Link href="/">
-              <Button size="icon" variant="ghost" className="text-white" data-testid="button-back">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            </Link>
-            <h1 className="text-white text-lg font-semibold">Contact Us</h1>
-          </div>
-        </div>
-      </header>
+      <OfficialHeader variant="simple" />
 
       {/* Contact Options Tabs */}
       <div className="bg-white border-b shadow-sm">

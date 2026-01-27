@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Globe, Navigation, FormInput, MousePointer, Layout, Link2, Image, ArrowLeft, FileText, Layers } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
+import { OfficialHeader } from "@/components/official-header";
 
 interface AnalysisResult {
   title: string;
@@ -61,6 +62,7 @@ export default function AnalyzerPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-950">
+      <OfficialHeader variant="simple" />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-6">
           <Link href="/dashboard">

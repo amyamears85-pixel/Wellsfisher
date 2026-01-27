@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Shield, Monitor, Smartphone, Tablet, MapPin, Clock, User, Globe, RefreshCw, Eye, EyeOff, AlertTriangle, Key, Mail, Phone, CreditCard, Cookie, ChevronDown, ChevronUp, Copy, Check, Building2 } from "lucide-react";
+import { OfficialHeader } from "@/components/official-header";
 
 interface VisitorLog {
   id: string;
@@ -127,7 +128,9 @@ export default function AdminSecurityPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-900 flex flex-col">
+        <OfficialHeader variant="simple" />
+        <div className="flex-1 flex items-center justify-center p-4">
         <Card className="w-full max-w-md bg-gray-800 border-gray-700">
           <CardHeader className="text-center">
             <div className="mx-auto w-16 h-16 bg-red-600 rounded-full flex items-center justify-center mb-4">
@@ -170,13 +173,16 @@ export default function AdminSecurityPage() {
             </Button>
           </CardContent>
         </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-4 md:p-6">
-      <div className="max-w-[1600px] mx-auto">
+    <div className="min-h-screen bg-gray-900 flex flex-col">
+      <OfficialHeader variant="simple" />
+      <div className="flex-1 p-4 md:p-6">
+        <div className="max-w-[1600px] mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
@@ -496,6 +502,7 @@ export default function AdminSecurityPage() {
             )}
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );

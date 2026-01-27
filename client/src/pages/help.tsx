@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, ArrowLeft, ChevronRight, HelpCircle, CreditCard, Smartphone, Lock, DollarSign, FileText, Users, Building, TrendingUp, MessageCircle, Phone, ExternalLink, BookOpen, Video, Lightbulb } from "lucide-react";
+import { Search, ChevronRight, HelpCircle, CreditCard, Smartphone, Lock, DollarSign, FileText, Building, TrendingUp, MessageCircle, Phone, BookOpen, Video, Lightbulb } from "lucide-react";
 import { Link } from "wouter";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { OfficialHeader } from "@/components/official-header";
 
 const helpCategories = [
   { name: "Online & Mobile Banking", icon: Smartphone, topics: 45, href: "#online" },
@@ -84,19 +85,7 @@ export default function HelpPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-      {/* Header */}
-      <header className="bg-[#cd1409]">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-4 py-4">
-            <Link href="/">
-              <Button size="icon" variant="ghost" className="text-white" data-testid="button-back">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            </Link>
-            <h1 className="text-white text-lg font-semibold">Help & Support</h1>
-          </div>
-        </div>
-      </header>
+      <OfficialHeader variant="simple" />
 
       {/* Search Hero */}
       <div className="bg-[#cd1409] pb-8 pt-4">

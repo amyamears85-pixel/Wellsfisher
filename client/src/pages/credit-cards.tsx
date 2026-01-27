@@ -1,9 +1,10 @@
 import { useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Check, ChevronDown, MapPin, Phone, Globe, Search, CreditCard, Percent, Gift, ShoppingBag, Plane, DollarSign, Shield, Star, Clock, HelpCircle, X } from "lucide-react";
+import { Check, CreditCard, Percent, Gift, ShoppingBag, Plane, DollarSign, Shield, Star, Clock, HelpCircle, X } from "lucide-react";
 import { Link } from "wouter";
-import { MobileMenu } from "@/components/mobile-menu";
+import { OfficialHeader } from "@/components/official-header";
+import { WellsFargoIcon } from "@/components/wells-fargo-logo";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -267,46 +268,7 @@ export default function CreditCardsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Header */}
-      <div className="bg-[#2c2c2c] text-white text-xs">
-        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
-          <div className="flex items-center gap-5">
-            <button onClick={() => toast({ title: "Find Locations", description: "4,700+ branches nationwide" })} className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><MapPin className="w-3.5 h-3.5" />Find Locations</button>
-            <a href="tel:1-800-932-6736" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><Phone className="w-3.5 h-3.5" />1-800-932-6736</a>
-            <a href="sms:93557" className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white">Text Us: 93557</a>
-          </div>
-          <button onClick={() => toast({ title: "Español", description: "Sitio en español" })} className="hover:underline flex items-center gap-1.5 text-gray-300 hover:text-white"><Globe className="w-3.5 h-3.5" />Español</button>
-        </div>
-      </div>
-
-      <header className="bg-[#cd1409]">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/"><span className="text-white text-2xl sm:text-3xl tracking-wide cursor-pointer" style={{ fontFamily: "'Times New Roman', 'Georgia', serif" }}>WELLS FARGO</span></Link>
-          <div className="flex items-center gap-4">
-            <form onSubmit={handleSearch} className="relative hidden lg:block">
-              <Input placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-56 h-9 bg-white border-0 text-gray-800 text-sm rounded-sm pr-10" />
-              <button type="submit" className="absolute right-0 top-0 h-full px-3 bg-[#b81208]"><Search className="w-4 h-4 text-white" /></button>
-            </form>
-            <MobileMenu currentPage="Credit Cards" />
-          </div>
-        </div>
-        <nav className="bg-[#c41e24] border-t border-[#b81208]">
-          <div className="max-w-7xl mx-auto px-4 flex items-center overflow-x-auto">
-            {[{ name: "Personal", href: "/", active: true }, { name: "Small Business", href: "#" }].map((item) => (
-              <Link key={item.name} href={item.href}><span className={`px-5 py-3.5 text-sm text-white whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${item.active ? "bg-[#a01820] border-b-[3px] border-[#ffcd41]" : "hover:bg-[#b81208] border-b-[3px] border-transparent"}`}>{item.name}<ChevronDown className="w-3 h-3 opacity-70" /></span></Link>
-            ))}
-          </div>
-        </nav>
-        <div className="bg-[#a01820]">
-          <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center gap-8 overflow-x-auto">
-            {[{ name: "Checking", href: "/checking" }, { name: "Savings & CDs", href: "/savings" }, { name: "Credit Cards", href: "/credit-cards", active: true }, { name: "Home Loans", href: "/home-loans" }, { name: "Auto", href: "/auto" }, { name: "Investing", href: "/investing" }].map((item) => (
-              <Link key={item.name} href={item.href}><span className={`text-sm whitespace-nowrap cursor-pointer ${item.active ? "text-white font-semibold" : "text-white/80 hover:text-white"}`}>{item.name}</span></Link>
-            ))}
-          </div>
-        </div>
-      </header>
-
-      <div className="bg-[#ffcd41] h-2"></div>
+      <OfficialHeader variant="full" showNav />
 
       {/* Hero */}
       <section className="bg-gradient-to-r from-[#cd1409] to-[#8a1419] text-white py-16">

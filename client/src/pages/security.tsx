@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Shield, ArrowLeft, ChevronRight, Lock, Eye, AlertTriangle, CheckCircle2, Bell, Smartphone, Mail, Key, Fingerprint, AlertCircle, ExternalLink, FileText, Phone, UserX, CreditCard } from "lucide-react";
-import { Link } from "wouter";
+import { Shield, ChevronRight, Lock, Eye, AlertTriangle, CheckCircle2, Bell, Smartphone, Mail, Key, Fingerprint, AlertCircle, Phone, UserX, CreditCard } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import { OfficialHeader } from "@/components/official-header";
 
 const securityAlerts = [
   { id: 1, type: "info", title: "Security Update Available", message: "A new security update is available for the Wells Fargo Mobile app.", date: "Today", read: false },
@@ -58,19 +57,7 @@ export default function SecurityPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-      {/* Header */}
-      <header className="bg-[#cd1409] sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-4 py-4">
-            <Link href="/">
-              <Button size="icon" variant="ghost" className="text-white" data-testid="button-back">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            </Link>
-            <h1 className="text-white text-lg font-semibold">Security Center</h1>
-          </div>
-        </div>
-      </header>
+      <OfficialHeader variant="simple" />
 
       <div className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 space-y-6">
         {/* Security Score */}

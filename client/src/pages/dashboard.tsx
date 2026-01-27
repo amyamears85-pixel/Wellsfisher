@@ -41,6 +41,7 @@ import { useToast } from "@/hooks/use-toast";
 import { MobileMenu } from "@/components/mobile-menu";
 import { OfficialFooter } from "@/components/official-footer";
 import { WellsFargoIcon } from "@/components/wells-fargo-logo";
+import { OfficialHeader } from "@/components/official-header";
 
 export default function DashboardPage() {
   const [, setLocation] = useLocation();
@@ -285,52 +286,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fafafa]">
-      <header className="bg-[#cd1409] text-white sticky top-0 z-[9999]">
-        <div className="max-w-[1280px] mx-auto px-4 py-3">
-          <div className="flex items-center justify-between gap-4">
-            <Link href="/">
-              <div className="flex items-center gap-2.5 cursor-pointer">
-                <WellsFargoIcon className="w-9 h-9" />
-                <span
-                  className="text-xl tracking-wide"
-                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                  data-testid="text-logo"
-                >
-                  WELLS FARGO
-                </span>
-              </div>
-            </Link>
-
-            <nav className="flex items-center gap-2">
-              <button
-                className="p-2 rounded-full transition-colors relative hover-elevate"
-                data-testid="button-notifications"
-                onClick={() => toast({ title: "Notifications", description: "You have 2 unread notifications" })}
-              >
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-[#ffcd41] rounded-full"></span>
-              </button>
-              <button
-                className="p-2 rounded-full transition-colors hover-elevate"
-                data-testid="button-profile"
-                onClick={() => setLocation("/settings")}
-              >
-                <User className="w-5 h-5" />
-              </button>
-              <button
-                className="p-2 rounded-full transition-colors hover-elevate"
-                onClick={() => logoutMutation.mutate()}
-                data-testid="button-logout"
-              >
-                <LogOut className="w-5 h-5" />
-              </button>
-              <MobileMenu />
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      <div className="bg-[#ffcd41] h-1"></div>
+      <OfficialHeader variant="simple" />
 
       <div className="bg-white border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4">

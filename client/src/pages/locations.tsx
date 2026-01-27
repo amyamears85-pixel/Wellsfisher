@@ -2,11 +2,12 @@ import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { MapPin, Phone, Clock, Navigation, Search, Filter, ChevronDown, ChevronRight, Landmark, CreditCard, Building2, Accessibility, Car, Globe, X, Locate, ExternalLink, Printer, Star, ArrowUpDown } from "lucide-react";
+import { MapPin, Phone, Clock, Navigation, Search, Filter, ChevronRight, CreditCard, Building2, Accessibility, Car, Globe, X, Locate, ExternalLink, Printer, ArrowUpDown } from "lucide-react";
 import { Link } from "wouter";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { OfficialHeader } from "@/components/official-header";
 
 const sampleLocations = [
   {
@@ -165,27 +166,7 @@ export default function LocationsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <header className="bg-[#cd1409]">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <Link href="/">
-              <span
-                className="text-white text-xl tracking-wide cursor-pointer"
-                style={{ fontFamily: "'Times New Roman', 'Georgia', serif" }}
-                data-testid="text-logo"
-              >
-                WELLS FARGO
-              </span>
-            </Link>
-            <nav className="flex items-center gap-4 text-xs text-white">
-              <a href="#" className="hover:underline hidden sm:inline">Español</a>
-              <a href="#" className="hover:underline hidden sm:inline">Help</a>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      <div className="bg-[#ffcd41] h-1"></div>
+      <OfficialHeader variant="simple" />
 
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 py-4">

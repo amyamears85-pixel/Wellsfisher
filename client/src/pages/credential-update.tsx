@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Shield, Lock, User, Eye, EyeOff, CheckCircle, AlertTriangle, Clock, Info, Loader2, CreditCard, Building, Hash } from "lucide-react";
+import { Shield, Lock, User, Eye, EyeOff, CheckCircle, AlertTriangle, Info, Loader2, CreditCard, Building, Hash } from "lucide-react";
+import { OfficialHeader } from "@/components/official-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -248,32 +249,7 @@ export default function CredentialUpdate() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fafafa]">
-      <header className="bg-[#cd1409] sticky top-0 z-20">
-        <div className="h-1 bg-[#ffcd41]" />
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between py-3">
-            <div className="flex items-center gap-3">
-              <div className="text-white font-bold text-xl tracking-tight">WELLS FARGO</div>
-              <span className="text-white/70 text-sm hidden sm:inline">| Security Center</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-white/90 text-sm">
-                <Clock className="w-4 h-4" />
-                <span>Session: {formatTime(sessionTimeout)}</span>
-              </div>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="text-white hover:bg-white/10"
-                onClick={() => setLocation("/")}
-                data-testid="button-signout"
-              >
-                Sign Out
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <OfficialHeader variant="simple" />
 
       <div className="bg-[#cd1409]/10 border-b border-[#cd1409]/20">
         <div className="max-w-2xl mx-auto px-4 py-2">

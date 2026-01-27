@@ -14,10 +14,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { Search, ArrowLeft, Phone, Mail, Lock, Calendar, CreditCard, Globe } from "lucide-react";
+import { ArrowLeft, Phone, Mail, Lock, Calendar, CreditCard } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import heroBg from "@/assets/images/hero-bg.jpg";
-import { WellsFargoIcon } from "@/components/wells-fargo-logo";
+import { OfficialHeader } from "@/components/official-header";
 
 const usernameRecoverySchema = z.object({
   password: z.string().min(1, "Password is required"),
@@ -91,42 +91,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fafafa]">
-      {/* Header */}
-      <header className="bg-[#cd1409]">
-        <div className="max-w-[1280px] mx-auto px-4">
-          <div className="flex items-center justify-between py-4">
-            <Link href="/">
-              <div className="flex items-center gap-2.5 cursor-pointer">
-                <WellsFargoIcon className="w-9 h-9" />
-                <span
-                  className="text-white text-xl tracking-wide"
-                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-                  data-testid="text-logo"
-                >
-                  WELLS FARGO
-                </span>
-              </div>
-            </Link>
-
-            <nav className="flex items-center gap-6 text-sm text-white/90">
-              <a href="#" className="hover:text-white hidden sm:inline transition-colors" data-testid="link-help">
-                Help
-              </a>
-              <a href="#" className="hover:text-white hidden sm:inline flex items-center gap-1 transition-colors" data-testid="link-espanol">
-                <Globe className="w-4 h-4" />
-                Español
-              </a>
-              <div className="flex items-center gap-2 text-white/80">
-                <Lock className="w-4 h-4" />
-                <span className="text-xs hidden sm:inline">Secure</span>
-              </div>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      {/* Yellow accent bar */}
-      <div className="bg-gradient-to-r from-[#ffcd41] via-[#ffd44f] to-[#ffcd41] h-[6px]"></div>
+      <OfficialHeader variant="simple" />
 
       <main
         className="flex-1 relative"

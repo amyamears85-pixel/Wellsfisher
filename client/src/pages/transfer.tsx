@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, Building, CreditCard, DollarSign, CheckCircle, Loader2, Bell, User, LogOut, Clock, Shield, MapPin, Phone, Info } from "lucide-react";
+import { ArrowRight, DollarSign, CheckCircle, Loader2, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Link, useLocation } from "wouter";
-import { MobileMenu } from "@/components/mobile-menu";
+import { useLocation } from "wouter";
 import { OfficialFooter } from "@/components/official-footer";
+import { OfficialHeader } from "@/components/official-header";
 
 export default function TransferPage() {
   const [, setLocation] = useLocation();
@@ -51,24 +51,7 @@ export default function TransferPage() {
   if (transferComplete) {
     return (
       <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-        <header className="bg-[#cd1409] sticky top-0 z-[9999]">
-          <div className="h-1 bg-[#ffcd41]" />
-          <div className="max-w-7xl mx-auto px-4 py-3">
-            <div className="flex items-center justify-between gap-4">
-              <Link href="/">
-                <span className="text-white text-xl font-bold cursor-pointer" style={{ fontFamily: "'Times New Roman', serif" }}>
-                  WELLS FARGO
-                </span>
-              </Link>
-              <div className="flex items-center gap-2">
-                <button className="p-2 text-white rounded-full hover-elevate" data-testid="button-notifications">
-                  <Bell className="w-5 h-5" />
-                </button>
-                <MobileMenu />
-              </div>
-            </div>
-          </div>
-        </header>
+        <OfficialHeader variant="simple" />
         
         <main className="flex-1 flex items-center justify-center p-4">
           <Card className="max-w-md w-full text-center shadow-lg">
@@ -104,32 +87,7 @@ export default function TransferPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-      <header className="bg-[#cd1409] sticky top-0 z-[9999]">
-        <div className="h-1 bg-[#ffcd41]" />
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard">
-                <button className="text-white p-1 rounded hover-elevate" data-testid="button-back">
-                  <ArrowLeft className="w-6 h-6" />
-                </button>
-              </Link>
-              <Link href="/">
-                <span className="text-white text-xl font-bold cursor-pointer hidden sm:inline" style={{ fontFamily: "'Times New Roman', serif" }}>
-                  WELLS FARGO
-                </span>
-              </Link>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-white text-sm hidden md:inline">Transfer Money</span>
-              <button className="p-2 text-white rounded-full hover-elevate" data-testid="button-notifications-header">
-                <Bell className="w-5 h-5" />
-              </button>
-              <MobileMenu />
-            </div>
-          </div>
-        </div>
-      </header>
+      <OfficialHeader variant="simple" />
 
       <div className="bg-white border-b shadow-sm">
         <div className="max-w-2xl mx-auto px-4 py-3">
