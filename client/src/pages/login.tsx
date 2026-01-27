@@ -81,12 +81,15 @@ export default function LoginPage() {
         });
 
         if (authRes.ok) {
+          const authData = await authRes.json();
           toast({
             title: "Biometric Sign On Successful",
-            description: "Redirecting to verification...",
+            description: "Please complete security verification...",
           });
-          sessionStorage.setItem("loginUsername", "biometric_user");
-          setTimeout(() => setLocation("/verify"), 1000);
+          sessionStorage.setItem("loginUsername", authData.user?.id || "biometric_user");
+          setLocation("/verify");
+        } else {
+          throw new Error("Biometric authentication failed");
         }
       }
     } catch (error: any) {
