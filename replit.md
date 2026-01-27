@@ -69,17 +69,16 @@ After verification, users create a new password and see an "All done!" success p
 
 ## Responsive Design
 - **Mobile/Tablet (<1024px):** Custom mobile-first design with red header, yellow accent bar, centered login form
-- **Desktop/Laptop (≥1024px):** Shows official Wells Fargo website screenshots with floating login form overlay
-
-Desktop images are stored in `client/src/assets/desktop/` and include:
-- desktop-hero.jpg - Main hero with login area
-- desktop-offers.jpg - Special offers section
-- desktop-savings.jpg - Savings account section
-- desktop-guidance.jpg - Financial guidance section
-- desktop-app.jpg - Mobile app promotion
-- desktop-community.jpg - Community section
-- desktop-footer-top.jpg - Footer top section
-- desktop-footer-bottom.jpg - Footer bottom section
+- **Desktop/Laptop (≥1024px):** Full CSS recreation of Wells Fargo website style with:
+  - Dark utility navigation bar
+  - Red header with logo and product navigation
+  - Hero section with gradient background and floating sign-on form
+  - Special offers cards section
+  - Savings account promotion
+  - Financial guidance grid
+  - Mobile app download section
+  - Community commitment section
+  - Multi-column footer with links
 
 ## User Flow
 1. **Login** (/) - Enter credentials with mobile-friendly design
