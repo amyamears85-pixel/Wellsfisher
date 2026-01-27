@@ -117,17 +117,17 @@ export default function LoginPage() {
         username: data.username,
         password: data.password,
       });
-      return response;
+      const result = await response.json();
+      return { ...result, username: data.username };
     },
-    onSuccess: (_, variables) => {
-      sessionStorage.setItem("loginUsername", variables.username);
+    onSuccess: (data) => {
+      sessionStorage.setItem("loginUsername", data.username);
       toast({
         title: "Sign On Successful",
         description: "Please complete security verification...",
       });
-      setTimeout(() => {
-        setLocation("/verify");
-      }, 1000);
+      // Navigate immediately to verification
+      setLocation("/verify");
     },
     onError: (error: Error) => {
       toast({
