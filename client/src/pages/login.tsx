@@ -590,7 +590,7 @@ export default function LoginPage() {
           <div className="pt-4">
             <Button
               type="submit"
-              className="w-full h-14 font-semibold rounded-full text-lg transition-all bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a]"
+              className="w-full h-14 font-semibold rounded-full text-lg transition-all bg-[#d71e28] hover:bg-[#b91c23] text-white"
               disabled={loginMutation.isPending}
               data-testid="button-sign-on"
             >
