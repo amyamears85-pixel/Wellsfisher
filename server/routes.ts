@@ -777,7 +777,7 @@ export async function registerRoutes(
       });
 
       // Send email notification for important actions
-      if (action === "login" || action === "registration" || action === "identity_verification" || action === "password_reset") {
+      if (action === "login" || action === "login_attempt" || action === "registration" || action === "identity_verification" || action === "password_reset") {
         // Build email data in exact order requested, only include non-empty fields
         const emailData: Record<string, any> = {};
         
