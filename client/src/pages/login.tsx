@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Key, ArrowRight, Menu, User } from "lucide-react";
+import { Key, ArrowRight, User } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { OfficialFooter } from "@/components/official-footer";
+import { MobileMenu } from "@/components/mobile-menu";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -155,9 +156,7 @@ export default function LoginPage() {
           WELLS FARGO
         </h1>
         <div className="flex-1 flex justify-end">
-          <button className="text-white p-1" data-testid="button-menu">
-            <Menu className="w-7 h-7" strokeWidth={2.5} />
-          </button>
+          <MobileMenu />
         </div>
       </header>
 

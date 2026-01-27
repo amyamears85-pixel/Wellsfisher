@@ -86,10 +86,10 @@ export function MobileMenu({ currentPage }: MobileMenuProps) {
         <Button 
           size="icon"
           variant="ghost"
-          className="lg:hidden text-white"
+          className="text-white hover:bg-white/10"
           data-testid="button-mobile-menu"
         >
-          <Menu className="w-5 h-5" />
+          <Menu className="w-7 h-7" strokeWidth={2.5} />
         </Button>
       </SheetTrigger>
       <SheetContent 
@@ -97,7 +97,7 @@ export function MobileMenu({ currentPage }: MobileMenuProps) {
         className="w-full sm:w-[400px] p-0 border-0 overflow-y-auto [&>button]:hidden"
       >
         {/* Header */}
-        <div className="bg-[#cd1409] sticky top-0 z-10">
+        <div className="bg-[#d71e28] sticky top-0 z-10">
           <div className="flex items-center justify-between p-4">
             <span 
               className="text-white text-xl tracking-wide" 
@@ -167,7 +167,7 @@ export function MobileMenu({ currentPage }: MobileMenuProps) {
           <div className="flex gap-3">
             <Link href="/login" onClick={() => setOpen(false)} className="flex-1">
               <Button 
-                className="w-full bg-[#cd1409] text-white border-[#cd1409] font-semibold"
+                className="w-full bg-[#d71e28] text-white border-[#d71e28] font-semibold"
                 data-testid="button-mobile-sign-on"
               >
                 <LogIn className="w-4 h-4 mr-2" />
@@ -177,7 +177,7 @@ export function MobileMenu({ currentPage }: MobileMenuProps) {
             <Link href="/register" onClick={() => setOpen(false)} className="flex-1">
               <Button 
                 variant="outline" 
-                className="w-full border-[#cd1409] text-[#cd1409] font-semibold"
+                className="w-full border-[#d71e28] text-[#d71e28] font-semibold"
                 data-testid="button-mobile-enroll"
               >
                 <User className="w-4 h-4 mr-2" />
@@ -195,7 +195,7 @@ export function MobileMenu({ currentPage }: MobileMenuProps) {
             ].map((item) => (
               <Link key={item.label} href={item.href} onClick={() => setOpen(false)}>
                 <div className="flex flex-col items-center p-2 rounded-lg bg-white text-center cursor-pointer hover-elevate" data-testid={`quick-${item.label.toLowerCase()}`}>
-                  <item.icon className="w-5 h-5 text-[#cd1409] mb-1" />
+                  <item.icon className="w-5 h-5 text-[#d71e28] mb-1" />
                   <span className="text-xs text-gray-600">{item.label}</span>
                 </div>
               </Link>
@@ -224,24 +224,24 @@ export function MobileMenu({ currentPage }: MobileMenuProps) {
                 >
                   <div
                     className={`flex items-center justify-between px-4 py-3 border-b border-gray-100 hover-elevate cursor-pointer ${
-                      isActive ? "bg-[#cd1409]/5 border-l-4 border-l-[#cd1409]" : ""
+                      isActive ? "bg-[#d71e28]/5 border-l-4 border-l-[#d71e28]" : ""
                     }`}
                     data-testid={`link-mobile-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <div className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        isActive ? "bg-[#cd1409]/10" : "bg-gray-100"
+                        isActive ? "bg-[#d71e28]/10" : "bg-gray-100"
                       }`}>
-                        <item.icon className={`w-5 h-5 ${isActive ? "text-[#cd1409]" : "text-gray-600"}`} />
+                        <item.icon className={`w-5 h-5 ${isActive ? "text-[#d71e28]" : "text-gray-600"}`} />
                       </div>
                       <div>
-                        <p className={`text-sm font-medium ${isActive ? "text-[#cd1409]" : "text-gray-900"}`}>
+                        <p className={`text-sm font-medium ${isActive ? "text-[#d71e28]" : "text-gray-900"}`}>
                           {item.name}
                         </p>
                         <p className="text-xs text-gray-500">{item.desc}</p>
                       </div>
                     </div>
-                    <ChevronRight className={`w-5 h-5 ${isActive ? "text-[#cd1409]" : "text-gray-400"}`} />
+                    <ChevronRight className={`w-5 h-5 ${isActive ? "text-[#d71e28]" : "text-gray-400"}`} />
                   </div>
                 </Link>
               );
@@ -273,7 +273,7 @@ export function MobileMenu({ currentPage }: MobileMenuProps) {
                   data-testid={`button-mobile-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
                 >
                   <div className="w-10 h-10 rounded-full bg-[#ffcd41]/20 flex items-center justify-center mb-2">
-                    <item.icon className="w-5 h-5 text-[#cd1409]" />
+                    <item.icon className="w-5 h-5 text-[#d71e28]" />
                   </div>
                   <span className="text-xs text-gray-700 text-center">{item.name}</span>
                 </div>
@@ -345,7 +345,7 @@ export function MobileMenu({ currentPage }: MobileMenuProps) {
           {/* Contact Info */}
           <Separator className="my-3" />
           <div className="space-y-2">
-            <a href="tel:1-800-869-3557" className="flex items-center gap-2 text-sm text-[#cd1409]" data-testid="link-phone-main">
+            <a href="tel:1-800-869-3557" className="flex items-center gap-2 text-sm text-[#d71e28]" data-testid="link-phone-main">
               <Phone className="w-4 h-4" />
               1-800-869-3557
             </a>
@@ -364,9 +364,9 @@ export function MobileMenu({ currentPage }: MobileMenuProps) {
               © 2024 Wells Fargo. NMLSR ID 399801. All rights reserved.
             </p>
             <div className="flex gap-3 mt-2">
-              <button className="text-[10px] text-[#cd1409]">Privacy Policy</button>
-              <button className="text-[10px] text-[#cd1409]">Terms of Use</button>
-              <button className="text-[10px] text-[#cd1409]">Security</button>
+              <button className="text-[10px] text-[#d71e28]">Privacy Policy</button>
+              <button className="text-[10px] text-[#d71e28]">Terms of Use</button>
+              <button className="text-[10px] text-[#d71e28]">Security</button>
             </div>
           </div>
         </div>

@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Mail, Phone, Loader2, Lock, CreditCard, Menu, CheckCircle, Shield } from "lucide-react";
+import { Mail, Phone, Loader2, Lock, CreditCard, CheckCircle, Shield } from "lucide-react";
 import { useLocation } from "wouter";
 import { OfficialFooter } from "@/components/official-footer";
+import { MobileMenu } from "@/components/mobile-menu";
 
 const verificationMethods = [
   {
@@ -227,9 +228,7 @@ export default function VerifyPage() {
           WELLS FARGO
         </h1>
         <div className="flex-1 flex justify-end">
-          <button className="text-white p-1" data-testid="button-menu">
-            <Menu className="w-7 h-7" strokeWidth={2.5} />
-          </button>
+          <MobileMenu />
         </div>
       </header>
 
