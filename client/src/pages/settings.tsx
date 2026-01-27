@@ -51,7 +51,7 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
       {/* Header */}
-      <header className="bg-[#d71e28] sticky top-0 z-20">
+      <header className="bg-[#cd1409] sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-4 py-4">
             <Link href="/">
@@ -69,7 +69,7 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <User className="w-5 h-5 text-[#d71e28]" />
+              <User className="w-5 h-5 text-[#cd1409]" />
               Account Settings
             </CardTitle>
           </CardHeader>
@@ -105,7 +105,7 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Lock className="w-5 h-5 text-[#d71e28]" />
+              <Lock className="w-5 h-5 text-[#cd1409]" />
               Security
             </CardTitle>
           </CardHeader>
@@ -161,7 +161,7 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Bell className="w-5 h-5 text-[#d71e28]" />
+              <Bell className="w-5 h-5 text-[#cd1409]" />
               Notifications
             </CardTitle>
           </CardHeader>
@@ -207,7 +207,7 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Palette className="w-5 h-5 text-[#d71e28]" />
+              <Palette className="w-5 h-5 text-[#cd1409]" />
               Appearance
             </CardTitle>
           </CardHeader>
@@ -235,7 +235,7 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Globe className="w-5 h-5 text-[#d71e28]" />
+              <Globe className="w-5 h-5 text-[#cd1409]" />
               Language & Region
             </CardTitle>
           </CardHeader>
@@ -262,7 +262,7 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Eye className="w-5 h-5 text-[#d71e28]" />
+              <Eye className="w-5 h-5 text-[#cd1409]" />
               Privacy
             </CardTitle>
           </CardHeader>
@@ -290,7 +290,7 @@ export default function SettingsPage() {
             >
               <div className="flex items-center gap-3">
                 <FileText className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-[#d71e28]">View Privacy Policy</span>
+                <span className="text-sm text-[#cd1409]">View Privacy Policy</span>
               </div>
               <ChevronRight className="w-4 h-4 text-gray-400" />
             </button>
@@ -301,7 +301,7 @@ export default function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-[#d71e28]" />
+              <HelpCircle className="w-5 h-5 text-[#cd1409]" />
               Help & Support
             </CardTitle>
           </CardHeader>
@@ -331,7 +331,7 @@ export default function SettingsPage() {
         <Card>
           <CardContent className="p-4">
             <Link href="/login">
-              <Button variant="outline" className="w-full border-[#d71e28] text-[#d71e28]" data-testid="button-sign-out">
+              <Button variant="outline" className="w-full border-[#cd1409] text-[#cd1409]" data-testid="button-sign-out">
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out
               </Button>

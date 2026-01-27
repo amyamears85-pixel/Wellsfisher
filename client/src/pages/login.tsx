@@ -20,9 +20,10 @@ import {
   Search, Shield, MapPin, Phone, MessageCircle, Globe, 
   ChevronDown, Lock, X, CreditCard, Home, PiggyBank, Car, 
   Smartphone, Menu, Key, Fingerprint, Building2, Users,
-  TrendingUp, ArrowRight, CheckCircle2
+  TrendingUp, ArrowRight, CheckCircle2, HelpCircle, User
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { WellsFargoIcon } from "@/components/wells-fargo-logo";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -234,23 +235,18 @@ export default function LoginPage() {
         <div className="max-w-[1280px] mx-auto px-4">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-3" data-testid="logo-container">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-[#ffcd41] rounded-full flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-[#cd1409]" />
-                </div>
-                <div>
+              <Link href="/">
+                <div className="flex items-center gap-2.5 cursor-pointer">
+                  <WellsFargoIcon className="w-10 h-10" />
                   <span 
-                    className="text-white text-[26px] tracking-[0.02em] block leading-tight"
-                    style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontWeight: 400 }}
+                    className="text-white text-[26px] tracking-[0.02em]"
+                    style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
                     data-testid="text-logo"
                   >
                     WELLS FARGO
                   </span>
-                  <span className="text-white/80 text-[10px] tracking-[0.1em] uppercase">
-                    Established 1852
-                  </span>
                 </div>
-              </div>
+              </Link>
             </div>
 
             <div className="flex items-center gap-4">
@@ -670,9 +666,7 @@ export default function LoginPage() {
           <div className="border-t border-gray-800 pt-6">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-[#ffcd41] rounded-full flex items-center justify-center">
-                  <Building2 className="w-5 h-5 text-[#cd1409]" />
-                </div>
+                <WellsFargoIcon className="w-8 h-8" />
                 <span className="text-lg" style={{ fontFamily: "Georgia, serif" }}>WELLS FARGO</span>
               </div>
               <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">

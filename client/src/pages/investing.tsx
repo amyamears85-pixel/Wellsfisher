@@ -160,7 +160,7 @@ export default function InvestingPage() {
               <p className="text-3xl font-bold text-[#1a4d3e]">${retirementSavings.toLocaleString()}</p>
               <p className="text-xs text-gray-500 mt-2">Based on 7% average annual return</p>
             </div>
-            <Button onClick={() => { setShowRetirementModal(false); handleOpenAccount("IRA Account"); }} className="w-full bg-[#d71e28] hover:bg-[#b91c23]">Open an IRA</Button>
+            <Button onClick={() => { setShowRetirementModal(false); handleOpenAccount("IRA Account"); }} className="w-full bg-[#cd1409] hover:bg-[#b81208]">Open an IRA</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -180,26 +180,26 @@ export default function InvestingPage() {
       </div>
 
       {/* Header */}
-      <header className="bg-[#d71e28]">
+      <header className="bg-[#cd1409]">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between py-3">
             <Link href="/"><span className="text-white text-2xl sm:text-3xl tracking-wide cursor-pointer" style={{ fontFamily: "'Times New Roman', 'Georgia', serif" }}>WELLS FARGO</span></Link>
             <div className="flex items-center gap-4">
               <form onSubmit={handleSearch} className="relative hidden lg:block">
                 <Input placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-56 h-9 bg-white border-0 text-gray-800 text-sm rounded-sm pr-10" />
-                <button type="submit" className="absolute right-0 top-0 h-full px-3 bg-[#b91c23]"><Search className="w-4 h-4 text-white" /></button>
+                <button type="submit" className="absolute right-0 top-0 h-full px-3 bg-[#b81208]"><Search className="w-4 h-4 text-white" /></button>
               </form>
               <MobileMenu currentPage="Investing" />
             </div>
           </div>
         </div>
 
-        <nav className="bg-[#c41e24] border-t border-[#b91c23]">
+        <nav className="bg-[#c41e24] border-t border-[#b81208]">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center overflow-x-auto">
               {[{ name: "Personal", href: "/", active: true }, { name: "Small Business", href: "#" }].map((item) => (
                 <Link key={item.name} href={item.href}>
-                  <span className={`px-5 py-3.5 text-sm text-white whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${item.active ? "bg-[#a01820] border-b-[3px] border-[#ffcd41]" : "hover:bg-[#b91c23] border-b-[3px] border-transparent"}`}>{item.name}<ChevronDown className="w-3 h-3 opacity-70" /></span>
+                  <span className={`px-5 py-3.5 text-sm text-white whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${item.active ? "bg-[#a01820] border-b-[3px] border-[#ffcd41]" : "hover:bg-[#b81208] border-b-[3px] border-transparent"}`}>{item.name}<ChevronDown className="w-3 h-3 opacity-70" /></span>
                 </Link>
               ))}
             </div>
@@ -253,7 +253,7 @@ export default function InvestingPage() {
                   <p className="text-gray-600 mb-4">{option.desc}</p>
                   <p className="text-sm text-gray-500 mb-4">Minimum: {option.minInvestment}</p>
                   <ul className="space-y-2 mb-6">{option.features.map((f, i) => <li key={i} className="flex items-center gap-2 text-sm text-gray-700"><Check className="w-4 h-4 text-green-600" />{f}</li>)}</ul>
-                  <Button onClick={() => handleOpenAccount(option.name)} className="w-full bg-[#d71e28] hover:bg-[#b91c23] text-white rounded-full">Learn More</Button>
+                  <Button onClick={() => handleOpenAccount(option.name)} className="w-full bg-[#cd1409] hover:bg-[#b81208] text-white rounded-full">Learn More</Button>
                 </CardContent>
               </Card>
             ))}
@@ -282,9 +282,9 @@ export default function InvestingPage() {
             <CardContent className="p-6">
               <h3 className="font-bold text-gray-800 text-sm mb-3">Investment and Insurance Products are:</h3>
               <div className="grid sm:grid-cols-3 gap-3 text-xs text-gray-600">
-                <div className="flex items-start gap-2"><span className="text-[#d71e28] font-bold">•</span><span>Not Insured by the FDIC or Any Federal Government Agency</span></div>
-                <div className="flex items-start gap-2"><span className="text-[#d71e28] font-bold">•</span><span>Not a Deposit or Other Obligation of, or Guaranteed by, the Bank</span></div>
-                <div className="flex items-start gap-2"><span className="text-[#d71e28] font-bold">•</span><span>Subject to Investment Risks, Including Possible Loss of Principal</span></div>
+                <div className="flex items-start gap-2"><span className="text-[#cd1409] font-bold">•</span><span>Not Insured by the FDIC or Any Federal Government Agency</span></div>
+                <div className="flex items-start gap-2"><span className="text-[#cd1409] font-bold">•</span><span>Not a Deposit or Other Obligation of, or Guaranteed by, the Bank</span></div>
+                <div className="flex items-start gap-2"><span className="text-[#cd1409] font-bold">•</span><span>Subject to Investment Risks, Including Possible Loss of Principal</span></div>
               </div>
             </CardContent>
           </Card>

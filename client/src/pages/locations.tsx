@@ -165,7 +165,7 @@ export default function LocationsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <header className="bg-[#d71e28]">
+      <header className="bg-[#cd1409]">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <Link href="/">
@@ -190,7 +190,7 @@ export default function LocationsPage() {
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <nav className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-            <Link href="/" className="text-[#d71e28] hover:underline">Home</Link>
+            <Link href="/" className="text-[#cd1409] hover:underline">Home</Link>
             <ChevronRight className="w-4 h-4" />
             <span>Locator</span>
           </nav>
@@ -226,7 +226,7 @@ export default function LocationsPage() {
                     </button>
                   )}
                 </div>
-                <Button className="bg-[#d71e28] hover:bg-[#b91c23] text-white h-11 px-6" data-testid="button-search-locations">
+                <Button className="bg-[#cd1409] hover:bg-[#b81208] text-white h-11 px-6" data-testid="button-search-locations">
                   Search
                 </Button>
               </div>
@@ -235,7 +235,7 @@ export default function LocationsPage() {
             <div className="flex items-end">
               <Button
                 variant="outline"
-                className="h-11 border-[#d71e28] text-[#d71e28] hover:bg-red-50"
+                className="h-11 border-[#cd1409] text-[#cd1409] hover:bg-red-50"
                 data-testid="button-use-location"
               >
                 <Locate className="w-4 h-4 mr-2" />
@@ -264,7 +264,7 @@ export default function LocationsPage() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-[#d71e28]"
+              className="text-[#cd1409]"
               onClick={() => setShowFilters(!showFilters)}
               data-testid="button-toggle-filters"
             >
@@ -278,7 +278,7 @@ export default function LocationsPage() {
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-gray-700">Filter by</h3>
                 <button 
-                  className="text-sm text-[#d71e28] hover:underline"
+                  className="text-sm text-[#cd1409] hover:underline"
                   onClick={() => setFilters({
                     openNow: false,
                     driveUp: false,
@@ -334,7 +334,7 @@ export default function LocationsPage() {
                   onClick={() => setActiveTab(tab.id as typeof activeTab)}
                   className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors ${
                     activeTab === tab.id
-                      ? "text-[#d71e28] border-[#d71e28]"
+                      ? "text-[#cd1409] border-[#cd1409]"
                       : "text-gray-600 border-transparent hover:text-gray-800"
                   }`}
                   data-testid={`tab-${tab.id}`}
@@ -372,7 +372,7 @@ export default function LocationsPage() {
                 data-testid={`card-location-${location.id}`}
               >
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-[#d71e28] text-white rounded-full flex items-center justify-center text-xs font-bold">
+                  <div className="flex-shrink-0 w-6 h-6 bg-[#cd1409] text-white rounded-full flex items-center justify-center text-xs font-bold">
                     {index + 1}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -381,7 +381,7 @@ export default function LocationsPage() {
                         <div className="flex items-center gap-2 mb-0.5">
                           <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${
                             location.type === "branch" 
-                              ? "bg-[#d71e28] text-white" 
+                              ? "bg-[#cd1409] text-white" 
                               : "bg-gray-200 text-gray-700"
                           }`}>
                             {location.type === "branch" ? "BRANCH" : "ATM"}
@@ -409,7 +409,7 @@ export default function LocationsPage() {
                       {location.phone && (
                         <a
                           href={`tel:${location.phone}`}
-                          className="text-xs text-[#d71e28] hover:underline flex items-center gap-1"
+                          className="text-xs text-[#cd1409] hover:underline flex items-center gap-1"
                           onClick={(e) => e.stopPropagation()}
                           data-testid={`link-phone-${location.id}`}
                         >
@@ -418,7 +418,7 @@ export default function LocationsPage() {
                         </a>
                       )}
                       <button
-                        className="text-xs text-[#d71e28] hover:underline flex items-center gap-1"
+                        className="text-xs text-[#cd1409] hover:underline flex items-center gap-1"
                         onClick={(e) => e.stopPropagation()}
                         data-testid={`button-directions-${location.id}`}
                       >
@@ -475,7 +475,7 @@ export default function LocationsPage() {
                           )}
 
                           <div className="flex gap-2">
-                            <Button size="sm" className="flex-1 bg-[#d71e28] text-white text-xs" data-testid={`button-schedule-${location.id}`}>
+                            <Button size="sm" className="flex-1 bg-[#cd1409] text-white text-xs" data-testid={`button-schedule-${location.id}`}>
                               Schedule appointment
                             </Button>
                             <Button size="sm" variant="outline" className="flex-1 text-xs" data-testid={`button-details-${location.id}`}>
@@ -497,7 +497,7 @@ export default function LocationsPage() {
           <div className="absolute inset-0 bg-[#e8e4df]">
             <div className="w-full h-full flex items-center justify-center">
               <div className="text-center">
-                <MapPin className="w-16 h-16 text-[#d71e28] mx-auto mb-4 opacity-50" />
+                <MapPin className="w-16 h-16 text-[#cd1409] mx-auto mb-4 opacity-50" />
                 <p className="text-gray-500 text-lg">Map View</p>
                 <p className="text-gray-400 text-sm mt-1">Interactive map showing {filteredLocations.length} locations</p>
               </div>

@@ -120,12 +120,12 @@ export default function CheckingPage() {
       <Dialog open={showApplicationModal} onOpenChange={setShowApplicationModal}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-[#d71e28]">Open {selectedAccount}</DialogTitle>
+            <DialogTitle className="text-[#cd1409]">Open {selectedAccount}</DialogTitle>
             <DialogDescription>Step {applicationStep} of 4: {stepTitles[applicationStep - 1]}</DialogDescription>
           </DialogHeader>
           <div className="flex gap-1 mb-4">
             {[1,2,3,4].map(step => (
-              <div key={step} className={`h-1 flex-1 rounded ${step <= applicationStep ? 'bg-[#d71e28]' : 'bg-gray-200'}`} />
+              <div key={step} className={`h-1 flex-1 rounded ${step <= applicationStep ? 'bg-[#cd1409]' : 'bg-gray-200'}`} />
             ))}
           </div>
           <form onSubmit={handleApplicationSubmit} className="space-y-4">
@@ -281,7 +281,7 @@ export default function CheckingPage() {
               {applicationStep > 1 ? (
                 <Button type="button" variant="outline" onClick={() => setApplicationStep(applicationStep - 1)}>Back</Button>
               ) : <div />}
-              <Button type="submit" className="bg-[#d71e28] hover:bg-[#b91c23]">{applicationStep === 4 ? "Submit Application" : "Continue"}</Button>
+              <Button type="submit" className="bg-[#cd1409] hover:bg-[#b81208]">{applicationStep === 4 ? "Submit Application" : "Continue"}</Button>
             </div>
           </form>
         </DialogContent>
@@ -300,7 +300,7 @@ export default function CheckingPage() {
                   <th className="text-left p-3 bg-gray-50">Feature</th>
                   {checkingAccounts.map(acc => (
                     <th key={acc.name} className="text-center p-3 bg-gray-50 min-w-[180px]">
-                      <div className="font-bold text-[#d71e28]">{acc.name}</div>
+                      <div className="font-bold text-[#cd1409]">{acc.name}</div>
                     </th>
                   ))}
                 </tr>
@@ -313,7 +313,7 @@ export default function CheckingPage() {
                 <tr className="border-b"><td className="p-3 font-medium">Early Direct Deposit</td>{checkingAccounts.map(acc => <td key={acc.name} className="text-center p-3"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>)}</tr>
                 <tr className="border-b bg-gray-50"><td className="p-3 font-medium">Mobile Deposit</td>{checkingAccounts.map(acc => <td key={acc.name} className="text-center p-3"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>)}</tr>
                 <tr className="border-b"><td className="p-3 font-medium">Zelle®</td>{checkingAccounts.map(acc => <td key={acc.name} className="text-center p-3"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>)}</tr>
-                <tr><td className="p-3"></td>{checkingAccounts.map(acc => <td key={acc.name} className="text-center p-3"><Button onClick={() => { setShowCompareModal(false); handleOpenAccount(acc.name); }} className="bg-[#d71e28] hover:bg-[#b91c23] text-sm">Open Account</Button></td>)}</tr>
+                <tr><td className="p-3"></td>{checkingAccounts.map(acc => <td key={acc.name} className="text-center p-3"><Button onClick={() => { setShowCompareModal(false); handleOpenAccount(acc.name); }} className="bg-[#cd1409] hover:bg-[#b81208] text-sm">Open Account</Button></td>)}</tr>
               </tbody>
             </table>
           </div>
@@ -338,26 +338,26 @@ export default function CheckingPage() {
       </div>
 
       {/* Main header */}
-      <header className="bg-[#d71e28]">
+      <header className="bg-[#cd1409]">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between py-3">
             <Link href="/"><span className="text-white text-2xl sm:text-3xl tracking-wide cursor-pointer" style={{ fontFamily: "'Times New Roman', 'Georgia', serif", fontWeight: 400 }}>WELLS FARGO</span></Link>
             <div className="flex items-center gap-4">
               <form onSubmit={handleSearch} className="relative hidden lg:block">
                 <Input placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-56 h-9 bg-white border-0 text-gray-800 placeholder:text-gray-500 text-sm rounded-sm pr-10" />
-                <button type="submit" className="absolute right-0 top-0 h-full px-3 bg-[#b91c23] hover:bg-[#a01820] transition-colors rounded-r-sm"><Search className="w-4 h-4 text-white" /></button>
+                <button type="submit" className="absolute right-0 top-0 h-full px-3 bg-[#b81208] hover:bg-[#a01820] transition-colors rounded-r-sm"><Search className="w-4 h-4 text-white" /></button>
               </form>
               <MobileMenu currentPage="Checking" />
             </div>
           </div>
         </div>
 
-        <nav className="bg-[#c41e24] border-t border-[#b91c23]">
+        <nav className="bg-[#c41e24] border-t border-[#b81208]">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center overflow-x-auto">
               {[{ name: "Personal", href: "/", active: true }, { name: "Small Business", href: "#" }, { name: "Commercial", href: "#" }, { name: "Corporate & Investment", href: "#" }].map((item) => (
                 <Link key={item.name} href={item.href}>
-                  <span className={`px-5 py-3.5 text-sm text-white whitespace-nowrap flex items-center gap-1.5 cursor-pointer transition-colors ${item.active ? "bg-[#a01820] border-b-[3px] border-[#ffcd41]" : "hover:bg-[#b91c23] border-b-[3px] border-transparent"}`}>{item.name}<ChevronDown className="w-3 h-3 opacity-70" /></span>
+                  <span className={`px-5 py-3.5 text-sm text-white whitespace-nowrap flex items-center gap-1.5 cursor-pointer transition-colors ${item.active ? "bg-[#a01820] border-b-[3px] border-[#ffcd41]" : "hover:bg-[#b81208] border-b-[3px] border-transparent"}`}>{item.name}<ChevronDown className="w-3 h-3 opacity-70" /></span>
                 </Link>
               ))}
             </div>
@@ -385,7 +385,7 @@ export default function CheckingPage() {
       <div className="bg-[#ffcd41] h-2"></div>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#d71e28] to-[#8a1419] text-white py-16">
+      <section className="bg-gradient-to-r from-[#cd1409] to-[#8a1419] text-white py-16">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div>
@@ -403,7 +403,7 @@ export default function CheckingPage() {
                   <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><DollarSign className="w-5 h-5" /> Limited Time Offer</h3>
                   <p className="text-3xl font-bold mb-2">Earn $300</p>
                   <p className="text-white/90 mb-4">Open a new Everyday Checking account with qualifying direct deposits totaling $1,000 or more within 90 days of account opening.</p>
-                  <Button onClick={() => handleOpenAccount("Everyday Checking")} className="w-full bg-white text-[#d71e28] hover:bg-gray-100 font-semibold">Claim Your Bonus</Button>
+                  <Button onClick={() => handleOpenAccount("Everyday Checking")} className="w-full bg-white text-[#cd1409] hover:bg-gray-100 font-semibold">Claim Your Bonus</Button>
                   <p className="text-xs text-white/60 mt-3">Offer expires 03/31/2026. Terms apply.</p>
                 </CardContent>
               </Card>
@@ -422,7 +422,7 @@ export default function CheckingPage() {
               { icon: Shield, label: "Security Center", action: () => toast({ title: "Security", description: "Learn about our fraud protection and security features." }) },
               { icon: HelpCircle, label: "Help & FAQs", action: () => document.getElementById('faqs')?.scrollIntoView({ behavior: 'smooth' }) },
             ].map((item) => (
-              <button key={item.label} onClick={item.action} className="flex items-center gap-2 text-[#d71e28] hover:underline"><item.icon className="w-4 h-4" />{item.label}</button>
+              <button key={item.label} onClick={item.action} className="flex items-center gap-2 text-[#cd1409] hover:underline"><item.icon className="w-4 h-4" />{item.label}</button>
             ))}
           </div>
         </div>
@@ -439,12 +439,12 @@ export default function CheckingPage() {
             {checkingAccounts.map((account) => (
               <Card key={account.name} className="border-0 shadow-lg hover:shadow-xl transition-all relative overflow-hidden group">
                 {account.highlight && (
-                  <div className="absolute top-0 left-0 right-0 bg-[#d71e28] text-white text-xs font-semibold py-1.5 text-center">{account.highlight}</div>
+                  <div className="absolute top-0 left-0 right-0 bg-[#cd1409] text-white text-xs font-semibold py-1.5 text-center">{account.highlight}</div>
                 )}
                 <CardContent className={`p-6 ${account.highlight ? "pt-10" : ""}`}>
                   <h3 className="text-xl font-bold text-gray-800 mb-2">{account.name}</h3>
                   <div className="mb-4">
-                    <span className="text-3xl font-bold text-[#d71e28]">{account.monthlyFee}</span>
+                    <span className="text-3xl font-bold text-[#cd1409]">{account.monthlyFee}</span>
                     <span className="text-gray-500 text-sm"> /month</span>
                   </div>
                   <p className="text-sm text-gray-600 mb-4 min-h-[60px]">{account.feeWaiver}</p>
@@ -458,8 +458,8 @@ export default function CheckingPage() {
                       <li key={i} className="flex items-start gap-2 text-sm text-gray-700"><Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />{feature}</li>
                     ))}
                   </ul>
-                  <Button onClick={() => handleOpenAccount(account.name)} className="w-full bg-[#d71e28] hover:bg-[#b91c23] text-white rounded-full mb-2">Open Account</Button>
-                  <button onClick={() => toast({ title: account.name, description: `Learn more about ${account.name} features and benefits.` })} className="w-full text-center text-sm text-[#d71e28] hover:underline">Learn more <ChevronRight className="w-3 h-3 inline" /></button>
+                  <Button onClick={() => handleOpenAccount(account.name)} className="w-full bg-[#cd1409] hover:bg-[#b81208] text-white rounded-full mb-2">Open Account</Button>
+                  <button onClick={() => toast({ title: account.name, description: `Learn more about ${account.name} features and benefits.` })} className="w-full text-center text-sm text-[#cd1409] hover:underline">Learn more <ChevronRight className="w-3 h-3 inline" /></button>
                 </CardContent>
               </Card>
             ))}
@@ -481,14 +481,14 @@ export default function CheckingPage() {
                       <div>
                         <h3 className="text-xl font-bold mb-4">Bank on the go with our award-winning app</h3>
                         <ul className="space-y-3">
-                          <li className="flex items-start gap-3"><Smartphone className="w-5 h-5 text-[#d71e28] mt-1" /><div><strong>Mobile Deposit</strong><p className="text-sm text-gray-600">Deposit checks anytime by taking a photo with your phone</p></div></li>
-                          <li className="flex items-start gap-3"><Zap className="w-5 h-5 text-[#d71e28] mt-1" /><div><strong>Zelle®</strong><p className="text-sm text-gray-600">Send money in minutes to friends and family</p></div></li>
-                          <li className="flex items-start gap-3"><Wallet className="w-5 h-5 text-[#d71e28] mt-1" /><div><strong>Digital Wallets</strong><p className="text-sm text-gray-600">Add your card to Apple Pay®, Google Pay™, or Samsung Pay</p></div></li>
-                          <li className="flex items-start gap-3"><Clock className="w-5 h-5 text-[#d71e28] mt-1" /><div><strong>24/7 Access</strong><p className="text-sm text-gray-600">Check balances, pay bills, and transfer money anytime</p></div></li>
+                          <li className="flex items-start gap-3"><Smartphone className="w-5 h-5 text-[#cd1409] mt-1" /><div><strong>Mobile Deposit</strong><p className="text-sm text-gray-600">Deposit checks anytime by taking a photo with your phone</p></div></li>
+                          <li className="flex items-start gap-3"><Zap className="w-5 h-5 text-[#cd1409] mt-1" /><div><strong>Zelle®</strong><p className="text-sm text-gray-600">Send money in minutes to friends and family</p></div></li>
+                          <li className="flex items-start gap-3"><Wallet className="w-5 h-5 text-[#cd1409] mt-1" /><div><strong>Digital Wallets</strong><p className="text-sm text-gray-600">Add your card to Apple Pay®, Google Pay™, or Samsung Pay</p></div></li>
+                          <li className="flex items-start gap-3"><Clock className="w-5 h-5 text-[#cd1409] mt-1" /><div><strong>24/7 Access</strong><p className="text-sm text-gray-600">Check balances, pay bills, and transfer money anytime</p></div></li>
                         </ul>
                       </div>
                       <div className="bg-gray-100 rounded-lg p-6 text-center">
-                        <Smartphone className="w-16 h-16 text-[#d71e28] mx-auto mb-4" />
+                        <Smartphone className="w-16 h-16 text-[#cd1409] mx-auto mb-4" />
                         <h4 className="font-semibold mb-2">Download the App</h4>
                         <p className="text-sm text-gray-600 mb-4">Available on iOS and Android</p>
                         <div className="flex gap-2 justify-center">
@@ -511,7 +511,7 @@ export default function CheckingPage() {
                         { icon: CreditCard, title: "Card Controls", desc: "Turn your debit card on/off instantly from the mobile app" },
                       ].map((item) => (
                         <div key={item.title} className="p-4 bg-gray-50 rounded-lg">
-                          <item.icon className="w-8 h-8 text-[#d71e28] mb-3" />
+                          <item.icon className="w-8 h-8 text-[#cd1409] mb-3" />
                           <h4 className="font-semibold mb-2">{item.title}</h4>
                           <p className="text-sm text-gray-600">{item.desc}</p>
                         </div>
@@ -546,7 +546,7 @@ export default function CheckingPage() {
                   <CardContent className="p-6">
                     <h3 className="text-xl font-bold mb-4">Earn rewards with your checking account</h3>
                     <p className="text-gray-600 mb-4">Link your checking to a Wells Fargo credit card and earn bonus rewards on everyday purchases.</p>
-                    <Button onClick={() => toast({ title: "Rewards Program", description: "Learn more about earning rewards with your Wells Fargo accounts." })} className="bg-[#d71e28] hover:bg-[#b91c23]">Explore Credit Cards</Button>
+                    <Button onClick={() => toast({ title: "Rewards Program", description: "Learn more about earning rewards with your Wells Fargo accounts." })} className="bg-[#cd1409] hover:bg-[#b81208]">Explore Credit Cards</Button>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -567,7 +567,7 @@ export default function CheckingPage() {
           </div>
 
           {/* CTA */}
-          <Card className="bg-gradient-to-r from-[#d71e28] to-[#8a1419] text-white border-0">
+          <Card className="bg-gradient-to-r from-[#cd1409] to-[#8a1419] text-white border-0">
             <CardContent className="p-8 text-center">
               <h2 className="text-2xl font-bold mb-4">Ready to open your account?</h2>
               <p className="text-white/90 mb-6 max-w-2xl mx-auto">Join millions of customers who trust Wells Fargo for their everyday banking needs. Open your account online in minutes.</p>

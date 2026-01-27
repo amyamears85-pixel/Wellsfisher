@@ -157,12 +157,12 @@ export default function CreditCardsPage() {
       <Dialog open={showApplicationModal} onOpenChange={setShowApplicationModal}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-[#d71e28]">Apply for {selectedCard}</DialogTitle>
+            <DialogTitle className="text-[#cd1409]">Apply for {selectedCard}</DialogTitle>
             <DialogDescription>Step {applicationStep} of 4</DialogDescription>
           </DialogHeader>
           <div className="flex gap-1 mb-4">
             {[1,2,3,4].map(step => (
-              <div key={step} className={`h-1 flex-1 rounded ${step <= applicationStep ? 'bg-[#d71e28]' : 'bg-gray-200'}`} />
+              <div key={step} className={`h-1 flex-1 rounded ${step <= applicationStep ? 'bg-[#cd1409]' : 'bg-gray-200'}`} />
             ))}
           </div>
           <form onSubmit={handleApplicationSubmit} className="space-y-4">
@@ -222,7 +222,7 @@ export default function CreditCardsPage() {
             )}
             <div className="flex justify-between pt-4 border-t">
               {applicationStep > 1 ? <Button type="button" variant="outline" onClick={() => setApplicationStep(applicationStep - 1)}>Back</Button> : <div />}
-              <Button type="submit" className="bg-[#d71e28] hover:bg-[#b91c23]" disabled={applicationStep === 4 && !formData.agreeTerms}>{applicationStep === 4 ? "Submit" : "Continue"}</Button>
+              <Button type="submit" className="bg-[#cd1409] hover:bg-[#b81208]" disabled={applicationStep === 4 && !formData.agreeTerms}>{applicationStep === 4 ? "Submit" : "Continue"}</Button>
             </div>
           </form>
         </DialogContent>
@@ -236,12 +236,12 @@ export default function CreditCardsPage() {
             <div className="text-center py-8 text-gray-500">Select at least 2 cards to compare</div>
           ) : (
             <table className="w-full text-sm">
-              <thead><tr className="border-b"><th className="text-left p-3 bg-gray-50">Feature</th>{compareCards.map(name => <th key={name} className="text-center p-3 bg-gray-50 font-bold text-[#d71e28]">{name}</th>)}</tr></thead>
+              <thead><tr className="border-b"><th className="text-left p-3 bg-gray-50">Feature</th>{compareCards.map(name => <th key={name} className="text-center p-3 bg-gray-50 font-bold text-[#cd1409]">{name}</th>)}</tr></thead>
               <tbody>
                 <tr className="border-b"><td className="p-3 font-medium">Annual Fee</td>{compareCards.map(name => <td key={name} className="text-center p-3">{creditCards.find(c => c.name === name)?.annualFee}</td>)}</tr>
                 <tr className="border-b"><td className="p-3 font-medium">Rewards</td>{compareCards.map(name => <td key={name} className="text-center p-3">{creditCards.find(c => c.name === name)?.rewardRate} {creditCards.find(c => c.name === name)?.rewardDesc}</td>)}</tr>
                 <tr className="border-b"><td className="p-3 font-medium">Welcome Bonus</td>{compareCards.map(name => <td key={name} className="text-center p-3 text-xs">{creditCards.find(c => c.name === name)?.welcomeBonus}</td>)}</tr>
-                <tr><td className="p-3"></td>{compareCards.map(name => <td key={name} className="text-center p-3"><Button onClick={() => { setShowCompareModal(false); handleApply(name); }} className="bg-[#d71e28] hover:bg-[#b91c23] text-sm">Apply</Button></td>)}</tr>
+                <tr><td className="p-3"></td>{compareCards.map(name => <td key={name} className="text-center p-3"><Button onClick={() => { setShowCompareModal(false); handleApply(name); }} className="bg-[#cd1409] hover:bg-[#b81208] text-sm">Apply</Button></td>)}</tr>
               </tbody>
             </table>
           )}
@@ -252,7 +252,7 @@ export default function CreditCardsPage() {
       <Dialog open={showRewardsCalcModal} onOpenChange={setShowRewardsCalcModal}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle className="text-[#d71e28]">Rewards Calculator</DialogTitle>
+            <DialogTitle className="text-[#cd1409]">Rewards Calculator</DialogTitle>
           </DialogHeader>
           <div className="space-y-6">
             <div><Label className="flex justify-between"><span>Monthly Spending</span><span className="font-semibold">${monthlySpend[0].toLocaleString()}</span></Label><Slider value={monthlySpend} onValueChange={setMonthlySpend} min={500} max={10000} step={100} className="mt-2" /></div>
@@ -260,8 +260,8 @@ export default function CreditCardsPage() {
             <div><Label className="flex justify-between"><span>Travel</span><span className="font-semibold">${travelSpend[0]}</span></Label><Slider value={travelSpend} onValueChange={setTravelSpend} min={0} max={2000} step={50} className="mt-2" /></div>
             <div className="border-t pt-4 space-y-3">
               <h4 className="font-semibold">Annual Rewards Estimate</h4>
-              <div className="flex justify-between p-3 bg-gray-50 rounded-lg"><span>Active Cash® Card</span><span className="font-bold text-[#d71e28]">${rewardsEstimate.activeCash}</span></div>
-              <div className="flex justify-between p-3 bg-gray-50 rounded-lg"><span>Autograph℠ Card</span><span className="font-bold text-[#d71e28]">{rewardsEstimate.autograph} pts</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-lg"><span>Active Cash® Card</span><span className="font-bold text-[#cd1409]">${rewardsEstimate.activeCash}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-lg"><span>Autograph℠ Card</span><span className="font-bold text-[#cd1409]">{rewardsEstimate.autograph} pts</span></div>
             </div>
           </div>
         </DialogContent>
@@ -279,21 +279,21 @@ export default function CreditCardsPage() {
         </div>
       </div>
 
-      <header className="bg-[#d71e28]">
+      <header className="bg-[#cd1409]">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/"><span className="text-white text-2xl sm:text-3xl tracking-wide cursor-pointer" style={{ fontFamily: "'Times New Roman', 'Georgia', serif" }}>WELLS FARGO</span></Link>
           <div className="flex items-center gap-4">
             <form onSubmit={handleSearch} className="relative hidden lg:block">
               <Input placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-56 h-9 bg-white border-0 text-gray-800 text-sm rounded-sm pr-10" />
-              <button type="submit" className="absolute right-0 top-0 h-full px-3 bg-[#b91c23]"><Search className="w-4 h-4 text-white" /></button>
+              <button type="submit" className="absolute right-0 top-0 h-full px-3 bg-[#b81208]"><Search className="w-4 h-4 text-white" /></button>
             </form>
             <MobileMenu currentPage="Credit Cards" />
           </div>
         </div>
-        <nav className="bg-[#c41e24] border-t border-[#b91c23]">
+        <nav className="bg-[#c41e24] border-t border-[#b81208]">
           <div className="max-w-7xl mx-auto px-4 flex items-center overflow-x-auto">
             {[{ name: "Personal", href: "/", active: true }, { name: "Small Business", href: "#" }].map((item) => (
-              <Link key={item.name} href={item.href}><span className={`px-5 py-3.5 text-sm text-white whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${item.active ? "bg-[#a01820] border-b-[3px] border-[#ffcd41]" : "hover:bg-[#b91c23] border-b-[3px] border-transparent"}`}>{item.name}<ChevronDown className="w-3 h-3 opacity-70" /></span></Link>
+              <Link key={item.name} href={item.href}><span className={`px-5 py-3.5 text-sm text-white whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${item.active ? "bg-[#a01820] border-b-[3px] border-[#ffcd41]" : "hover:bg-[#b81208] border-b-[3px] border-transparent"}`}>{item.name}<ChevronDown className="w-3 h-3 opacity-70" /></span></Link>
             ))}
           </div>
         </nav>
@@ -309,7 +309,7 @@ export default function CreditCardsPage() {
       <div className="bg-[#ffcd41] h-2"></div>
 
       {/* Hero */}
-      <section className="bg-gradient-to-r from-[#d71e28] to-[#8a1419] text-white py-16">
+      <section className="bg-gradient-to-r from-[#cd1409] to-[#8a1419] text-white py-16">
         <div className="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-8 items-center">
           <div>
             <p className="text-white/80 text-sm mb-2">CREDIT CARDS</p>
@@ -325,7 +325,7 @@ export default function CreditCardsPage() {
               <h3 className="font-semibold text-lg mb-4 flex items-center gap-2"><Star className="w-5 h-5" /> Featured Card</h3>
               <p className="text-3xl font-bold mb-1">Active Cash® Card</p>
               <p className="text-white/90 mb-4">Earn unlimited 2% cash rewards. Plus, $200 bonus.</p>
-              <Button onClick={() => handleApply("Active Cash® Card")} className="w-full bg-white text-[#d71e28] hover:bg-gray-100 font-semibold">Apply Now</Button>
+              <Button onClick={() => handleApply("Active Cash® Card")} className="w-full bg-white text-[#cd1409] hover:bg-gray-100 font-semibold">Apply Now</Button>
             </CardContent>
           </Card>
         </div>
@@ -335,7 +335,7 @@ export default function CreditCardsPage() {
       <section className="bg-white border-b py-4">
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-center gap-8 flex-wrap text-sm">
           {[{ icon: CreditCard, label: "Manage Card", action: () => toast({ title: "Sign In", description: "Sign in to manage your card." }) }, { icon: DollarSign, label: "Rewards Calculator", action: () => setShowRewardsCalcModal(true) }, { icon: Shield, label: "Card Benefits", action: () => toast({ title: "Benefits", description: "Explore card benefits." }) }, { icon: HelpCircle, label: "FAQs", action: () => document.getElementById('faqs')?.scrollIntoView({ behavior: 'smooth' }) }].map((item) => (
-            <button key={item.label} onClick={item.action} className="flex items-center gap-2 text-[#d71e28] hover:underline"><item.icon className="w-4 h-4" />{item.label}</button>
+            <button key={item.label} onClick={item.action} className="flex items-center gap-2 text-[#cd1409] hover:underline"><item.icon className="w-4 h-4" />{item.label}</button>
           ))}
         </div>
       </section>
@@ -348,7 +348,7 @@ export default function CreditCardsPage() {
             <div><h2 className="text-2xl font-bold text-gray-800">Our Credit Cards</h2><p className="text-gray-600">Choose from cash back, travel, and balance transfer options</p></div>
             <div className="flex gap-2">
               {["all", "cash", "travel", "balance"].map((cat) => (
-                <Button key={cat} variant={selectedCategory === cat ? "default" : "outline"} size="sm" onClick={() => setSelectedCategory(cat)} className={selectedCategory === cat ? "bg-[#d71e28] hover:bg-[#b91c23]" : ""}>
+                <Button key={cat} variant={selectedCategory === cat ? "default" : "outline"} size="sm" onClick={() => setSelectedCategory(cat)} className={selectedCategory === cat ? "bg-[#cd1409] hover:bg-[#b81208]" : ""}>
                   {cat === "all" ? "All" : cat.charAt(0).toUpperCase() + cat.slice(1)}
                 </Button>
               ))}
@@ -368,17 +368,17 @@ export default function CreditCardsPage() {
           <div className="grid lg:grid-cols-2 gap-6 mb-12">
             {filteredCards.map((card) => (
               <Card key={card.name} className="border-0 shadow-lg hover:shadow-xl transition-all relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 bg-[#d71e28] text-white text-xs font-semibold py-1.5 text-center">{card.highlight}</div>
+                <div className="absolute top-0 left-0 right-0 bg-[#cd1409] text-white text-xs font-semibold py-1.5 text-center">{card.highlight}</div>
                 <CardContent className="p-6 pt-10">
                   <div className="flex items-start justify-between mb-4">
                     <div><p className="text-xs text-gray-500 uppercase">{card.category}</p><h3 className="text-xl font-bold text-gray-800">{card.name}</h3></div>
-                    <div className="w-12 h-12 bg-[#d71e28]/10 rounded-lg flex items-center justify-center"><card.icon className="w-6 h-6 text-[#d71e28]" /></div>
+                    <div className="w-12 h-12 bg-[#cd1409]/10 rounded-lg flex items-center justify-center"><card.icon className="w-6 h-6 text-[#cd1409]" /></div>
                   </div>
-                  <div className="mb-4"><span className="text-3xl font-bold text-[#d71e28]">{card.rewardRate}</span><span className="text-gray-600 text-sm ml-1">{card.rewardDesc}</span></div>
+                  <div className="mb-4"><span className="text-3xl font-bold text-[#cd1409]">{card.rewardRate}</span><span className="text-gray-600 text-sm ml-1">{card.rewardDesc}</span></div>
                   <div className="mb-4 p-3 bg-[#fff8e6] rounded-lg border border-[#ffcd41]"><p className="text-sm font-medium text-[#8b6914]">{card.welcomeBonus}</p></div>
                   <ul className="space-y-2 mb-6">{card.features.map((f, i) => <li key={i} className="flex items-start gap-2 text-sm text-gray-700"><Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />{f}</li>)}</ul>
                   <div className="flex gap-2">
-                    <Button onClick={() => handleApply(card.name)} className="flex-1 bg-[#d71e28] hover:bg-[#b91c23] text-white rounded-full">Apply Now</Button>
+                    <Button onClick={() => handleApply(card.name)} className="flex-1 bg-[#cd1409] hover:bg-[#b81208] text-white rounded-full">Apply Now</Button>
                     <Button variant="outline" onClick={() => toggleCompare(card.name)} className={compareCards.includes(card.name) ? "bg-gray-100" : ""}>{compareCards.includes(card.name) ? <X className="w-4 h-4" /> : "Compare"}</Button>
                   </div>
                   <p className="text-xs text-gray-500 mt-3">Annual Fee: {card.annualFee}</p>
@@ -398,7 +398,7 @@ export default function CreditCardsPage() {
               <Card className="border-0 shadow-md"><CardContent className="p-6">
                 <div className="grid md:grid-cols-3 gap-6">
                   {[{ icon: Gift, title: "Welcome Bonuses", desc: "Earn bonus rewards after qualifying purchases" }, { icon: ShoppingBag, title: "Everyday Rewards", desc: "Earn on purchases you make every day" }, { icon: Plane, title: "Travel Perks", desc: "No foreign fees, travel insurance, concierge" }].map((item) => (
-                    <div key={item.title} className="text-center"><item.icon className="w-10 h-10 text-[#d71e28] mx-auto mb-3" /><h4 className="font-semibold mb-2">{item.title}</h4><p className="text-sm text-gray-600">{item.desc}</p></div>
+                    <div key={item.title} className="text-center"><item.icon className="w-10 h-10 text-[#cd1409] mx-auto mb-3" /><h4 className="font-semibold mb-2">{item.title}</h4><p className="text-sm text-gray-600">{item.desc}</p></div>
                   ))}
                 </div>
               </CardContent></Card>

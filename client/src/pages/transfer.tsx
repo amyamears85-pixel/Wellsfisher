@@ -51,7 +51,7 @@ export default function TransferPage() {
   if (transferComplete) {
     return (
       <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-        <header className="bg-[#d71e28] sticky top-0 z-[9999]">
+        <header className="bg-[#cd1409] sticky top-0 z-[9999]">
           <div className="h-1 bg-[#ffcd41]" />
           <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between gap-4">
@@ -88,7 +88,7 @@ export default function TransferPage() {
                   <p>Time: {new Date().toLocaleTimeString('en-US')}</p>
                 </div>
               </div>
-              <Button onClick={() => setLocation("/dashboard")} className="w-full bg-[#d71e28]" data-testid="button-return-accounts">
+              <Button onClick={() => setLocation("/dashboard")} className="w-full bg-[#cd1409]" data-testid="button-return-accounts">
                 Return to Accounts
               </Button>
               <p className="text-xs text-gray-500 mt-4">
@@ -104,7 +104,7 @@ export default function TransferPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-      <header className="bg-[#d71e28] sticky top-0 z-[9999]">
+      <header className="bg-[#cd1409] sticky top-0 z-[9999]">
         <div className="h-1 bg-[#ffcd41]" />
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-4">
@@ -140,11 +140,11 @@ export default function TransferPage() {
 
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
         <div className="flex items-center gap-2 mb-6">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 1 ? 'bg-[#d71e28] text-white' : 'bg-gray-200'}`}>1</div>
-          <div className={`flex-1 h-1 ${step >= 2 ? 'bg-[#d71e28]' : 'bg-gray-200'}`} />
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 2 ? 'bg-[#d71e28] text-white' : 'bg-gray-200'}`}>2</div>
-          <div className={`flex-1 h-1 ${step >= 3 ? 'bg-[#d71e28]' : 'bg-gray-200'}`} />
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 3 ? 'bg-[#d71e28] text-white' : 'bg-gray-200'}`}>3</div>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 1 ? 'bg-[#cd1409] text-white' : 'bg-gray-200'}`}>1</div>
+          <div className={`flex-1 h-1 ${step >= 2 ? 'bg-[#cd1409]' : 'bg-gray-200'}`} />
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 2 ? 'bg-[#cd1409] text-white' : 'bg-gray-200'}`}>2</div>
+          <div className={`flex-1 h-1 ${step >= 3 ? 'bg-[#cd1409]' : 'bg-gray-200'}`} />
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 3 ? 'bg-[#cd1409] text-white' : 'bg-gray-200'}`}>3</div>
         </div>
 
         <Card>
@@ -202,7 +202,7 @@ export default function TransferPage() {
 
                 <Button 
                   onClick={() => setStep(2)} 
-                  className="w-full bg-[#d71e28]"
+                  className="w-full bg-[#cd1409]"
                   disabled={!formData.fromAccount || !formData.toAccount}
                   data-testid="button-continue-step1"
                 >
@@ -252,7 +252,7 @@ export default function TransferPage() {
                   <Button variant="outline" onClick={() => setStep(1)} className="flex-1" data-testid="button-back-step2">Back</Button>
                   <Button 
                     onClick={() => setStep(3)} 
-                    className="flex-1 bg-[#d71e28]"
+                    className="flex-1 bg-[#cd1409]"
                     disabled={!formData.amount || parseFloat(formData.amount) <= 0}
                     data-testid="button-continue-step2"
                   >
@@ -297,7 +297,7 @@ export default function TransferPage() {
                   <Button variant="outline" onClick={() => setStep(2)} className="flex-1" disabled={isProcessing} data-testid="button-back-step3">
                     Back
                   </Button>
-                  <Button onClick={handleSubmit} className="flex-1 bg-[#d71e28]" disabled={isProcessing} data-testid="button-submit-transfer">
+                  <Button onClick={handleSubmit} className="flex-1 bg-[#cd1409]" disabled={isProcessing} data-testid="button-submit-transfer">
                     {isProcessing ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />

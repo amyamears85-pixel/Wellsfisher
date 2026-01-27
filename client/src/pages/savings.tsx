@@ -311,26 +311,26 @@ export default function SavingsPage() {
         </div>
       </div>
 
-      <header className="bg-[#d71e28]">
+      <header className="bg-[#cd1409]">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between py-3">
             <Link href="/"><span className="text-white text-2xl sm:text-3xl tracking-wide cursor-pointer" style={{ fontFamily: "'Times New Roman', 'Georgia', serif" }}>WELLS FARGO</span></Link>
             <div className="flex items-center gap-4">
               <form onSubmit={handleSearch} className="relative hidden lg:block">
                 <Input placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-56 h-9 bg-white border-0 text-gray-800 text-sm rounded-sm pr-10" />
-                <button type="submit" className="absolute right-0 top-0 h-full px-3 bg-[#b91c23]"><Search className="w-4 h-4 text-white" /></button>
+                <button type="submit" className="absolute right-0 top-0 h-full px-3 bg-[#b81208]"><Search className="w-4 h-4 text-white" /></button>
               </form>
               <MobileMenu currentPage="Savings & CDs" />
             </div>
           </div>
         </div>
 
-        <nav className="bg-[#c41e24] border-t border-[#b91c23]">
+        <nav className="bg-[#c41e24] border-t border-[#b81208]">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center overflow-x-auto">
               {[{ name: "Personal", href: "/", active: true }, { name: "Small Business", href: "#" }].map((item) => (
                 <Link key={item.name} href={item.href}>
-                  <span className={`px-5 py-3.5 text-sm text-white whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${item.active ? "bg-[#a01820] border-b-[3px] border-[#ffcd41]" : "hover:bg-[#b91c23] border-b-[3px] border-transparent"}`}>{item.name}<ChevronDown className="w-3 h-3 opacity-70" /></span>
+                  <span className={`px-5 py-3.5 text-sm text-white whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${item.active ? "bg-[#a01820] border-b-[3px] border-[#ffcd41]" : "hover:bg-[#b81208] border-b-[3px] border-transparent"}`}>{item.name}<ChevronDown className="w-3 h-3 opacity-70" /></span>
                 </Link>
               ))}
             </div>

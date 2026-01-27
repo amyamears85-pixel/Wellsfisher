@@ -57,7 +57,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
       {/* Header */}
-      <header className="bg-[#d71e28] sticky top-0 z-20">
+      <header className="bg-[#cd1409] sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-4 py-4">
             <Link href="/">
@@ -84,7 +84,7 @@ export default function ContactPage() {
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`flex-1 flex items-center justify-center gap-2 py-4 border-b-2 transition-colors ${
                   activeTab === tab.id
-                    ? "border-[#d71e28] text-[#d71e28] bg-red-50/50"
+                    ? "border-[#cd1409] text-[#cd1409] bg-red-50/50"
                     : "border-transparent text-gray-600 hover:bg-gray-50"
                 }`}
                 data-testid={`tab-${tab.id}`}
@@ -103,7 +103,7 @@ export default function ContactPage() {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Headphones className="w-5 h-5 text-[#d71e28]" />
+                  <Headphones className="w-5 h-5 text-[#cd1409]" />
                   Customer Service Numbers
                 </CardTitle>
               </CardHeader>
@@ -118,12 +118,12 @@ export default function ContactPage() {
                     data-testid={`link-call-${item.name.toLowerCase().replace(/\s+/g, "-")}`}
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-[#d71e28]/10 flex items-center justify-center">
-                        <item.icon className="w-5 h-5 text-[#d71e28]" />
+                      <div className="w-10 h-10 rounded-full bg-[#cd1409]/10 flex items-center justify-center">
+                        <item.icon className="w-5 h-5 text-[#cd1409]" />
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">{item.name}</p>
-                        <p className="text-sm text-[#d71e28]">{item.number}</p>
+                        <p className="text-sm text-[#cd1409]">{item.number}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -146,7 +146,7 @@ export default function ContactPage() {
                 <p className="text-sm text-gray-600 mb-3">
                   If you're calling from outside the United States, please use our international number.
                 </p>
-                <a href="tel:1-925-942-3000" className="flex items-center gap-2 text-[#d71e28] font-medium" data-testid="link-international">
+                <a href="tel:1-925-942-3000" className="flex items-center gap-2 text-[#cd1409] font-medium" data-testid="link-international">
                   <Phone className="w-4 h-4" />
                   1-925-942-3000
                 </a>
@@ -161,7 +161,7 @@ export default function ContactPage() {
                 <p className="text-sm text-gray-600 mb-3">
                   For customers who are deaf, hard of hearing, or speech-impaired.
                 </p>
-                <a href="tel:1-800-877-4833" className="flex items-center gap-2 text-[#d71e28] font-medium" data-testid="link-tty">
+                <a href="tel:1-800-877-4833" className="flex items-center gap-2 text-[#cd1409] font-medium" data-testid="link-tty">
                   <Phone className="w-4 h-4" />
                   1-800-877-4833
                 </a>
@@ -186,7 +186,7 @@ export default function ContactPage() {
                   </p>
                 </div>
                 <Link href="/login">
-                  <Button className="w-full bg-[#d71e28] text-white" data-testid="button-sign-on-message">
+                  <Button className="w-full bg-[#cd1409] text-white" data-testid="button-sign-on-message">
                     Sign On to Send Message
                   </Button>
                 </Link>
@@ -207,7 +207,7 @@ export default function ContactPage() {
                     "Available 24/7",
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                      <span className="w-1.5 h-1.5 bg-[#d71e28] rounded-full mt-1.5 flex-shrink-0" />
+                      <span className="w-1.5 h-1.5 bg-[#cd1409] rounded-full mt-1.5 flex-shrink-0" />
                       {item}
                     </li>
                   ))}
@@ -311,7 +311,7 @@ export default function ContactPage() {
                     </p>
                   </div>
 
-                  <Button type="submit" className="w-full bg-[#d71e28] text-white" data-testid="button-submit-email">
+                  <Button type="submit" className="w-full bg-[#cd1409] text-white" data-testid="button-submit-email">
                     Send Message
                   </Button>
                 </form>
@@ -324,7 +324,7 @@ export default function ContactPage() {
         <Card className="mt-6">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-[#d71e28]" />
+              <HelpCircle className="w-5 h-5 text-[#cd1409]" />
               Common Questions
             </CardTitle>
           </CardHeader>

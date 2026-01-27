@@ -45,7 +45,7 @@ export default function BillPayPage() {
   if (paymentComplete) {
     return (
       <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-        <header className="bg-[#d71e28] sticky top-0 z-[9999]">
+        <header className="bg-[#cd1409] sticky top-0 z-[9999]">
           <div className="h-1 bg-[#ffcd41]" />
           <div className="max-w-7xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between gap-4">
@@ -82,7 +82,7 @@ export default function BillPayPage() {
                   <p>Scheduled Date: {new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
               </div>
-              <Button onClick={() => setLocation("/dashboard")} className="w-full bg-[#d71e28]" data-testid="button-return-accounts">
+              <Button onClick={() => setLocation("/dashboard")} className="w-full bg-[#cd1409]" data-testid="button-return-accounts">
                 Return to Accounts
               </Button>
               <p className="text-xs text-gray-500 mt-4">
@@ -98,7 +98,7 @@ export default function BillPayPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-      <header className="bg-[#d71e28] sticky top-0 z-[9999]">
+      <header className="bg-[#cd1409] sticky top-0 z-[9999]">
         <div className="h-1 bg-[#ffcd41]" />
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-4">
@@ -137,7 +137,7 @@ export default function BillPayPage() {
           <CardHeader>
             <div className="flex items-center justify-between gap-4">
               <CardTitle className="text-lg">Your Payees</CardTitle>
-              <Button variant="ghost" size="sm" className="text-[#d71e28]" data-testid="button-add-payee">
+              <Button variant="ghost" size="sm" className="text-[#cd1409]" data-testid="button-add-payee">
                 <Plus className="w-4 h-4 mr-1" />
                 Add Payee
               </Button>
@@ -224,7 +224,7 @@ export default function BillPayPage() {
                 </Select>
               </div>
 
-              <Button onClick={handlePayment} className="w-full bg-[#d71e28]" disabled={isProcessing} data-testid="button-submit-payment">
+              <Button onClick={handlePayment} className="w-full bg-[#cd1409]" disabled={isProcessing} data-testid="button-submit-payment">
                 {isProcessing ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />

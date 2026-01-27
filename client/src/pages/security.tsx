@@ -59,7 +59,7 @@ export default function SecurityPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
       {/* Header */}
-      <header className="bg-[#d71e28] sticky top-0 z-20">
+      <header className="bg-[#cd1409] sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-4 py-4">
             <Link href="/">
@@ -108,7 +108,7 @@ export default function SecurityPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg flex items-center gap-2">
-              <Bell className="w-5 h-5 text-[#d71e28]" />
+              <Bell className="w-5 h-5 text-[#cd1409]" />
               Recent Security Alerts
             </CardTitle>
             <Badge variant="outline">{securityAlerts.filter(a => !a.read).length} new</Badge>
@@ -131,7 +131,7 @@ export default function SecurityPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="font-medium text-gray-900">{alert.title}</p>
-                    {!alert.read && <span className="w-2 h-2 bg-[#d71e28] rounded-full" />}
+                    {!alert.read && <span className="w-2 h-2 bg-[#cd1409] rounded-full" />}
                   </div>
                   <p className="text-sm text-gray-600 mt-0.5">{alert.message}</p>
                   <p className="text-xs text-gray-400 mt-1">{alert.date}</p>
@@ -145,7 +145,7 @@ export default function SecurityPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Shield className="w-5 h-5 text-[#d71e28]" />
+              <Shield className="w-5 h-5 text-[#cd1409]" />
               Security Features
             </CardTitle>
           </CardHeader>
@@ -166,7 +166,7 @@ export default function SecurityPage() {
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-gray-900">{feature.name}</p>
                       {feature.recommended && !feature.enabled && (
-                        <Badge variant="outline" className="text-[#d71e28] border-[#d71e28] text-xs">
+                        <Badge variant="outline" className="text-[#cd1409] border-[#cd1409] text-xs">
                           Recommended
                         </Badge>
                       )}
@@ -188,8 +188,8 @@ export default function SecurityPage() {
         <div className="grid md:grid-cols-2 gap-4">
           <Card className="hover-elevate cursor-pointer" data-testid="card-change-password">
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-[#d71e28]/10 flex items-center justify-center">
-                <Key className="w-6 h-6 text-[#d71e28]" />
+              <div className="w-12 h-12 rounded-full bg-[#cd1409]/10 flex items-center justify-center">
+                <Key className="w-6 h-6 text-[#cd1409]" />
               </div>
               <div className="flex-1">
                 <p className="font-medium text-gray-900">Change Password</p>
@@ -201,8 +201,8 @@ export default function SecurityPage() {
           
           <Card className="hover-elevate cursor-pointer" data-testid="card-manage-devices">
             <CardContent className="p-4 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-[#d71e28]/10 flex items-center justify-center">
-                <Smartphone className="w-6 h-6 text-[#d71e28]" />
+              <div className="w-12 h-12 rounded-full bg-[#cd1409]/10 flex items-center justify-center">
+                <Smartphone className="w-6 h-6 text-[#cd1409]" />
               </div>
               <div className="flex-1">
                 <p className="font-medium text-gray-900">Manage Devices</p>
@@ -217,7 +217,7 @@ export default function SecurityPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-[#d71e28]" />
+              <AlertTriangle className="w-5 h-5 text-[#cd1409]" />
               Recognize & Report Fraud
             </CardTitle>
           </CardHeader>
@@ -246,7 +246,7 @@ export default function SecurityPage() {
                 If you suspect fraud on your account, contact us immediately.
               </p>
               <a href="tel:1-800-869-3557">
-                <Button variant="outline" className="border-[#d71e28] text-[#d71e28]" data-testid="button-report-fraud">
+                <Button variant="outline" className="border-[#cd1409] text-[#cd1409]" data-testid="button-report-fraud">
                   <Phone className="w-4 h-4 mr-2" />
                   Report Fraud: 1-800-869-3557
                 </Button>
@@ -259,7 +259,7 @@ export default function SecurityPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Eye className="w-5 h-5 text-[#d71e28]" />
+              <Eye className="w-5 h-5 text-[#cd1409]" />
               Security Tips
             </CardTitle>
           </CardHeader>

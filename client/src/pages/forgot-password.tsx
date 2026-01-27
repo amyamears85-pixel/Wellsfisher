@@ -14,9 +14,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { Search, ArrowLeft, Phone, Mail, Lock, Calendar, CreditCard } from "lucide-react";
+import { Search, ArrowLeft, Phone, Mail, Lock, Calendar, CreditCard, Globe } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import heroBg from "@/assets/images/hero-bg.jpg";
+import { WellsFargoIcon } from "@/components/wells-fargo-logo";
 
 const usernameRecoverySchema = z.object({
   password: z.string().min(1, "Password is required"),
@@ -89,50 +90,43 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-[#d71e28] text-white">
-        <div className="max-w-7xl mx-auto px-4 py-2">
-          <div className="flex items-center justify-between">
+    <div className="min-h-screen flex flex-col bg-[#fafafa]">
+      {/* Header */}
+      <header className="bg-[#cd1409]">
+        <div className="max-w-[1280px] mx-auto px-4">
+          <div className="flex items-center justify-between py-4">
             <Link href="/">
-              <span
-                className="text-lg font-bold tracking-wide cursor-pointer"
-                data-testid="text-logo"
-              >
-                WELLS FARGO
-              </span>
+              <div className="flex items-center gap-2.5 cursor-pointer">
+                <WellsFargoIcon className="w-9 h-9" />
+                <span
+                  className="text-white text-xl tracking-wide"
+                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+                  data-testid="text-logo"
+                >
+                  WELLS FARGO
+                </span>
+              </div>
             </Link>
 
-            <nav className="flex items-center gap-4 text-xs">
-              <a
-                href="#"
-                className="hover:underline hidden sm:inline"
-                data-testid="link-customer-service"
-              >
-                Customer Service
+            <nav className="flex items-center gap-6 text-sm text-white/90">
+              <a href="#" className="hover:text-white hidden sm:inline transition-colors" data-testid="link-help">
+                Help
               </a>
-              <a
-                href="#"
-                className="hover:underline hidden sm:inline"
-                data-testid="link-atm-locations"
-              >
-                ATMs/Locations
-              </a>
-              <a
-                href="#"
-                className="hover:underline hidden sm:inline"
-                data-testid="link-espanol"
-              >
+              <a href="#" className="hover:text-white hidden sm:inline flex items-center gap-1 transition-colors" data-testid="link-espanol">
+                <Globe className="w-4 h-4" />
                 Español
               </a>
-              <div className="flex items-center gap-2">
-                <Search className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-white/80">
+                <Lock className="w-4 h-4" />
+                <span className="text-xs hidden sm:inline">Secure</span>
               </div>
             </nav>
           </div>
         </div>
       </header>
 
-      <div className="bg-[#ffcd41] h-1"></div>
+      {/* Yellow accent bar */}
+      <div className="bg-gradient-to-r from-[#ffcd41] via-[#ffd44f] to-[#ffcd41] h-[6px]"></div>
 
       <main
         className="flex-1 relative"
@@ -151,7 +145,7 @@ export default function ForgotPasswordPage() {
               {step === "choose" ? (
                 <Link href="/">
                   <button
-                    className="flex items-center gap-2 text-[#d71e28] text-sm mb-4 hover:underline"
+                    className="flex items-center gap-2 text-[#cd1409] text-sm mb-4 hover:underline"
                     data-testid="button-back"
                   >
                     <ArrowLeft className="w-4 h-4" />
@@ -161,7 +155,7 @@ export default function ForgotPasswordPage() {
               ) : (
                 <button
                   onClick={() => setStep("choose")}
-                  className="flex items-center gap-2 text-[#d71e28] text-sm mb-4 hover:underline"
+                  className="flex items-center gap-2 text-[#cd1409] text-sm mb-4 hover:underline"
                   data-testid="button-back-options"
                 >
                   <ArrowLeft className="w-4 h-4" />
@@ -184,7 +178,7 @@ export default function ForgotPasswordPage() {
                   <div className="space-y-3">
                     <button
                       onClick={() => handleSelectOption("username")}
-                      className="w-full p-4 border border-gray-300 rounded-md text-left hover:border-[#d71e28] hover:bg-gray-50 transition-colors"
+                      className="w-full p-4 border border-gray-300 rounded-md text-left hover:border-[#cd1409] hover:bg-gray-50 transition-colors"
                       data-testid="button-forgot-username"
                     >
                       <div className="flex items-center gap-3">
@@ -204,7 +198,7 @@ export default function ForgotPasswordPage() {
 
                     <button
                       onClick={() => handleSelectOption("password")}
-                      className="w-full p-4 border border-gray-300 rounded-md text-left hover:border-[#d71e28] hover:bg-gray-50 transition-colors"
+                      className="w-full p-4 border border-gray-300 rounded-md text-left hover:border-[#cd1409] hover:bg-gray-50 transition-colors"
                       data-testid="button-forgot-password"
                     >
                       <div className="flex items-center gap-3">
@@ -226,7 +220,7 @@ export default function ForgotPasswordPage() {
                   <div className="mt-4 text-center">
                     <button
                       onClick={() => handleSelectOption("both")}
-                      className="text-[#d71e28] text-sm underline hover:no-underline"
+                      className="text-[#cd1409] text-sm underline hover:no-underline"
                       data-testid="link-forgot-both"
                     >
                       Both
@@ -322,7 +316,7 @@ export default function ForgotPasswordPage() {
 
                       <Button
                         type="submit"
-                        className="w-full h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full"
+                        className="w-full h-11 bg-[#cd1409] hover:bg-[#b81208] rounded-full"
                         data-testid="button-continue"
                       >
                         Continue
@@ -418,7 +412,7 @@ export default function ForgotPasswordPage() {
 
                       <Button
                         type="submit"
-                        className="w-full h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full"
+                        className="w-full h-11 bg-[#cd1409] hover:bg-[#b81208] rounded-full"
                         data-testid="button-continue"
                       >
                         Continue
@@ -515,7 +509,7 @@ export default function ForgotPasswordPage() {
 
                       <Button
                         type="submit"
-                        className="w-full h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full"
+                        className="w-full h-11 bg-[#cd1409] hover:bg-[#b81208] rounded-full"
                         data-testid="button-continue"
                       >
                         Continue
@@ -530,7 +524,7 @@ export default function ForgotPasswordPage() {
                   <Phone className="w-4 h-4" />
                   <span>
                     Need help? Call{" "}
-                    <a href="tel:1-800-869-3557" className="text-[#d71e28]">
+                    <a href="tel:1-800-869-3557" className="text-[#cd1409]">
                       1-800-869-3557
                     </a>
                   </span>

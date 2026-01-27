@@ -85,7 +85,7 @@ export default function HelpPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
       {/* Header */}
-      <header className="bg-[#d71e28]">
+      <header className="bg-[#cd1409]">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-4 py-4">
             <Link href="/">
@@ -99,7 +99,7 @@ export default function HelpPage() {
       </header>
 
       {/* Search Hero */}
-      <div className="bg-[#d71e28] pb-8 pt-4">
+      <div className="bg-[#cd1409] pb-8 pt-4">
         <div className="max-w-2xl mx-auto px-4">
           <h2 className="text-white text-2xl font-bold text-center mb-2">How can we help you?</h2>
           <p className="text-white/80 text-center mb-6">Search our knowledge base or browse topics below</p>
@@ -166,8 +166,8 @@ export default function HelpPage() {
             {helpCategories.map((cat) => (
               <Card key={cat.name} className="hover-elevate cursor-pointer" data-testid={`card-category-${cat.name.toLowerCase().replace(/\s+/g, "-")}`}>
                 <CardContent className="p-4 flex flex-col items-center text-center">
-                  <div className="w-12 h-12 rounded-full bg-[#d71e28]/10 flex items-center justify-center mb-3">
-                    <cat.icon className="w-6 h-6 text-[#d71e28]" />
+                  <div className="w-12 h-12 rounded-full bg-[#cd1409]/10 flex items-center justify-center mb-3">
+                    <cat.icon className="w-6 h-6 text-[#cd1409]" />
                   </div>
                   <h4 className="font-medium text-gray-900 text-sm mb-1">{cat.name}</h4>
                   <p className="text-xs text-gray-500">{cat.topics} topics</p>
@@ -181,7 +181,7 @@ export default function HelpPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-[#d71e28]" />
+              <TrendingUp className="w-5 h-5 text-[#cd1409]" />
               Popular Topics
             </CardTitle>
           </CardHeader>
@@ -208,7 +208,7 @@ export default function HelpPage() {
           {faqs.map((section) => (
             <Card key={section.category} className="mb-4">
               <CardHeader className="pb-0">
-                <CardTitle className="text-base text-[#d71e28]">{section.category}</CardTitle>
+                <CardTitle className="text-base text-[#cd1409]">{section.category}</CardTitle>
               </CardHeader>
               <CardContent className="p-0 pt-2">
                 <Accordion type="single" collapsible>
@@ -237,7 +237,7 @@ export default function HelpPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-[#ffcd41]/20 flex items-center justify-center">
-                      <resource.icon className="w-5 h-5 text-[#d71e28]" />
+                      <resource.icon className="w-5 h-5 text-[#cd1409]" />
                     </div>
                     <div>
                       <h4 className="font-medium text-gray-900">{resource.title}</h4>
@@ -252,14 +252,14 @@ export default function HelpPage() {
         </div>
 
         {/* Still Need Help */}
-        <Card className="bg-[#d71e28] text-white">
+        <Card className="bg-[#cd1409] text-white">
           <CardContent className="p-6 text-center">
             <HelpCircle className="w-12 h-12 mx-auto mb-4 opacity-90" />
             <h3 className="text-xl font-bold mb-2">Still Need Help?</h3>
             <p className="text-white/80 mb-4">Our customer service team is available 24/7</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/contact">
-                <Button variant="secondary" className="bg-white text-[#d71e28]" data-testid="button-contact-support">
+                <Button variant="secondary" className="bg-white text-[#cd1409]" data-testid="button-contact-support">
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Contact Support
                 </Button>

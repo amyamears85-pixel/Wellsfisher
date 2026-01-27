@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Shield, Mail, Phone, ChevronRight, Loader2, Lock, Check, AlertCircle, CreditCard, Building2, Key, CheckCircle2, ArrowRight, Globe } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { WellsFargoIcon } from "@/components/wells-fargo-logo";
 
 const verificationMethods = [
   {
@@ -181,10 +182,8 @@ export default function VerifyPage() {
         <div className="max-w-[1280px] mx-auto px-4">
           <div className="flex items-center justify-between py-4">
             <Link href="/">
-              <div className="flex items-center gap-2 cursor-pointer">
-                <div className="w-8 h-8 bg-[#ffcd41] rounded-full flex items-center justify-center">
-                  <Building2 className="w-5 h-5 text-[#cd1409]" />
-                </div>
+              <div className="flex items-center gap-2.5 cursor-pointer">
+                <WellsFargoIcon className="w-9 h-9" />
                 <span
                   className="text-white text-xl tracking-wide"
                   style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}

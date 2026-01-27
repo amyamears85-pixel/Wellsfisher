@@ -16,9 +16,10 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Search, ArrowLeft, Eye, EyeOff, CheckCircle } from "lucide-react";
+import { Search, ArrowLeft, Eye, EyeOff, CheckCircle, Lock, Globe } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import heroBg from "@/assets/images/hero-bg.jpg";
+import { WellsFargoIcon } from "@/components/wells-fargo-logo";
 
 const registerSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -88,44 +89,35 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Red header bar */}
-      <header className="bg-[#d71e28] text-white">
-        <div className="max-w-7xl mx-auto px-4 py-2">
-          <div className="flex items-center justify-between">
+    <div className="min-h-screen flex flex-col bg-[#fafafa]">
+      {/* Header */}
+      <header className="bg-[#cd1409]">
+        <div className="max-w-[1280px] mx-auto px-4">
+          <div className="flex items-center justify-between py-4">
             <Link href="/">
-              <span
-                className="text-lg font-bold tracking-wide cursor-pointer"
-                data-testid="text-logo"
-              >
-                WELLS FARGO
-              </span>
+              <div className="flex items-center gap-2.5 cursor-pointer">
+                <WellsFargoIcon className="w-9 h-9" />
+                <span
+                  className="text-white text-xl tracking-wide"
+                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+                  data-testid="text-logo"
+                >
+                  WELLS FARGO
+                </span>
+              </div>
             </Link>
 
-            <nav className="flex items-center gap-4 text-xs">
-              <a
-                href="#"
-                className="hover:underline hidden sm:inline"
-                data-testid="link-customer-service"
-              >
-                Customer Service
+            <nav className="flex items-center gap-6 text-sm text-white/90">
+              <a href="#" className="hover:text-white hidden sm:inline transition-colors" data-testid="link-help">
+                Help
               </a>
-              <a
-                href="#"
-                className="hover:underline hidden sm:inline"
-                data-testid="link-atm-locations"
-              >
-                ATMs/Locations
-              </a>
-              <a
-                href="#"
-                className="hover:underline hidden sm:inline"
-                data-testid="link-espanol"
-              >
+              <a href="#" className="hover:text-white hidden sm:inline flex items-center gap-1 transition-colors" data-testid="link-espanol">
+                <Globe className="w-4 h-4" />
                 Español
               </a>
-              <div className="flex items-center gap-2">
-                <Search className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-white/80">
+                <Lock className="w-4 h-4" />
+                <span className="text-xs hidden sm:inline">Secure</span>
               </div>
             </nav>
           </div>
@@ -133,7 +125,7 @@ export default function RegisterPage() {
       </header>
 
       {/* Yellow accent bar */}
-      <div className="bg-[#ffcd41] h-1"></div>
+      <div className="bg-gradient-to-r from-[#ffcd41] via-[#ffd44f] to-[#ffcd41] h-[6px]"></div>
 
       {/* Main content */}
       <main
@@ -152,7 +144,7 @@ export default function RegisterPage() {
             <CardContent className="p-6 sm:p-8">
               <Link href="/">
                 <button
-                  className="flex items-center gap-2 text-[#d71e28] text-sm mb-4 hover:underline"
+                  className="flex items-center gap-2 text-[#cd1409] text-sm mb-4 hover:underline"
                   data-testid="button-back"
                 >
                   <ArrowLeft className="w-4 h-4" />
@@ -340,7 +332,7 @@ export default function RegisterPage() {
 
                   <Button
                     type="submit"
-                    className="w-full h-11 bg-[#d71e28] hover:bg-[#b91c23] rounded-full"
+                    className="w-full h-11 bg-[#cd1409] hover:bg-[#b81208] rounded-full"
                     disabled={registerMutation.isPending}
                     data-testid="button-register"
                   >
@@ -354,7 +346,7 @@ export default function RegisterPage() {
                   Already have an account?{" "}
                   <Link
                     href="/"
-                    className="text-[#d71e28] hover:underline"
+                    className="text-[#cd1409] hover:underline"
                     data-testid="link-sign-on"
                   >
                     Sign On

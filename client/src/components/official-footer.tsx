@@ -1,7 +1,9 @@
+import { WellsFargoIcon } from "@/components/wells-fargo-logo";
+
 export function OfficialFooter() {
   return (
-    <footer className="bg-white border-t mt-auto">
-      <div className="h-1 bg-[#ffcd41]" />
+    <footer className="bg-[#fafafa] border-t mt-auto">
+      <div className="h-1.5 bg-gradient-to-r from-[#ffcd41] via-[#ffe066] to-[#ffcd41]" />
       <div className="max-w-4xl mx-auto px-4 py-6">
         <div className="space-y-4 text-xs text-gray-600 leading-relaxed">
           <div className="bg-gray-50 p-4 rounded border">
@@ -15,7 +17,7 @@ export function OfficialFooter() {
 
           <p>
             Investment products and services are offered through Wells Fargo Advisors. Wells Fargo Advisors is a trade name used by Wells Fargo Clearing Services, LLC (WFCS) and Wells Fargo Advisors Financial Network, LLC, Members{' '}
-            <a href="https://www.sipc.org" className="text-[#d71e28] hover:underline" data-testid="link-sipc">SIPC</a>, separate registered broker-dealers and non-bank affiliates of Wells Fargo & Company.
+            <a href="https://www.sipc.org" className="text-[#cd1409] hover:underline" data-testid="link-sipc">SIPC</a>, separate registered broker-dealers and non-bank affiliates of Wells Fargo & Company.
           </p>
 
           <p>
@@ -46,7 +48,11 @@ export function OfficialFooter() {
             <p>LRC-0325</p>
           </div>
 
-          <div className="pt-2 border-t">
+          <div className="pt-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <WellsFargoIcon className="w-6 h-6" />
+              <span className="text-sm font-medium text-gray-700" style={{ fontFamily: "Georgia, serif" }}>WELLS FARGO</span>
+            </div>
             <p className="text-gray-500">© 1999 - 2026 Wells Fargo. NMLSR ID 399801</p>
           </div>
         </div>
