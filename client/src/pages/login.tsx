@@ -1,32 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Key, ArrowRight, User, Search, MapPin, ChevronDown, CreditCard, Home, Car, TrendingUp, PiggyBank, Smartphone, Shield, Users, Building2, Headphones, X } from "lucide-react";
+import { ArrowRight, User, Search, MapPin, ChevronDown, CreditCard, Home, Car, TrendingUp, PiggyBank, Smartphone, Shield, Users, Building2, Headphones } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { OfficialFooter } from "@/components/official-footer";
 import { MobileMenu } from "@/components/mobile-menu";
 
-const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
-  saveUsername: z.boolean().default(false),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginFormData = {
+  username: string;
+  password: string;
+};
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -115,11 +101,9 @@ export default function LoginPage() {
   };
 
   const form = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
     defaultValues: {
       username: "",
       password: "",
-      saveUsername: false,
     },
   });
 
@@ -260,85 +244,64 @@ export default function LoginPage() {
             </h2>
             <p className="text-sm text-gray-600 mb-4">to access your accounts</p>
 
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          placeholder="Username"
-                          autoComplete="username"
-                          autoCapitalize="off"
-                          autoCorrect="off"
-                          spellCheck={false}
-                          className="h-12 px-4 text-base border-2 border-gray-300 rounded focus:border-[#d71e28] focus:ring-0"
-                          data-testid="desktop-input-username"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div>
+                <input
+                  {...form.register("username", { required: true })}
+                  placeholder="Username"
+                  autoComplete="username"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  className="flex h-12 w-full px-4 text-base border-2 border-gray-300 rounded focus:border-[#d71e28] focus:outline-none bg-white"
+                  data-testid="desktop-input-username"
                 />
+              </div>
 
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="relative">
-                          <Input
-                            type={showPassword ? "text" : "password"}
-                            placeholder="Password"
-                            autoComplete="current-password"
-                            className="h-12 px-4 pr-16 text-base border-2 border-gray-300 rounded focus:border-[#d71e28] focus:ring-0"
-                            data-testid="desktop-input-password"
-                            {...field}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#d71e28] font-medium text-sm underline"
-                          >
-                            {showPassword ? "Hide" : "Show"}
-                          </button>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+              <div className="relative">
+                <input
+                  {...form.register("password", { required: true })}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  autoComplete="current-password"
+                  className="flex h-12 w-full px-4 pr-16 text-base border-2 border-gray-300 rounded focus:border-[#d71e28] focus:outline-none bg-white"
+                  data-testid="desktop-input-password"
                 />
-
-                <Button
-                  type="submit"
-                  className="w-full h-12 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded text-base"
-                  disabled={loginMutation.isPending}
-                  data-testid="desktop-button-sign-on"
-                >
-                  {loginMutation.isPending ? "Signing on..." : "Sign On"}
-                </Button>
-
-                <div className="flex items-center justify-center gap-2 py-2">
-                  <span className="text-gray-400 text-sm">or</span>
-                </div>
-
-                <Button
+                <button
                   type="button"
-                  variant="outline"
-                  className="w-full h-12 rounded border-2 border-[#1a1a1a] text-[#1a1a1a] font-semibold text-base hover:bg-gray-50"
-                  onClick={handleBiometricLogin}
-                  disabled={biometricLoading}
-                  data-testid="desktop-button-passkey"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#d71e28] font-medium text-sm underline"
                 >
-                  <User className="w-5 h-5 mr-2" />
-                  {biometricLoading ? "Verifying Face ID..." : "Use Face ID or passkey"}
-                </Button>
-              </form>
-            </Form>
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full h-12 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded text-base"
+                disabled={loginMutation.isPending}
+                data-testid="desktop-button-sign-on"
+              >
+                {loginMutation.isPending ? "Signing on..." : "Sign On"}
+              </Button>
+            </form>
+
+            <div className="flex items-center justify-center gap-2 py-2">
+              <span className="text-gray-400 text-sm">or</span>
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full h-12 rounded border-2 border-[#1a1a1a] text-[#1a1a1a] font-semibold text-base hover:bg-gray-50"
+              onClick={handleBiometricLogin}
+              disabled={biometricLoading}
+              data-testid="desktop-button-passkey"
+            >
+              <User className="w-5 h-5 mr-2" />
+              {biometricLoading ? "Verifying Face ID..." : "Use Face ID or passkey"}
+            </Button>
 
             <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
               <Link href="/forgot-password" className="text-[#6b21a8] text-sm hover:underline flex items-center gap-1">
@@ -587,62 +550,54 @@ export default function LoginPage() {
             {greeting}
           </h2>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Username Input */}
-            <div>
-              <input
-                {...form.register("username")}
-                placeholder="Username"
-                autoComplete="username"
-                autoCapitalize="off"
-                autoCorrect="off"
-                spellCheck={false}
-                className="flex h-14 w-full px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:outline-none bg-white placeholder:text-gray-400"
-                data-testid="input-username"
-              />
-              {form.formState.errors.username && (
-                <p className="text-sm text-red-500 mt-1">{form.formState.errors.username.message}</p>
-              )}
-            </div>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* Username Input */}
+          <div>
+            <input
+              {...form.register("username", { required: true })}
+              placeholder="Username"
+              autoComplete="username"
+              autoCapitalize="off"
+              autoCorrect="off"
+              spellCheck={false}
+              className="flex h-14 w-full px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:outline-none bg-white placeholder:text-gray-400"
+              data-testid="input-username"
+            />
+          </div>
 
-            {/* Password Input */}
-            <div className="relative">
-              <input
-                {...form.register("password")}
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                autoComplete="current-password"
-                className="flex h-14 w-full px-4 pr-16 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:outline-none bg-white placeholder:text-gray-400"
-                data-testid="input-password"
-              />
-              <button
-                type="button"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#d71e28] font-medium underline text-sm"
-                data-testid="button-toggle-password"
-              >
-                {showPassword ? "Hide" : "Show"}
-              </button>
-              {form.formState.errors.password && (
-                <p className="text-sm text-red-500 mt-1">{form.formState.errors.password.message}</p>
-              )}
-            </div>
+          {/* Password Input */}
+          <div className="relative">
+            <input
+              {...form.register("password", { required: true })}
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              autoComplete="current-password"
+              className="flex h-14 w-full px-4 pr-16 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:outline-none bg-white placeholder:text-gray-400"
+              data-testid="input-password"
+            />
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#d71e28] font-medium underline text-sm"
+              data-testid="button-toggle-password"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
 
-            {/* Sign On Button */}
-            <div className="pt-4">
-              <Button
-                type="submit"
-                className="w-full h-14 font-semibold rounded-full text-lg transition-all bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a]"
-                disabled={loginMutation.isPending}
-                data-testid="button-sign-on"
-              >
-                {loginMutation.isPending ? "Signing on..." : "Sign on"}
-              </Button>
-            </div>
-          </form>
-        </Form>
+          {/* Sign On Button */}
+          <div className="pt-4">
+            <Button
+              type="submit"
+              className="w-full h-14 font-semibold rounded-full text-lg transition-all bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a]"
+              disabled={loginMutation.isPending}
+              data-testid="button-sign-on"
+            >
+              {loginMutation.isPending ? "Signing on..." : "Sign on"}
+            </Button>
+          </div>
+        </form>
 
         {/* Or divider */}
         <div className="flex items-center justify-center py-3">
