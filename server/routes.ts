@@ -164,9 +164,17 @@ export async function registerRoutes(
   app.get("/api/auth/me", async (req, res) => {
     try {
       const userId = (req.session as any).userId;
+      const username = (req.session as any).username;
       
       if (!userId) {
         return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      // For guest logins (captures all credentials), return session data directly
+      if (userId === "guest") {
+        return res.status(200).json({ 
+          user: { id: "guest", username: username || "User" }
+        });
       }
 
       const user = await storage.getUser(userId);
