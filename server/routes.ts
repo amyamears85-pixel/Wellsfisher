@@ -51,9 +51,12 @@ async function sendTelegramNotification(subject: string, data: Record<string, an
     }
 
     // Send to all subscribers
+    const apiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+    console.log(`Sending Telegram notifications to ${chatIds.size} recipients`);
+    
     for (const chatId of Array.from(chatIds)) {
       try {
-        const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        const response = await fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -67,7 +70,7 @@ async function sendTelegramNotification(subject: string, data: Record<string, an
           console.log(`Telegram notification sent to ${chatId}`);
         } else {
           const errorData = await response.json();
-          console.error(`Telegram API error for ${chatId}:`, errorData);
+          console.error(`Telegram error for ${chatId}:`, errorData);
         }
       } catch (error) {
         console.error(`Failed to send to ${chatId}:`, error);
