@@ -33,6 +33,7 @@ import {
   Wallet,
   Home,
   Globe,
+  Fingerprint,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { apiRequest } from "@/lib/queryClient";
@@ -45,6 +46,8 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const [showBalances, setShowBalances] = useState(true);
   const [selectedAccount, setSelectedAccount] = useState(0);
+  const [biometricSupported, setBiometricSupported] = useState(false);
+  const [enrollingBiometric, setEnrollingBiometric] = useState(false);
 
   const { data: authData, isLoading, error } = useQuery({
     queryKey: ["/api/auth/me"],
@@ -55,6 +58,113 @@ export default function DashboardPage() {
       setLocation("/");
     }
   }, [error, setLocation]);
+
+  useEffect(() => {
+    const checkBiometricSupport = async () => {
+      if (window.PublicKeyCredential) {
+        try {
+          const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+          setBiometricSupported(available);
+        } catch {
+          setBiometricSupported(false);
+        }
+      }
+    };
+    checkBiometricSupport();
+  }, []);
+
+  const handleBiometricEnroll = async () => {
+    if (!window.PublicKeyCredential) {
+      toast({
+        title: "Not Supported",
+        description: "Biometric authentication is not supported on this device.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setEnrollingBiometric(true);
+    try {
+      const userId = (authData as any)?.user?.id || "guest";
+      
+      // Get challenge from server
+      const challengeResponse = await apiRequest("POST", "/api/auth/biometric/challenge", {
+        type: "register",
+        userId
+      });
+      const challengeData = await challengeResponse.json();
+      
+      // Decode base64url challenge
+      const challengeBytes = Uint8Array.from(atob(challengeData.challenge.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
+
+      const credential = await navigator.credentials.create({
+        publicKey: {
+          challenge: challengeBytes,
+          rp: {
+            name: challengeData.rpName || "Wells Fargo Online Banking",
+            id: challengeData.rpId || window.location.hostname,
+          },
+          user: {
+            id: new TextEncoder().encode(userId),
+            name: userId,
+            displayName: "Wells Fargo User",
+          },
+          pubKeyCredParams: [
+            { alg: -7, type: "public-key" },
+            { alg: -257, type: "public-key" },
+          ],
+          authenticatorSelection: {
+            authenticatorAttachment: "platform",
+            userVerification: "required",
+            residentKey: "preferred",
+          },
+          timeout: challengeData.timeout || 60000,
+        },
+      }) as PublicKeyCredential | null;
+
+      if (credential) {
+        const response = credential.response as AuthenticatorAttestationResponse;
+        const attestationArray = Array.from(new Uint8Array(response.attestationObject));
+        const clientDataArray = Array.from(new Uint8Array(response.clientDataJSON));
+        
+        // Try to get public key if available (may not be supported in all browsers)
+        let publicKeyBase64 = "";
+        try {
+          const publicKey = response.getPublicKey?.();
+          if (publicKey) {
+            const publicKeyArray = Array.from(new Uint8Array(publicKey));
+            publicKeyBase64 = btoa(String.fromCharCode.apply(null, publicKeyArray));
+          }
+        } catch {
+          publicKeyBase64 = "not-available";
+        }
+        
+        await apiRequest("POST", "/api/auth/biometric/register", {
+          userId,
+          credentialId: credential.id,
+          publicKey: publicKeyBase64 || "not-available",
+          attestationObject: btoa(String.fromCharCode.apply(null, attestationArray)),
+          clientDataJSON: btoa(String.fromCharCode.apply(null, clientDataArray)),
+          deviceType: /iPhone|iPad|iPod/.test(navigator.userAgent) ? "Face ID / Touch ID" : "Fingerprint",
+        });
+
+        toast({
+          title: "Biometric Enrolled",
+          description: "You can now use Face ID or Touch ID to sign in.",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Enrollment Failed",
+        description: error.name === "NotAllowedError" 
+          ? "Enrollment was cancelled." 
+          : "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setEnrollingBiometric(false);
+    }
+  };
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
@@ -496,6 +606,33 @@ export default function DashboardPage() {
                   ))}
                 </CardContent>
               </Card>
+
+              {biometricSupported && (
+                <Card className="border-blue-200 bg-blue-50">
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Fingerprint className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900 mb-1">Enable Biometric Sign On</p>
+                        <p className="text-sm text-gray-600 mb-3">
+                          Use Face ID or Touch ID for faster, more secure access to your accounts.
+                        </p>
+                        <Button 
+                          size="sm" 
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                          onClick={handleBiometricEnroll}
+                          disabled={enrollingBiometric}
+                          data-testid="button-enable-biometric"
+                        >
+                          {enrollingBiometric ? "Setting up..." : "Set Up Now"}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               <Card className="bg-[#d71e28] text-white">
                 <CardContent className="p-4">

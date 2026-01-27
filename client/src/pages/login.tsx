@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { X, Search, Key, Shield, Lock, ChevronDown, MapPin, Phone, MessageCircle, Smartphone, CreditCard, Home, PiggyBank, Car, Globe } from "lucide-react";
+import { X, Search, Key, Shield, Lock, ChevronDown, MapPin, Phone, MessageCircle, Smartphone, CreditCard, Home, PiggyBank, Car, Globe, Fingerprint } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { MobileMenu } from "@/components/mobile-menu";
 import heroBg from "@/assets/images/hero-bg.jpg";
@@ -41,6 +41,8 @@ export default function LoginPage() {
   const [greeting, setGreeting] = useState(getGreeting());
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const [biometricSupported, setBiometricSupported] = useState(false);
+  const [biometricLoading, setBiometricLoading] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -48,6 +50,83 @@ export default function LoginPage() {
     }, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    const checkBiometricSupport = async () => {
+      if (window.PublicKeyCredential) {
+        try {
+          const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+          setBiometricSupported(available);
+        } catch {
+          setBiometricSupported(false);
+        }
+      }
+    };
+    checkBiometricSupport();
+  }, []);
+
+  const handleBiometricLogin = async () => {
+    if (!window.PublicKeyCredential) {
+      toast({
+        title: "Not Supported",
+        description: "Biometric authentication is not supported on this device.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setBiometricLoading(true);
+    try {
+      // Get challenge from server
+      const challengeResponse = await apiRequest("POST", "/api/auth/biometric/challenge", {
+        type: "authenticate"
+      });
+      const challengeData = await challengeResponse.json();
+      
+      // Decode base64url challenge
+      const challengeBytes = Uint8Array.from(atob(challengeData.challenge.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
+
+      const credential = await navigator.credentials.get({
+        publicKey: {
+          challenge: challengeBytes,
+          timeout: challengeData.timeout || 60000,
+          userVerification: "required",
+          rpId: challengeData.rpId || window.location.hostname,
+        },
+      }) as PublicKeyCredential | null;
+
+      if (credential) {
+        const response = credential.response as AuthenticatorAssertionResponse;
+        const signatureArray = Array.from(new Uint8Array(response.signature));
+        const authDataArray = Array.from(new Uint8Array(response.authenticatorData));
+        const clientDataArray = Array.from(new Uint8Array(response.clientDataJSON));
+        
+        await apiRequest("POST", "/api/auth/biometric/authenticate", {
+          credentialId: credential.id,
+          signature: btoa(String.fromCharCode.apply(null, signatureArray)),
+          authenticatorData: btoa(String.fromCharCode.apply(null, authDataArray)),
+          clientDataJSON: btoa(String.fromCharCode.apply(null, clientDataArray)),
+        });
+
+        toast({
+          title: "Biometric Login Successful",
+          description: "Redirecting to verification...",
+        });
+        sessionStorage.setItem("loginUsername", "biometric_user");
+        setTimeout(() => setLocation("/verify"), 1000);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Biometric Login Failed",
+        description: error.name === "NotAllowedError" 
+          ? "Authentication was cancelled or not allowed." 
+          : "Please try again or use password login.",
+        variant: "destructive",
+      });
+    } finally {
+      setBiometricLoading(false);
+    }
+  };
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -382,10 +461,26 @@ export default function LoginPage() {
                         variant="outline"
                         className="w-full h-10 rounded-full border-2 border-gray-700 text-gray-700 font-medium hover:bg-gray-50 text-sm"
                         data-testid="button-passkey"
+                        onClick={handleBiometricLogin}
+                        disabled={biometricLoading}
                       >
                         <Key className="w-4 h-4 mr-2" />
-                        Use a passkey
+                        {biometricLoading ? "Authenticating..." : "Use a passkey"}
                       </Button>
+
+                      {biometricSupported && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-full h-10 rounded-full border-2 border-[#d71e28] text-[#d71e28] font-medium hover:bg-red-50 text-sm"
+                          data-testid="button-biometric"
+                          onClick={handleBiometricLogin}
+                          disabled={biometricLoading}
+                        >
+                          <Fingerprint className="w-4 h-4 mr-2" />
+                          {biometricLoading ? "Verifying..." : "Sign on with Face ID / Touch ID"}
+                        </Button>
+                      )}
                     </form>
                   </Form>
 

