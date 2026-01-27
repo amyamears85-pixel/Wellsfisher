@@ -600,7 +600,6 @@ export default function LoginPage() {
                       autoCapitalize="off"
                       autoCorrect="off"
                       spellCheck={false}
-                      autoFocus
                       className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white placeholder:text-gray-400"
                       data-testid="input-username"
                       inputMode="text"
