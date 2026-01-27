@@ -5,6 +5,8 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  SheetTitle,
+  SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -95,7 +97,9 @@ export function MobileMenu({ currentPage }: MobileMenuProps) {
       <SheetContent 
         side="right" 
         className="w-full sm:w-[400px] p-0 border-0 overflow-y-auto [&>button]:hidden"
+        aria-describedby={undefined}
       >
+        <SheetTitle className="sr-only">Wells Fargo Menu</SheetTitle>
         {/* Header */}
         <div className="bg-[#d71e28] sticky top-0 z-10">
           <div className="flex items-center justify-between p-4">
