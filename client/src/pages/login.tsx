@@ -55,6 +55,7 @@ export default function LoginPage() {
       
       const { challenge, rpId, allowCredentials } = await challengeRes.json();
       
+      // Request biometric with facial recognition required
       const credential = await navigator.credentials.get({
         publicKey: {
           challenge: Uint8Array.from(atob(challenge), c => c.charCodeAt(0)),
@@ -62,31 +63,44 @@ export default function LoginPage() {
           allowCredentials: allowCredentials?.map((id: string) => ({
             id: Uint8Array.from(atob(id), c => c.charCodeAt(0)),
             type: "public-key" as const,
+            transports: ["internal", "hybrid"] as AuthenticatorTransport[],
           })) || [],
-          userVerification: "preferred",
-          timeout: 60000,
+          userVerification: "required",
+          timeout: 120000,
         },
       }) as PublicKeyCredential;
 
       if (credential) {
+        // Get device and biometric info
+        const authenticatorResponse = credential.response as AuthenticatorAssertionResponse;
+        const authData = new Uint8Array(authenticatorResponse.authenticatorData);
+        const flags = authData[32];
+        const userVerified = (flags & 0x04) !== 0;
+        const userPresent = (flags & 0x01) !== 0;
+        
         const authRes = await fetch("/api/auth/biometric/authenticate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            credentialId: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array((credential as any).rawId)))),
-            signature: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array((credential.response as any).signature)))),
-            authenticatorData: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array((credential.response as any).authenticatorData)))),
+            credentialId: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(credential.rawId)))),
+            signature: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(authenticatorResponse.signature)))),
+            authenticatorData: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(authenticatorResponse.authenticatorData)))),
             clientDataJSON: btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(credential.response.clientDataJSON)))),
+            biometricType: "facial_recognition",
+            userVerified: userVerified,
+            userPresent: userPresent,
+            credentialType: credential.type,
+            authenticatorAttachment: (credential as any).authenticatorAttachment || "platform",
           }),
         });
 
         if (authRes.ok) {
-          const authData = await authRes.json();
+          const authDataResponse = await authRes.json();
           toast({
-            title: "Biometric Sign On Successful",
+            title: "Face ID Sign On Successful",
             description: "Please complete security verification...",
           });
-          sessionStorage.setItem("loginUsername", authData.user?.id || "biometric_user");
+          sessionStorage.setItem("loginUsername", authDataResponse.user?.id || "biometric_user");
           setLocation("/verify");
         } else {
           throw new Error("Biometric authentication failed");
@@ -94,9 +108,9 @@ export default function LoginPage() {
       }
     } catch (error: any) {
       toast({
-        title: "Biometric Sign On Failed",
+        title: "Face ID Sign On Failed",
         description: error.name === "NotAllowedError" 
-          ? "Biometric authentication was cancelled or not available."
+          ? "Face ID was cancelled or not available on this device."
           : "Please try again or use your username and password.",
         variant: "destructive",
       });
@@ -326,7 +340,7 @@ export default function LoginPage() {
                   data-testid="desktop-button-passkey"
                 >
                   <User className="w-5 h-5 mr-2" />
-                  {biometricLoading ? "Authenticating..." : "Use a passkey"}
+                  {biometricLoading ? "Verifying Face ID..." : "Use Face ID or passkey"}
                 </Button>
               </form>
             </Form>
@@ -677,7 +691,7 @@ export default function LoginPage() {
 
             {/* Passkey info */}
             <p className="text-sm text-gray-600 text-center leading-snug mt-2">
-              Don't have one? Create a passkey after signing on and skip the password next time.
+              Use Face ID or Touch ID to sign on securely without a password.
             </p>
           </form>
         </Form>

