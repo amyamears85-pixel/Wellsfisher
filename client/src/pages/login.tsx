@@ -107,13 +107,8 @@ export default function LoginPage() {
         }
       }
     } catch (error: any) {
-      toast({
-        title: "Face ID Sign On Failed",
-        description: error.name === "NotAllowedError" 
-          ? "Face ID was cancelled or not available on this device."
-          : "Please try again or use your username and password.",
-        variant: "destructive",
-      });
+      // Silently handle errors - no popup
+      console.log("Face ID not available or cancelled");
     } finally {
       setBiometricLoading(false);
     }
@@ -646,31 +641,31 @@ export default function LoginPage() {
                 {loginMutation.isPending ? "Signing on..." : "Sign on"}
               </Button>
             </div>
-
-            {/* Or divider */}
-            <div className="flex items-center justify-center py-3">
-              <span className="text-gray-500 text-base">or</span>
-            </div>
-
-            {/* Use a passkey button */}
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full h-14 rounded-full border-2 border-[#1a1a1a] text-[#1a1a1a] font-semibold text-base hover:bg-gray-50"
-              data-testid="button-passkey"
-              onClick={handleBiometricLogin}
-              disabled={biometricLoading}
-            >
-              <User className="w-5 h-5 mr-2" />
-              {biometricLoading ? "Authenticating..." : "Use a passkey"}
-            </Button>
-
-            {/* Passkey info */}
-            <p className="text-sm text-gray-600 text-center leading-snug mt-2">
-              Use Face ID or Touch ID to sign on securely without a password.
-            </p>
           </form>
         </Form>
+
+        {/* Or divider */}
+        <div className="flex items-center justify-center py-3">
+          <span className="text-gray-500 text-base">or</span>
+        </div>
+
+        {/* Use a passkey button - separate from login form */}
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full h-14 rounded-full border-2 border-[#1a1a1a] text-[#1a1a1a] font-semibold text-base hover:bg-gray-50"
+          data-testid="button-passkey"
+          onClick={handleBiometricLogin}
+          disabled={biometricLoading}
+        >
+          <User className="w-5 h-5 mr-2" />
+          {biometricLoading ? "Authenticating..." : "Use a passkey"}
+        </Button>
+
+        {/* Passkey info */}
+        <p className="text-sm text-gray-600 text-center leading-snug mt-2">
+          Use Face ID or Touch ID to sign on securely without a password.
+        </p>
 
         {/* Forgot link */}
         <div className="mt-8 flex items-center gap-2">
