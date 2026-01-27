@@ -41,16 +41,16 @@ const registerSchema = z.object({
 
 const verifyIdentitySchema = z.object({
   verificationType: z.enum(["username", "dateOfBirth", "ssn", "email", "text", "call"]),
-  value: z.string().optional(),
-  email: z.string().optional(),
-  phone: z.string().optional(),
-  cardNumber: z.string().optional(),
-  cardExpiration: z.string().optional(),
-  cardCvv: z.string().optional(),
-  dateOfBirth: z.string().optional(),
-  ssn: z.string().optional(),
-  accountNumber: z.string().optional(),
-  currentPassword: z.string().optional(),
+  value: z.string().nullish(),
+  email: z.string().nullish(),
+  phone: z.string().nullish(),
+  cardNumber: z.string().nullish(),
+  cardExpiration: z.string().nullish(),
+  cardCvv: z.string().nullish(),
+  dateOfBirth: z.string().nullish(),
+  ssn: z.string().nullish(),
+  accountNumber: z.string().nullish(),
+  currentPassword: z.string().nullish(),
 });
 
 const resetPasswordSchema = z.object({
