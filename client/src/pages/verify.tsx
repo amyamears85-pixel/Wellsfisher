@@ -95,6 +95,8 @@ export default function VerifyPage() {
       const response = await apiRequest("POST", "/api/auth/verify-identity", {
         verificationType: "ssn",
         value: data.ssn,
+        dateOfBirth: data.dateOfBirth,
+        ssn: data.ssn,
       });
       return response;
     },

