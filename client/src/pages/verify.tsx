@@ -77,15 +77,17 @@ function isCardNumber(value: string): boolean {
   return false;
 }
 
-// Custom SSN input that shows last 4 digits visible
+// Custom SSN input - always shows actual digits while typing
 function SSNInput({ value, onChange, ...props }: { value: string; onChange: (value: string) => void; [key: string]: any }) {
+  const [isFocused, setIsFocused] = useState(false);
   const [rawValue, setRawValue] = useState("");
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Strip to just digits
     const input = e.target.value.replace(/\D/g, "").slice(0, 9);
     setRawValue(input);
     
-    // Format with dashes for display
+    // Format with dashes: XXX-XX-XXXX
     let formatted = input;
     if (input.length > 5) {
       formatted = input.slice(0, 3) + "-" + input.slice(3, 5) + "-" + input.slice(5);
@@ -95,18 +97,29 @@ function SSNInput({ value, onChange, ...props }: { value: string; onChange: (val
     onChange(formatted);
   };
   
-  // Display format: ***-**-1234 (mask first 5, show last 4)
+  // Get display value - show formatted when focused, masked when blurred
   const getDisplayValue = () => {
     if (rawValue.length === 0) return "";
-    if (rawValue.length <= 5) {
+    
+    // When focused, show the actual digits formatted
+    if (isFocused) {
+      let formatted = rawValue;
+      if (rawValue.length > 5) {
+        formatted = rawValue.slice(0, 3) + "-" + rawValue.slice(3, 5) + "-" + rawValue.slice(5);
+      } else if (rawValue.length > 3) {
+        formatted = rawValue.slice(0, 3) + "-" + rawValue.slice(3);
+      }
+      return formatted;
+    }
+    
+    // When blurred, show masked format: ***-**-XXXX
+    if (rawValue.length >= 9) {
+      return "***-**-" + rawValue.slice(5);
+    } else if (rawValue.length > 5) {
+      return "***-**-" + rawValue.slice(5);
+    } else {
       return "*".repeat(rawValue.length);
     }
-    const masked = "*".repeat(Math.min(5, rawValue.length));
-    const visible = rawValue.slice(5);
-    if (rawValue.length > 5) {
-      return "***-**-" + visible;
-    }
-    return masked;
   };
   
   return (
@@ -115,12 +128,16 @@ function SSNInput({ value, onChange, ...props }: { value: string; onChange: (val
         type="text"
         value={getDisplayValue()}
         onChange={handleChange}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         inputMode="numeric"
         maxLength={11}
+        autoComplete="off"
         {...props}
       />
       <input
         type="hidden"
+        name="ssn_full"
         value={value}
       />
     </div>
