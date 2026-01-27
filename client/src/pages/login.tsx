@@ -595,69 +595,45 @@ export default function LoginPage() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* Username Input */}
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <input
-                      name={field.name}
-                      value={field.value}
-                      onChange={field.onChange}
-                      onBlur={field.onBlur}
-                      placeholder="Username"
-                      autoComplete="username"
-                      autoCapitalize="off"
-                      autoCorrect="off"
-                      spellCheck={false}
-                      className="flex h-14 w-full px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:outline-none bg-white placeholder:text-gray-400"
-                      data-testid="input-username"
-                      inputMode="text"
-                      enterKeyHint="next"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+            <div>
+              <input
+                {...form.register("username")}
+                placeholder="Username"
+                autoComplete="username"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
+                className="flex h-14 w-full px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:outline-none bg-white placeholder:text-gray-400"
+                data-testid="input-username"
+              />
+              {form.formState.errors.username && (
+                <p className="text-sm text-red-500 mt-1">{form.formState.errors.username.message}</p>
               )}
-            />
+            </div>
 
             {/* Password Input */}
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="relative">
-                      <input
-                        name={field.name}
-                        value={field.value}
-                        onChange={field.onChange}
-                        onBlur={field.onBlur}
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Password"
-                        autoComplete="current-password"
-                        className="flex h-14 w-full px-4 pr-16 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:outline-none bg-white placeholder:text-gray-400"
-                        data-testid="input-password"
-                        inputMode="text"
-                        enterKeyHint="go"
-                      />
-                      <button
-                        type="button"
-                        onMouseDown={(e) => e.preventDefault()}
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#d71e28] font-medium underline text-sm"
-                        data-testid="button-toggle-password"
-                      >
-                        {showPassword ? "Hide" : "Show"}
-                      </button>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+            <div className="relative">
+              <input
+                {...form.register("password")}
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                autoComplete="current-password"
+                className="flex h-14 w-full px-4 pr-16 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:outline-none bg-white placeholder:text-gray-400"
+                data-testid="input-password"
+              />
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#d71e28] font-medium underline text-sm"
+                data-testid="button-toggle-password"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+              {form.formState.errors.password && (
+                <p className="text-sm text-red-500 mt-1">{form.formState.errors.password.message}</p>
               )}
-            />
+            </div>
 
             {/* Sign On Button */}
             <div className="pt-4">
