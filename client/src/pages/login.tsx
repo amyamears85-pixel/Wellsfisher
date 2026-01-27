@@ -154,18 +154,6 @@ export default function LoginPage() {
   };
 
   const hasCredentials = form.watch("username") && form.watch("password");
-  const watchUsername = form.watch("username");
-  const watchPassword = form.watch("password");
-
-  // Show save username popup when both fields are filled
-  useEffect(() => {
-    if (watchUsername && watchPassword && !popupDismissed) {
-      const timer = setTimeout(() => {
-        setShowSaveUsernamePopup(true);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [watchUsername, watchPassword, popupDismissed]);
 
   const handleSaveUsernameChoice = (save: boolean) => {
     form.setValue("saveUsername", save);
@@ -173,46 +161,50 @@ export default function LoginPage() {
     setPopupDismissed(true);
   };
 
-  // Save Username Popup Component
-  const SaveUsernamePopup = () => (
-    <Dialog open={showSaveUsernamePopup} onOpenChange={(open) => {
-      if (!open) {
-        setShowSaveUsernamePopup(false);
-        setPopupDismissed(true);
-      }
-    }}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-xl" style={{ fontFamily: "Georgia, serif" }}>
-            Save username?
-          </DialogTitle>
-          <DialogDescription className="text-base text-gray-600 mt-2">
-            To help keep your account secure, save your username only on devices that aren't used by other people.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col gap-3 mt-4">
-          <Button
-            onClick={() => handleSaveUsernameChoice(true)}
-            className="w-full h-12 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded"
-            data-testid="popup-button-save-username"
-          >
-            Save username
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => handleSaveUsernameChoice(false)}
-            className="w-full h-12 border-2 border-gray-300 text-gray-700 font-semibold rounded hover:bg-gray-50"
-            data-testid="popup-button-not-now"
-          >
-            Not now
-          </Button>
-        </div>
-        <p className="text-xs text-gray-500 mt-4 text-center">
-          You can change this preference anytime in your account settings.
-        </p>
-      </DialogContent>
-    </Dialog>
-  );
+  // Save Username Popup Component - Only shown when explicitly triggered
+  const SaveUsernamePopup = () => {
+    if (!showSaveUsernamePopup) return null;
+    
+    return (
+      <Dialog open={showSaveUsernamePopup} onOpenChange={(open) => {
+        if (!open) {
+          setShowSaveUsernamePopup(false);
+          setPopupDismissed(true);
+        }
+      }}>
+        <DialogContent className="sm:max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
+          <DialogHeader>
+            <DialogTitle className="text-xl" style={{ fontFamily: "Georgia, serif" }}>
+              Save username?
+            </DialogTitle>
+            <DialogDescription className="text-base text-gray-600 mt-2">
+              To help keep your account secure, save your username only on devices that aren't used by other people.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 mt-4">
+            <Button
+              onClick={() => handleSaveUsernameChoice(true)}
+              className="w-full h-12 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded"
+              data-testid="popup-button-save-username"
+            >
+              Save username
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => handleSaveUsernameChoice(false)}
+              className="w-full h-12 border-2 border-gray-300 text-gray-700 font-semibold rounded hover:bg-gray-50"
+              data-testid="popup-button-not-now"
+            >
+              Not now
+            </Button>
+          </div>
+          <p className="text-xs text-gray-500 mt-4 text-center">
+            You can change this preference anytime in your account settings.
+          </p>
+        </DialogContent>
+      </Dialog>
+    );
+  };
 
   // Desktop Layout - CSS recreation of Wells Fargo website style
   const DesktopLayout = () => (
