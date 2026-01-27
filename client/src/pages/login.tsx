@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -41,8 +41,6 @@ export default function LoginPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [biometricLoading, setBiometricLoading] = useState(false);
-  const usernameRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
 
   const handleBiometricLogin = async () => {
     setBiometricLoading(true);
@@ -589,27 +587,20 @@ export default function LoginPage() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      {...field}
-                      ref={(e) => {
-                        field.ref(e);
-                        (usernameRef as any).current = e;
-                      }}
+                    <input
+                      name={field.name}
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
                       placeholder="Username"
                       autoComplete="username"
                       autoCapitalize="off"
                       autoCorrect="off"
                       spellCheck={false}
-                      className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white placeholder:text-gray-400"
+                      className="flex h-14 w-full px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:outline-none bg-white placeholder:text-gray-400"
                       data-testid="input-username"
                       inputMode="text"
                       enterKeyHint="next"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          passwordRef.current?.focus();
-                        }
-                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -625,33 +616,23 @@ export default function LoginPage() {
                 <FormItem>
                   <FormControl>
                     <div className="relative">
-                      <Input
-                        {...field}
-                        ref={(e) => {
-                          field.ref(e);
-                          (passwordRef as any).current = e;
-                        }}
+                      <input
+                        name={field.name}
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
                         type={showPassword ? "text" : "password"}
                         placeholder="Password"
                         autoComplete="current-password"
-                        className="h-14 px-4 pr-16 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white placeholder:text-gray-400"
+                        className="flex h-14 w-full px-4 pr-16 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:outline-none bg-white placeholder:text-gray-400"
                         data-testid="input-password"
                         inputMode="text"
                         enterKeyHint="go"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            form.handleSubmit(onSubmit)();
-                          }
-                        }}
                       />
                       <button
                         type="button"
                         onMouseDown={(e) => e.preventDefault()}
-                        onClick={() => {
-                          setShowPassword(!showPassword);
-                          passwordRef.current?.focus();
-                        }}
+                        onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-[#d71e28] font-medium underline text-sm"
                         data-testid="button-toggle-password"
                       >
