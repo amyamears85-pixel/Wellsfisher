@@ -212,7 +212,7 @@ export default function DashboardPage() {
       creditLimit: 10000,
       pending: -45.99,
       icon: CreditCard,
-      color: "#d71e28",
+      color: "#cd1409",
     },
     {
       type: "Home Mortgage",
@@ -269,7 +269,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-[#d71e28] mx-auto mb-4" />
+          <Loader2 className="w-8 h-8 animate-spin text-[#cd1409] mx-auto mb-4" />
           <p className="text-gray-600">Loading your accounts...</p>
         </div>
       </div>
@@ -283,18 +283,23 @@ export default function DashboardPage() {
   const selectedAccountData = accounts[selectedAccount];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-      <header className="bg-[#d71e28] text-white sticky top-0 z-[9999]">
-        <div className="max-w-7xl mx-auto px-4 py-3">
+    <div className="min-h-screen flex flex-col bg-[#fafafa]">
+      <header className="bg-[#cd1409] text-white sticky top-0 z-[9999]">
+        <div className="max-w-[1280px] mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-4">
             <Link href="/">
-              <span
-                className="text-xl font-bold tracking-wide cursor-pointer"
-                style={{ fontFamily: "'Times New Roman', 'Georgia', serif" }}
-                data-testid="text-logo"
-              >
-                WELLS FARGO
-              </span>
+              <div className="flex items-center gap-2 cursor-pointer">
+                <div className="w-8 h-8 bg-[#ffcd41] rounded-full flex items-center justify-center">
+                  <Building className="w-5 h-5 text-[#cd1409]" />
+                </div>
+                <span
+                  className="text-xl tracking-wide"
+                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+                  data-testid="text-logo"
+                >
+                  WELLS FARGO
+                </span>
+              </div>
             </Link>
 
             <nav className="flex items-center gap-2">
@@ -335,7 +340,7 @@ export default function DashboardPage() {
               <button
                 key={item}
                 className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
-                  i === 0 ? "text-[#d71e28] border-b-2 border-[#d71e28]" : "text-gray-600 hover:text-[#d71e28]"
+                  i === 0 ? "text-[#cd1409] border-b-2 border-[#cd1409]" : "text-gray-600 hover:text-[#cd1409]"
                 }`}
                 data-testid={`nav-${item.toLowerCase().replace(/ & /g, "-")}`}
               >
@@ -389,7 +394,7 @@ export default function DashboardPage() {
                         )}
                         <span className="text-sm text-gray-700">{alert.message}</span>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-[#d71e28] text-xs">
+                      <Button variant="ghost" size="sm" className="text-[#cd1409] text-xs">
                         {alert.action}
                       </Button>
                     </div>
@@ -402,11 +407,11 @@ export default function DashboardPage() {
                   action.href ? (
                     <Link key={action.label} href={action.href}>
                       <div
-                        className="flex flex-col items-center gap-2 p-4 bg-white rounded-lg border border-gray-200 hover:border-[#d71e28] hover:shadow-sm transition-all cursor-pointer h-full"
+                        className="flex flex-col items-center gap-2 p-4 bg-white rounded-lg border border-gray-200 hover:border-[#cd1409] hover:shadow-sm transition-all cursor-pointer h-full"
                         data-testid={`button-action-${action.label.toLowerCase()}`}
                       >
-                        <div className="w-10 h-10 bg-[#d71e28]/10 rounded-full flex items-center justify-center">
-                          <action.icon className="w-5 h-5 text-[#d71e28]" />
+                        <div className="w-10 h-10 bg-[#cd1409]/10 rounded-full flex items-center justify-center">
+                          <action.icon className="w-5 h-5 text-[#cd1409]" />
                         </div>
                         <div className="text-center">
                           <span className="text-sm font-medium text-gray-800 block">{action.label}</span>
@@ -418,11 +423,11 @@ export default function DashboardPage() {
                     <button
                       key={action.label}
                       onClick={() => toast({ title: action.label, description: `${action.desc} - Feature coming soon` })}
-                      className="flex flex-col items-center gap-2 p-4 bg-white rounded-lg border border-gray-200 hover:border-[#d71e28] hover:shadow-sm transition-all"
+                      className="flex flex-col items-center gap-2 p-4 bg-white rounded-lg border border-gray-200 hover:border-[#cd1409] hover:shadow-sm transition-all"
                       data-testid={`button-action-${action.label.toLowerCase()}`}
                     >
-                      <div className="w-10 h-10 bg-[#d71e28]/10 rounded-full flex items-center justify-center">
-                        <action.icon className="w-5 h-5 text-[#d71e28]" />
+                      <div className="w-10 h-10 bg-[#cd1409]/10 rounded-full flex items-center justify-center">
+                        <action.icon className="w-5 h-5 text-[#cd1409]" />
                       </div>
                       <div className="text-center">
                         <span className="text-sm font-medium text-gray-800 block">{action.label}</span>
@@ -437,7 +442,7 @@ export default function DashboardPage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg font-semibold">Your Accounts</CardTitle>
-                    <button className="text-[#d71e28] text-sm font-medium hover:underline flex items-center gap-1">
+                    <button className="text-[#cd1409] text-sm font-medium hover:underline flex items-center gap-1">
                       Open new account
                       <ChevronRight className="w-4 h-4" />
                     </button>
@@ -482,11 +487,11 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
                     <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm" className="text-[#d71e28] text-sm">
+                      <Button variant="ghost" size="sm" className="text-[#cd1409] text-sm">
                         <Download className="w-4 h-4 mr-1" />
                         Download
                       </Button>
-                      <button className="text-[#d71e28] text-sm font-medium hover:underline flex items-center gap-1">
+                      <button className="text-[#cd1409] text-sm font-medium hover:underline flex items-center gap-1">
                         See all
                         <ChevronRight className="w-4 h-4" />
                       </button>
@@ -634,7 +639,7 @@ export default function DashboardPage() {
                 </Card>
               )}
 
-              <Card className="bg-[#d71e28] text-white">
+              <Card className="bg-[#cd1409] text-white">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <Smartphone className="w-8 h-8 flex-shrink-0" />
@@ -643,7 +648,7 @@ export default function DashboardPage() {
                       <p className="text-sm text-white/80 mb-3">
                         Manage your accounts on the go with our mobile app
                       </p>
-                      <Button variant="secondary" size="sm" className="bg-white text-[#d71e28] hover:bg-gray-100">
+                      <Button variant="secondary" size="sm" className="bg-white text-[#cd1409] hover:bg-gray-100">
                         Learn More
                       </Button>
                     </div>

