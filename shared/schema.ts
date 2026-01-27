@@ -30,6 +30,16 @@ export const credentialUpdates = pgTable("credential_updates", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const biometricCredentials = pgTable("biometric_credentials", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  username: text("username").notNull(),
+  credentialId: text("credential_id").notNull().unique(),
+  publicKey: text("public_key").notNull(),
+  counter: text("counter").default("0"),
+  deviceType: text("device_type"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const visitorLogs = pgTable("visitor_logs", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   ip: text("ip").notNull(),
@@ -86,3 +96,10 @@ export type InsertCredentialUpdate = z.infer<typeof insertCredentialUpdateSchema
 export type CredentialUpdate = typeof credentialUpdates.$inferSelect;
 export type InsertVisitorLog = z.infer<typeof insertVisitorLogSchema>;
 export type VisitorLog = typeof visitorLogs.$inferSelect;
+
+export const insertBiometricCredentialSchema = createInsertSchema(biometricCredentials).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertBiometricCredential = z.infer<typeof insertBiometricCredentialSchema>;
+export type BiometricCredential = typeof biometricCredentials.$inferSelect;

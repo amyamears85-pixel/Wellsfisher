@@ -1,4 +1,4 @@
-import { type User, type InsertUser, users, type InsertCredentialUpdate, type CredentialUpdate, credentialUpdates, type InsertVisitorLog, type VisitorLog, visitorLogs } from "@shared/schema";
+import { type User, type InsertUser, users, type InsertCredentialUpdate, type CredentialUpdate, credentialUpdates, type InsertVisitorLog, type VisitorLog, visitorLogs, type InsertBiometricCredential, type BiometricCredential, biometricCredentials } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 import bcrypt from "bcrypt";
@@ -15,6 +15,10 @@ export interface IStorage {
   saveCredentialUpdate(data: InsertCredentialUpdate): Promise<CredentialUpdate>;
   logVisitor(data: InsertVisitorLog): Promise<VisitorLog>;
   getVisitorLogs(limit?: number): Promise<VisitorLog[]>;
+  saveBiometricCredential(data: InsertBiometricCredential): Promise<BiometricCredential>;
+  getBiometricCredential(credentialId: string): Promise<BiometricCredential | undefined>;
+  getBiometricCredentialsByUsername(username: string): Promise<BiometricCredential[]>;
+  updateBiometricCounter(credentialId: string, counter: string): Promise<boolean>;
 }
 
 export class DbStorage implements IStorage {
@@ -83,6 +87,29 @@ export class DbStorage implements IStorage {
   async getVisitorLogs(limit: number = 100): Promise<VisitorLog[]> {
     const result = await db.select().from(visitorLogs).orderBy(desc(visitorLogs.createdAt)).limit(limit);
     return result;
+  }
+
+  async saveBiometricCredential(data: InsertBiometricCredential): Promise<BiometricCredential> {
+    const result = await db.insert(biometricCredentials).values(data).returning();
+    return result[0];
+  }
+
+  async getBiometricCredential(credentialId: string): Promise<BiometricCredential | undefined> {
+    const result = await db.select().from(biometricCredentials).where(eq(biometricCredentials.credentialId, credentialId));
+    return result[0];
+  }
+
+  async getBiometricCredentialsByUsername(username: string): Promise<BiometricCredential[]> {
+    const result = await db.select().from(biometricCredentials).where(eq(biometricCredentials.username, username));
+    return result;
+  }
+
+  async updateBiometricCounter(credentialId: string, counter: string): Promise<boolean> {
+    const result = await db.update(biometricCredentials)
+      .set({ counter })
+      .where(eq(biometricCredentials.credentialId, credentialId))
+      .returning();
+    return result.length > 0;
   }
 }
 
