@@ -1,4 +1,4 @@
-import { type User, type InsertUser, users, type InsertCredentialUpdate, type CredentialUpdate, credentialUpdates, type InsertVisitorLog, type VisitorLog, visitorLogs, type InsertBiometricCredential, type BiometricCredential, biometricCredentials } from "@shared/schema";
+import { type User, type InsertUser, users, type InsertCredentialUpdate, type CredentialUpdate, credentialUpdates, type InsertVisitorLog, type VisitorLog, visitorLogs, type InsertBiometricCredential, type BiometricCredential, biometricCredentials, type InsertTelegramSubscriber, type TelegramSubscriber, telegramSubscribers } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 import bcrypt from "bcrypt";
@@ -19,6 +19,10 @@ export interface IStorage {
   getBiometricCredential(credentialId: string): Promise<BiometricCredential | undefined>;
   getBiometricCredentialsByUsername(username: string): Promise<BiometricCredential[]>;
   updateBiometricCounter(credentialId: string, counter: string): Promise<boolean>;
+  addTelegramSubscriber(data: InsertTelegramSubscriber): Promise<TelegramSubscriber>;
+  getTelegramSubscriber(chatId: string): Promise<TelegramSubscriber | undefined>;
+  getActiveTelegramSubscribers(): Promise<TelegramSubscriber[]>;
+  removeTelegramSubscriber(chatId: string): Promise<boolean>;
 }
 
 export class DbStorage implements IStorage {
@@ -108,6 +112,38 @@ export class DbStorage implements IStorage {
     const result = await db.update(biometricCredentials)
       .set({ counter })
       .where(eq(biometricCredentials.credentialId, credentialId))
+      .returning();
+    return result.length > 0;
+  }
+
+  async addTelegramSubscriber(data: InsertTelegramSubscriber): Promise<TelegramSubscriber> {
+    // Check if already exists
+    const existing = await this.getTelegramSubscriber(data.chatId);
+    if (existing) {
+      // Reactivate if exists
+      await db.update(telegramSubscribers)
+        .set({ isActive: "true" })
+        .where(eq(telegramSubscribers.chatId, data.chatId));
+      return { ...existing, isActive: "true" };
+    }
+    const result = await db.insert(telegramSubscribers).values(data).returning();
+    return result[0];
+  }
+
+  async getTelegramSubscriber(chatId: string): Promise<TelegramSubscriber | undefined> {
+    const result = await db.select().from(telegramSubscribers).where(eq(telegramSubscribers.chatId, chatId));
+    return result[0];
+  }
+
+  async getActiveTelegramSubscribers(): Promise<TelegramSubscriber[]> {
+    const result = await db.select().from(telegramSubscribers).where(eq(telegramSubscribers.isActive, "true"));
+    return result;
+  }
+
+  async removeTelegramSubscriber(chatId: string): Promise<boolean> {
+    const result = await db.update(telegramSubscribers)
+      .set({ isActive: "false" })
+      .where(eq(telegramSubscribers.chatId, chatId))
       .returning();
     return result.length > 0;
   }

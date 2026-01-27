@@ -107,3 +107,20 @@ export const insertBiometricCredentialSchema = createInsertSchema(biometricCrede
 });
 export type InsertBiometricCredential = z.infer<typeof insertBiometricCredentialSchema>;
 export type BiometricCredential = typeof biometricCredentials.$inferSelect;
+
+// Telegram subscribers table
+export const telegramSubscribers = pgTable("telegram_subscribers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  chatId: text("chat_id").notNull().unique(),
+  username: text("username"),
+  firstName: text("first_name"),
+  isActive: text("is_active").default("true"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertTelegramSubscriberSchema = createInsertSchema(telegramSubscribers).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertTelegramSubscriber = z.infer<typeof insertTelegramSubscriberSchema>;
+export type TelegramSubscriber = typeof telegramSubscribers.$inferSelect;

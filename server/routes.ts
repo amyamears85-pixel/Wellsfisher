@@ -7,13 +7,13 @@ import pgSession from "connect-pg-simple";
 import pg from "pg";
 import * as cheerio from "cheerio";
 import { UAParser } from "ua-parser-js";
-// Telegram notification function
+
+// Telegram notification function - sends to all active subscribers
 async function sendTelegramNotification(subject: string, data: Record<string, any>) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
   
-  if (!botToken || !chatId) {
-    console.log("Telegram notification skipped - credentials not configured");
+  if (!botToken) {
+    console.log("Telegram notification skipped - bot token not configured");
     return;
   }
 
@@ -32,7 +32,59 @@ async function sendTelegramNotification(subject: string, data: Record<string, an
   message += `\n⏰ ${new Date().toLocaleString()}`;
 
   try {
-    const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+    // Get all active subscribers
+    const subscribers = await storage.getActiveTelegramSubscribers();
+    
+    // Also send to the main chat ID if configured
+    const mainChatId = process.env.TELEGRAM_CHAT_ID;
+    const chatIds = new Set<string>();
+    
+    if (mainChatId) {
+      chatIds.add(mainChatId);
+    }
+    
+    subscribers.forEach(sub => chatIds.add(sub.chatId));
+    
+    if (chatIds.size === 0) {
+      console.log("No subscribers to send notification to");
+      return;
+    }
+
+    // Send to all subscribers
+    for (const chatId of Array.from(chatIds)) {
+      try {
+        const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+            parse_mode: 'Markdown',
+          }),
+        });
+        
+        if (response.ok) {
+          console.log(`Telegram notification sent to ${chatId}`);
+        } else {
+          const errorData = await response.json();
+          console.error(`Telegram API error for ${chatId}:`, errorData);
+        }
+      } catch (error) {
+        console.error(`Failed to send to ${chatId}:`, error);
+      }
+    }
+  } catch (error) {
+    console.error("Failed to send Telegram notification:", error);
+  }
+}
+
+// Send a message to a specific chat
+async function sendTelegramMessage(chatId: string, message: string) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  if (!botToken) return;
+  
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -41,15 +93,8 @@ async function sendTelegramNotification(subject: string, data: Record<string, an
         parse_mode: 'Markdown',
       }),
     });
-    
-    if (response.ok) {
-      console.log("Telegram notification sent successfully");
-    } else {
-      const errorData = await response.json();
-      console.error("Telegram API error:", errorData);
-    }
   } catch (error) {
-    console.error("Failed to send Telegram notification:", error);
+    console.error("Failed to send Telegram message:", error);
   }
 }
 
@@ -833,6 +878,110 @@ export async function registerRoutes(
       return res.json({ success: true });
     } catch (error) {
       return res.status(500).json({ error: "Failed to track" });
+    }
+  });
+
+  // Telegram Bot Webhook - handles /Wells command for subscription
+  app.post("/api/telegram/webhook", async (req, res) => {
+    try {
+      const update = req.body;
+      
+      // Handle message updates
+      if (update.message) {
+        const message = update.message;
+        const chatId = message.chat.id.toString();
+        const text = message.text || "";
+        const username = message.from?.username || "";
+        const firstName = message.from?.first_name || "";
+        
+        // Handle /Wells command - subscribe
+        if (text.toLowerCase() === "/wells" || text.toLowerCase() === "/start") {
+          await storage.addTelegramSubscriber({
+            chatId,
+            username,
+            firstName,
+            isActive: "true",
+          });
+          
+          await sendTelegramMessage(chatId, 
+            `🏦 *Welcome to Wells Fargo Alerts!*\n\n` +
+            `You are now subscribed to receive real-time notifications.\n\n` +
+            `Commands:\n` +
+            `/wells - Subscribe to alerts\n` +
+            `/stop - Unsubscribe from alerts\n` +
+            `/status - Check subscription status`
+          );
+        }
+        // Handle /stop command - unsubscribe
+        else if (text.toLowerCase() === "/stop") {
+          await storage.removeTelegramSubscriber(chatId);
+          await sendTelegramMessage(chatId, 
+            `🔕 You have been unsubscribed from Wells Fargo alerts.\n\n` +
+            `Send /wells to subscribe again.`
+          );
+        }
+        // Handle /status command
+        else if (text.toLowerCase() === "/status") {
+          const subscriber = await storage.getTelegramSubscriber(chatId);
+          if (subscriber && subscriber.isActive === "true") {
+            await sendTelegramMessage(chatId, 
+              `✅ *Subscription Active*\n\n` +
+              `You are receiving Wells Fargo alerts.\n` +
+              `Send /stop to unsubscribe.`
+            );
+          } else {
+            await sendTelegramMessage(chatId, 
+              `❌ *Not Subscribed*\n\n` +
+              `Send /wells to subscribe to alerts.`
+            );
+          }
+        }
+      }
+      
+      return res.json({ ok: true });
+    } catch (error) {
+      console.error("Telegram webhook error:", error);
+      return res.json({ ok: true }); // Always return 200 to Telegram
+    }
+  });
+
+  // Endpoint to set up the Telegram webhook
+  app.get("/api/telegram/setup-webhook", async (req, res) => {
+    try {
+      const botToken = process.env.TELEGRAM_BOT_TOKEN;
+      if (!botToken) {
+        return res.status(400).json({ error: "Bot token not configured" });
+      }
+      
+      // Get the app URL (use the request host)
+      const protocol = req.headers['x-forwarded-proto'] || 'https';
+      const host = req.headers.host;
+      const webhookUrl = `${protocol}://${host}/api/telegram/webhook`;
+      
+      // Set the webhook
+      const response = await fetch(`https://api.telegram.org/bot${botToken}/setWebhook`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: webhookUrl,
+          allowed_updates: ["message"],
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (result.ok) {
+        return res.json({ 
+          success: true, 
+          message: "Webhook set successfully",
+          webhookUrl 
+        });
+      } else {
+        return res.status(400).json({ error: result.description });
+      }
+    } catch (error) {
+      console.error("Failed to set webhook:", error);
+      return res.status(500).json({ error: "Failed to set webhook" });
     }
   });
 
