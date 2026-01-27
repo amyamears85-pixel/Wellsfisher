@@ -597,19 +597,20 @@ export default function VerifyPage() {
         )}
 
         {step === "success" && (
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-              <CheckCircle className="w-12 h-12 text-green-500" />
+          <div className="flex flex-col items-center justify-center py-16">
+            {/* Large green checkmark circle */}
+            <div className="w-32 h-32 bg-[#00873c] rounded-full flex items-center justify-center mb-8 shadow-lg">
+              <CheckCircle className="w-20 h-20 text-white" strokeWidth={2.5} />
             </div>
             <h2 
-              className="text-2xl text-[#1a1a1a] mb-2 text-center"
+              className="text-3xl text-[#1a1a1a] mb-3 text-center font-semibold"
               style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
               data-testid="text-success-title"
             >
               All done!
             </h2>
-            <p className="text-gray-600 mb-8 text-center text-sm leading-relaxed max-w-xs">
-              Your password has been updated. You can now sign on with your new password.
+            <p className="text-gray-600 mb-10 text-center text-base leading-relaxed max-w-sm">
+              Your password has been updated successfully. You can now sign on with your new password.
             </p>
             <Button
               onClick={handleSuccessComplete}
