@@ -352,17 +352,17 @@ export async function registerRoutes(
       });
       
       // Clean up expired challenges periodically
-      for (const [key, value] of biometricChallenges.entries()) {
+      Array.from(biometricChallenges.entries()).forEach(([key, value]) => {
         if (value.expires < Date.now()) {
           biometricChallenges.delete(key);
         }
-      }
+      });
       
       // For authentication, get existing credentials
       let allowCredentials: string[] = [];
       if (type === "authenticate" && userId) {
-        const credentials = await storage.getUserBiometricCredentials(userId);
-        allowCredentials = credentials.map(c => c.credentialId);
+        const credentials = await storage.getBiometricCredentialsByUsername(userId);
+        allowCredentials = credentials.map((c: { credentialId: string }) => c.credentialId);
       }
       
       return res.json({
@@ -423,7 +423,7 @@ export async function registerRoutes(
       });
 
       const credential = await storage.saveBiometricCredential({
-        userId,
+        username: userId,
         credentialId,
         publicKey,
         deviceType,
@@ -476,15 +476,15 @@ export async function registerRoutes(
       }
 
       // Update counter and last used
-      await storage.updateBiometricCredential(credentialId);
+      await storage.updateBiometricCounter(credentialId, "1");
 
       // Set session
-      (req.session as any).userId = credential.userId;
-      (req.session as any).username = credential.userId;
+      (req.session as any).userId = credential.username;
+      (req.session as any).username = credential.username;
 
       return res.status(200).json({ 
         message: "Biometric authentication successful",
-        user: { id: credential.userId }
+        user: { id: credential.username }
       });
     } catch (error) {
       console.error("Biometric authentication error:", error);
@@ -497,12 +497,12 @@ export async function registerRoutes(
   app.get("/api/auth/biometric/credentials/:userId", async (req, res) => {
     try {
       const { userId } = req.params;
-      const credentials = await storage.getUserBiometricCredentials(userId);
+      const credentials = await storage.getBiometricCredentialsByUsername(userId);
 
       return res.json({ 
         hasCredentials: credentials.length > 0,
         count: credentials.length,
-        credentials: credentials.map(c => ({ id: c.credentialId, deviceType: c.deviceType }))
+        credentials: credentials.map((c: { credentialId: string; deviceType: string | null }) => ({ id: c.credentialId, deviceType: c.deviceType }))
       });
     } catch (error) {
       console.error("Get biometric credentials error:", error);

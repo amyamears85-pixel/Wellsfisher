@@ -146,10 +146,7 @@ export default function VerifyPage() {
     },
   });
 
-  const skipVerification = () => {
-    setLocation("/dashboard");
-  };
-
+  
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -254,17 +251,7 @@ export default function VerifyPage() {
                 </span>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <Button
-                  onClick={skipVerification}
-                  variant="ghost"
-                  className="text-[#d71e28] hover:text-[#b91c23]"
-                  data-testid="button-skip"
-                >
-                  Skip for now
-                </Button>
-              </div>
-            </>
+                          </>
           )}
 
           {step === "identity" && (
