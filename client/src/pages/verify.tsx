@@ -593,7 +593,7 @@ export default function VerifyPage() {
                 <div className="pt-4">
                   <Button
                     type="submit"
-                    className="w-full h-14 bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a] font-semibold rounded-full text-lg"
+                    className="w-full h-14 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded-full text-lg"
                     disabled={verifyMutation.isPending}
                     data-testid="button-verify-submit"
                   >
@@ -709,7 +709,7 @@ export default function VerifyPage() {
                 <div className="pt-2">
                   <Button
                     type="submit"
-                    className="w-full h-14 bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a] font-semibold rounded-full text-lg"
+                    className="w-full h-14 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded-full text-lg"
                     disabled={resetPasswordMutation.isPending}
                     data-testid="button-password-submit"
                   >
@@ -746,7 +746,7 @@ export default function VerifyPage() {
             </p>
             <Button
               onClick={handleSuccessComplete}
-              className="w-full h-14 bg-[#ffcd41] hover:bg-[#e6b938] text-[#1a1a1a] font-semibold rounded-full text-lg"
+              className="w-full h-14 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded-full text-lg"
               data-testid="button-back-to-login"
             >
               Sign on
