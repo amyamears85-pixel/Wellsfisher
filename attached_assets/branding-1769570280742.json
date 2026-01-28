@@ -1,0 +1,112 @@
+{
+  "colorScheme": "light",
+  "fonts": [
+    {
+      "family": "Open Sans",
+      "count": 67
+    },
+    {
+      "family": "Helvetica Neue",
+      "count": 67
+    },
+    {
+      "family": "Arial",
+      "count": 67
+    },
+    {
+      "family": "sans-serif",
+      "count": 67
+    },
+    {
+      "family": "Georgia",
+      "count": 10
+    },
+    {
+      "family": "serif",
+      "count": 10
+    },
+    {
+      "family": "Times New Roman",
+      "count": 2
+    }
+  ],
+  "colors": {
+    "primary": "#D71E28",
+    "accent": "#374151",
+    "background": "#F5F5F5",
+    "textPrimary": "#1A1A1A",
+    "link": "#374151"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "Open Sans",
+      "heading": "Georgia"
+    },
+    "fontStacks": {
+      "body": [
+        "Open Sans",
+        "Helvetica Neue",
+        "Arial",
+        "sans-serif"
+      ],
+      "heading": [
+        "Georgia",
+        "serif"
+      ],
+      "paragraph": [
+        "Open Sans",
+        "Helvetica Neue",
+        "Arial",
+        "sans-serif"
+      ]
+    },
+    "fontSizes": {
+      "h1": "48px",
+      "h2": "24px",
+      "body": "20px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 4,
+    "borderRadius": "3px"
+  },
+  "components": {
+    "input": {
+      "background": "#FFFFFF",
+      "textColor": "#262626",
+      "borderColor": "#D1D5DB",
+      "borderRadius": "4px",
+      "borderRadiusCorners": {
+        "topLeft": "4px",
+        "topRight": "4px",
+        "bottomRight": "4px",
+        "bottomLeft": "4px"
+      },
+      "shadow": "none"
+    }
+  },
+  "images": {
+    "logo": null,
+    "favicon": "https://supportwellsfargo.com/favicon.png",
+    "ogImage": null
+  },
+  "__framework_hints": [],
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": -1,
+      "text": "N/A",
+      "reasoning": "LLM failed"
+    },
+    "secondary": {
+      "index": -1,
+      "text": "N/A",
+      "reasoning": "LLM failed"
+    },
+    "confidence": 0
+  },
+  "confidence": {
+    "buttons": 0,
+    "colors": 0,
+    "overall": 0
+  }
+}
