@@ -251,6 +251,20 @@ export default function LoginPage() {
               </div>
             </form>
 
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-9 rounded border border-gray-400 text-gray-700 font-medium text-xs hover:bg-gray-50"
+                onClick={handleBiometricLogin}
+                disabled={biometricLoading}
+                data-testid="desktop-button-passkey"
+              >
+                <User className="w-4 h-4 mr-2" />
+                {biometricLoading ? "Verifying..." : "Use Face ID or passkey"}
+              </Button>
+            </div>
+
             <div className="mt-3 space-y-1 text-xs">
               <Link href="/forgot-password" className="text-[#0066b2] hover:underline block">
                 Forgot username or password?
