@@ -142,55 +142,54 @@ export default function LoginPage() {
   // Desktop Layout - CSS recreation of Wells Fargo website style
   const DesktopLayout = () => (
     <div className="hidden lg:block min-h-screen bg-white">
-      {/* Top navigation bar - gray with category links */}
-      <div className="bg-[#f5f5f5] border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-2 flex justify-between items-center">
-          <div className="flex items-center gap-6 text-sm">
-            <span className="text-[#d71e28] font-semibold border-b-2 border-[#d71e28] pb-1 cursor-pointer">Personal</span>
-            <span className="text-gray-600 hover:text-[#d71e28] cursor-pointer">Investing & Wealth Management</span>
-            <span className="text-gray-600 hover:text-[#d71e28] cursor-pointer">Business</span>
-            <span className="text-gray-600 hover:text-[#d71e28] cursor-pointer">Commercial Banking</span>
-            <span className="text-gray-600 hover:text-[#d71e28] cursor-pointer">Corporate & Investment Banking</span>
-            <span className="text-gray-600 hover:text-[#d71e28] cursor-pointer">About Wells Fargo</span>
+      {/* Top red header bar with Wells Fargo logo */}
+      <header className="bg-[#d71e28]">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+          <div className="text-white font-bold text-2xl tracking-wider" style={{ fontFamily: "Georgia, serif" }}>
+            WELLS FARGO
           </div>
-          <div className="flex items-center gap-4 text-sm text-gray-600">
-            <span className="hover:text-[#d71e28] cursor-pointer">ATMs/Locations</span>
-            <span className="hover:text-[#d71e28] cursor-pointer">Help</span>
-            <span className="hover:text-[#d71e28] cursor-pointer">Español</span>
-            <Search className="w-4 h-4 cursor-pointer hover:text-[#d71e28]" />
+          <div className="flex items-center gap-5 text-sm text-white">
+            <span className="hover:underline cursor-pointer">ATMs/Locations</span>
+            <span className="hover:underline cursor-pointer">Help</span>
+            <span className="hover:underline cursor-pointer">Español</span>
+            <Search className="w-4 h-4 cursor-pointer" />
+            <Button
+              type="button"
+              onClick={() => {
+                const usernameInput = document.querySelector('[data-testid="desktop-input-username"]') as HTMLInputElement;
+                if (usernameInput) usernameInput.focus();
+              }}
+              className="bg-white text-[#d71e28] hover:bg-gray-100 px-4 py-1.5 rounded text-sm font-semibold"
+              data-testid="header-sign-on-button"
+            >
+              Sign On
+            </Button>
           </div>
+        </div>
+      </header>
+
+      {/* Main navigation bar - white with category links */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-8 text-sm">
+          <span className="text-gray-800 font-medium border-b-2 border-[#d71e28] pb-2 cursor-pointer">Personal</span>
+          <span className="text-gray-600 hover:text-gray-800 cursor-pointer pb-2">Investing & Wealth Management</span>
+          <span className="text-gray-600 hover:text-gray-800 cursor-pointer pb-2">Business</span>
+          <span className="text-gray-600 hover:text-gray-800 cursor-pointer pb-2">Commercial Banking</span>
+          <span className="text-gray-600 hover:text-gray-800 cursor-pointer pb-2">Corporate & Investment Banking</span>
+          <span className="text-gray-600 hover:text-gray-800 cursor-pointer pb-2">About Wells Fargo</span>
         </div>
       </div>
 
-      {/* Main header with Wells Fargo logo and stagecoach */}
-      <header className="bg-[#d71e28]">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {/* Stagecoach icon */}
-            <svg viewBox="0 0 40 24" className="w-10 h-6 text-white fill-current">
-              <rect x="8" y="10" width="24" height="10" rx="2" className="fill-[#ffcd41]"/>
-              <circle cx="12" cy="20" r="3" className="fill-white stroke-[#d71e28]" strokeWidth="1"/>
-              <circle cx="28" cy="20" r="3" className="fill-white stroke-[#d71e28]" strokeWidth="1"/>
-              <rect x="10" y="6" width="20" height="6" className="fill-[#ffcd41]"/>
-              <path d="M4 14 L8 12 L8 16 Z" className="fill-[#8B4513]"/>
-              <circle cx="3" cy="14" r="1.5" className="fill-white"/>
-            </svg>
-            <div className="text-white font-bold text-2xl tracking-wider" style={{ fontFamily: "Georgia, serif" }}>
-              WELLS FARGO
-            </div>
-          </div>
-          <nav className="flex items-center text-sm">
-            {["Checking", "Savings & CDs", "Credit Cards", "Home Loans", "Personal Loans", "Auto Loans", "Premier", "Education & Tools"].map((item) => (
-              <button key={item} className="text-white px-3 py-2 hover:bg-[#b91c23] rounded transition-colors text-[13px]">
-                {item}
-              </button>
-            ))}
-          </nav>
+      {/* Secondary navigation - product links */}
+      <div className="bg-[#fafafa] border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-2 flex items-center gap-6 text-sm text-gray-600">
+          {["Checking", "Savings & CDs", "Credit Cards", "Home Loans", "Personal Loans", "Auto Loans", "Premier", "Education & Tools"].map((item) => (
+            <span key={item} className="hover:text-[#d71e28] cursor-pointer">
+              {item}
+            </span>
+          ))}
         </div>
-      </header>
-      
-      {/* Yellow accent bar */}
-      <div className="h-1 bg-[#ffcd41]"></div>
+      </div>
 
       {/* Main content area with login form and promo */}
       <section className="bg-white border-b border-gray-200">
