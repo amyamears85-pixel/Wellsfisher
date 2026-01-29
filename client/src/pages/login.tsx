@@ -306,44 +306,49 @@ export default function LoginPage() {
         </div>
       </section>
 
-      {/* Three promo cards */}
-      <section className="bg-white py-8 border-b border-gray-200">
+      {/* Four promo cards */}
+      <section className="bg-white py-6 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-3 gap-6">
-            <div className="flex items-start gap-4 p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-              <div className="w-12 h-12 bg-[#d71e28] rounded-full flex items-center justify-center flex-shrink-0">
-                <CreditCard className="w-6 h-6 text-white" />
+          <div className="grid grid-cols-4 gap-4">
+            <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+              <div className="w-10 h-10 bg-[#d71e28] rounded-full flex items-center justify-center flex-shrink-0">
+                <CreditCard className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-800 mb-1">Earn a $200 cash rewards bonus</h3>
-                <p className="text-xs text-gray-600 mb-2">Plus, earn unlimited 2% cash rewards on purchases with $0 annual fee. Terms apply.</p>
-                <span className="text-[#0066b2] text-xs hover:underline">Learn more</span>
+                <h3 className="font-semibold text-gray-800 text-sm mb-1">Earn a $200 cash rewards bonus</h3>
+                <p className="text-xs text-gray-600 mb-2 leading-relaxed">Plus, earn unlimited 2% cash rewards on purchases with $0 annual fee. Terms apply.</p>
+                <span className="text-[#0066b2] text-xs hover:underline cursor-pointer">Learn more &gt;</span>
               </div>
             </div>
-            <div className="flex items-start gap-4 p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-              <div className="w-12 h-12 bg-[#0066b2] rounded-full flex items-center justify-center flex-shrink-0">
-                <Users className="w-6 h-6 text-white" />
+            <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+              <div className="w-10 h-10 bg-[#0066b2] rounded-full flex items-center justify-center flex-shrink-0">
+                <Users className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-800 mb-1">New customer? Say hello to a $125 bonus</h3>
-                <p className="text-xs text-gray-600 mb-2">Open a Clear Access Banking account, great for students & more, complete offer requirements.</p>
-                <span className="text-[#0066b2] text-xs hover:underline">See offer details</span>
+                <h3 className="font-semibold text-gray-800 text-sm mb-1">New customer? Say hello to a $125 bonus</h3>
+                <p className="text-xs text-gray-600 mb-2 leading-relaxed">Open a Clear Access Banking account, great for students & more, complete offer requirements.</p>
+                <span className="text-[#0066b2] text-xs hover:underline cursor-pointer">See offer details &gt;</span>
               </div>
             </div>
-            <div className="flex items-start gap-4 p-4 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-              <div className="w-12 h-12 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-6 h-6 text-[#d71e28]" />
+            <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+              <div className="w-10 h-10 bg-[#fef3e6] rounded-full flex items-center justify-center flex-shrink-0">
+                <PiggyBank className="w-5 h-5 text-[#d71e28]" />
               </div>
               <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs text-gray-500">Interest rates today</span>
-                  <span className="bg-[#d71e28] text-white text-xs px-2 py-0.5 rounded">%</span>
-                </div>
-                <h3 className="font-semibold text-gray-800 mb-1">Open a savings account</h3>
-                <p className="text-xs text-gray-600 mb-2">Explore our savings accounts and find the right fit for you.</p>
-                <span className="text-[#0066b2] text-xs hover:underline">Get started</span>
-                <span className="text-gray-400 mx-2">|</span>
-                <span className="text-[#0066b2] text-xs hover:underline">Check rates</span>
+                <h3 className="font-semibold text-gray-800 text-sm mb-1">Open a savings account</h3>
+                <p className="text-xs text-gray-600 mb-2 leading-relaxed">Explore our savings accounts and find the right fit for you.</p>
+                <span className="text-[#0066b2] text-xs hover:underline cursor-pointer">Get started &gt;</span>
+                <span className="text-gray-400 mx-1">|</span>
+                <span className="text-[#0066b2] text-xs hover:underline cursor-pointer">Check rates &gt;</span>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+              <div className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center flex-shrink-0 relative">
+                <TrendingUp className="w-5 h-5 text-[#0066b2]" />
+                <div className="absolute -top-1 -right-1 bg-[#d71e28] text-white text-[10px] px-1 rounded font-bold">%</div>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 mb-1">Interest rates today</p>
               </div>
             </div>
           </div>
