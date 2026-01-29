@@ -206,7 +206,7 @@ export default function LoginPage() {
               <div>
                 <label className="text-xs text-gray-600 block mb-1">Username</label>
                 <input
-                  {...form.register("username", { required: true })}
+                  {...form.register("username")}
                   autoComplete="username"
                   autoCapitalize="off"
                   autoCorrect="off"
@@ -229,7 +229,7 @@ export default function LoginPage() {
                   </button>
                 </div>
                 <input
-                  {...form.register("password", { required: true })}
+                  {...form.register("password")}
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   className="flex h-10 w-full px-3 text-sm border border-gray-300 rounded focus:border-[#d71e28] focus:outline-none focus:ring-1 focus:ring-[#d71e28] bg-white"
