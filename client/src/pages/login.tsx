@@ -162,23 +162,35 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Main header with Wells Fargo logo */}
+      {/* Main header with Wells Fargo logo and stagecoach */}
       <header className="bg-[#d71e28]">
-        <div className="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="text-white font-bold text-2xl tracking-wide" style={{ fontFamily: "Georgia, serif" }}>
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {/* Stagecoach icon */}
+            <svg viewBox="0 0 40 24" className="w-10 h-6 text-white fill-current">
+              <rect x="8" y="10" width="24" height="10" rx="2" className="fill-[#ffcd41]"/>
+              <circle cx="12" cy="20" r="3" className="fill-white stroke-[#d71e28]" strokeWidth="1"/>
+              <circle cx="28" cy="20" r="3" className="fill-white stroke-[#d71e28]" strokeWidth="1"/>
+              <rect x="10" y="6" width="20" height="6" className="fill-[#ffcd41]"/>
+              <path d="M4 14 L8 12 L8 16 Z" className="fill-[#8B4513]"/>
+              <circle cx="3" cy="14" r="1.5" className="fill-white"/>
+            </svg>
+            <div className="text-white font-bold text-2xl tracking-wider" style={{ fontFamily: "Georgia, serif" }}>
               WELLS FARGO
             </div>
           </div>
-          <nav className="flex items-center gap-1 text-sm">
+          <nav className="flex items-center text-sm">
             {["Checking", "Savings & CDs", "Credit Cards", "Home Loans", "Personal Loans", "Auto Loans", "Premier", "Education & Tools"].map((item) => (
-              <button key={item} className="text-white px-3 py-2 hover:bg-[#b91c23] rounded transition-colors">
+              <button key={item} className="text-white px-3 py-2 hover:bg-[#b91c23] rounded transition-colors text-[13px]">
                 {item}
               </button>
             ))}
           </nav>
         </div>
       </header>
+      
+      {/* Yellow accent bar */}
+      <div className="h-1 bg-[#ffcd41]"></div>
 
       {/* Main content area with login form and promo */}
       <section className="bg-white border-b border-gray-200">
