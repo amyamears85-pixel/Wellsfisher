@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "SIsuaOoMEzfLJwW35Bxds"
+uri = "file:///tmp/project.zip"
+type = "unspecified"
+title = "Project Zip File"
