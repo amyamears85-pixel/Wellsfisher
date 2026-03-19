@@ -6,3 +6,9 @@ id = "SIsuaOoMEzfLJwW35Bxds"
 uri = "file:///tmp/project.zip"
 type = "unspecified"
 title = "Project Zip File"
+
+[[outputs]]
+id = "BSM2lNVAloJEgqRrzF2xp"
+uri = "file://project.zip"
+type = "unspecified"
+title = "Project Zip File"
