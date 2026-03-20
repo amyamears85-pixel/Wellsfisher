@@ -144,8 +144,41 @@ app.use((req, res, next) => {
       host: "0.0.0.0",
       reusePort: true,
     },
-    () => {
+    async () => {
       log(`serving on port ${port}`);
+
+      // Auto-register bot commands and webhook on startup
+      const botToken = process.env.TELEGRAM_BOT_TOKEN;
+      const domain = process.env.REPLIT_DEV_DOMAIN || process.env.REPLIT_DOMAINS?.split(",")[0];
+      if (botToken && domain) {
+        try {
+          const webhookUrl = `https://${domain}/api/telegram/webhook`;
+          const whRes = await fetch(`https://api.telegram.org/bot${botToken}/setWebhook`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: webhookUrl, allowed_updates: ["message", "callback_query"] }),
+          });
+          const whData = await whRes.json() as { ok: boolean };
+          if (whData.ok) log(`Telegram webhook registered: ${webhookUrl}`);
+          else log(`Telegram webhook failed: ${JSON.stringify(whData)}`);
+
+          // Register bot commands
+          await fetch(`https://api.telegram.org/bot${botToken}/setMyCommands`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              commands: [
+                { command: "start", description: "Open the notification menu" },
+                { command: "status", description: "Check your subscription status" },
+                { command: "stop", description: "Unsubscribe from notifications" },
+              ],
+            }),
+          });
+          log("Telegram bot commands registered");
+        } catch (e) {
+          log(`Telegram setup error: ${e}`);
+        }
+      }
     },
   );
 })();

