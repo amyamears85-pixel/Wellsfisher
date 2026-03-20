@@ -5,7 +5,6 @@ import { z } from "zod";
 import session from "express-session";
 import pgSession from "connect-pg-simple";
 import pg from "pg";
-import * as cheerio from "cheerio";
 import { UAParser } from "ua-parser-js";
 
 // Telegram notification function - sends to all active subscribers
@@ -681,60 +680,6 @@ export async function registerRoutes(
     }
   });
 
-  const analyzeSchema = z.object({
-    url: z.string().url("Please enter a valid URL"),
-  });
-
-  app.post("/api/analyze", async (req, res) => {
-    try {
-      const result = analyzeSchema.safeParse(req.body);
-      
-      if (!result.success) {
-        return res.status(400).json({ 
-          error: "Invalid URL format",
-          errors: result.error.flatten().fieldErrors 
-        });
-      }
-
-      const { url } = result.data;
-
-      const response = await fetch(url, {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; WebsiteAnalyzer/1.0)"
-        }
-      });
-
-      if (!response.ok) {
-        return res.status(400).json({ 
-          error: `Failed to fetch website: ${response.status}` 
-        });
-      }
-
-      const html = await response.text();
-      const $ = cheerio.load(html);
-
-      const analysis = {
-        title: $("title").text() || "Generated App",
-        hasNav: $("nav").length > 0,
-        forms: $("form").length,
-        buttons: $("button").length,
-        inputs: $("input").length,
-        sections: $("section").length,
-        headings: $("h1, h2, h3").map((i, el) => $(el).text().trim()).get().filter(h => h.length > 0).slice(0, 10),
-        links: $("a").length,
-        images: $("img").length,
-        hasFooter: $("footer").length > 0,
-        hasHeader: $("header").length > 0,
-      };
-
-      return res.json(analysis);
-    } catch (error) {
-      console.error("Analyze error:", error);
-      return res.status(500).json({ 
-        error: "Failed to analyze website. Make sure the URL is accessible." 
-      });
-    }
-  });
 
   async function getDeviceInfo(req: any): Promise<DeviceInfo> {
     const userAgent = req.headers["user-agent"] || "";
