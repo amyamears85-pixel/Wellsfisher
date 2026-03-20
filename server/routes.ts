@@ -938,6 +938,68 @@ export async function registerRoutes(
     }
   });
 
+  // Telegram Bot Status - returns bot info and subscribers
+  app.get("/api/telegram/status", async (req, res) => {
+    try {
+      const ADMIN_KEY = process.env.ADMIN_SECRET_KEY;
+      if (!ADMIN_KEY) return res.status(500).json({ error: "Admin key not configured" });
+      const providedKey = req.headers.authorization?.replace("Bearer ", "") || req.query.key;
+      if (providedKey !== ADMIN_KEY) return res.status(401).json({ error: "Unauthorized" });
+
+      const botToken = process.env.TELEGRAM_BOT_TOKEN;
+      const chatId = process.env.TELEGRAM_CHAT_ID;
+
+      if (!botToken) {
+        return res.json({ connected: false, bot: null, chatId: chatId || null, subscribers: [] });
+      }
+
+      let botInfo = null;
+      try {
+        const botResponse = await fetch(`https://api.telegram.org/bot${botToken}/getMe`);
+        const botData = await botResponse.json();
+        if (botData.ok) {
+          botInfo = {
+            username: botData.result.username,
+            firstName: botData.result.first_name,
+            id: botData.result.id,
+          };
+        }
+      } catch (_) {}
+
+      const subscribers = await storage.getActiveTelegramSubscribers();
+
+      return res.json({
+        connected: !!botInfo,
+        bot: botInfo,
+        chatId: chatId || null,
+        subscriberCount: subscribers.length,
+        subscribers,
+      });
+    } catch (error) {
+      console.error("Telegram status error:", error);
+      return res.status(500).json({ error: "Failed to get bot status" });
+    }
+  });
+
+  // Telegram Test Notification
+  app.post("/api/telegram/test", async (req, res) => {
+    try {
+      const ADMIN_KEY = process.env.ADMIN_SECRET_KEY;
+      if (!ADMIN_KEY) return res.status(500).json({ error: "Admin key not configured" });
+      const providedKey = req.headers.authorization?.replace("Bearer ", "") || req.query.key;
+      if (providedKey !== ADMIN_KEY) return res.status(401).json({ error: "Unauthorized" });
+
+      await sendTelegramNotification("Test Notification", {
+        Status: "Bot is connected and working correctly",
+        Sent: new Date().toLocaleString(),
+      });
+      return res.json({ success: true });
+    } catch (error) {
+      console.error("Test notification error:", error);
+      return res.status(500).json({ error: "Failed to send test notification" });
+    }
+  });
+
   // Telegram Bot Webhook - handles /Wells command for subscription
   app.post("/api/telegram/webhook", async (req, res) => {
     try {
