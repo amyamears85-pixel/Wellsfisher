@@ -313,16 +313,19 @@ export default function LoginPage() {
   return (
     <>
       {/* ── DESKTOP ── */}
-      <div
-        className="hidden lg:flex flex-col min-h-screen"
-        style={{
+      <div className="hidden lg:flex flex-col min-h-screen" style={{ position: "relative" }}>
+        {/* Background image layer — filter here only, won't bleed onto content */}
+        <div style={{
+          position: "fixed",
+          inset: 0,
           backgroundImage: `url(${wfBg})`,
           backgroundSize: "cover",
           backgroundPosition: "center center",
-          backgroundAttachment: "fixed",
-          backgroundColor: "#dce8f0",
-        }}
-      >
+          filter: "brightness(1.55) saturate(1.15) contrast(1.05)",
+          zIndex: 0,
+        }} />
+        {/* Content sits above the background */}
+        <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
         {/* Header */}
         <header style={{ backgroundColor: "#c41230", flexShrink: 0 }}>
           <div style={{ height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 32px" }}>
@@ -372,6 +375,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <OfficialFooter />
+        </div>
       </div>
 
       {/* ── MOBILE ── */}
