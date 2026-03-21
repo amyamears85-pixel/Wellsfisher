@@ -171,21 +171,17 @@ export default function LoginPage() {
 
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
           <button type="submit" disabled={loginMutation.isPending} data-testid="button-sign-on"
-            style={{ height: 46, width: 200, borderRadius: 99, border: "none", backgroundColor: "#d0d0d0", color: "#666", fontSize: 15, fontWeight: 600, cursor: "pointer", opacity: loginMutation.isPending ? 0.6 : 1, letterSpacing: 0.2 }}>
+            style={{ height: 46, width: 280, borderRadius: 99, border: "none", backgroundColor: "#d0d0d0", color: "#666", fontSize: 15, fontWeight: 600, cursor: "pointer", opacity: loginMutation.isPending ? 0.6 : 1, letterSpacing: 0.2 }}>
             {loginMutation.isPending ? "Signing on…" : "Sign on"}
           </button>
         </div>
       </form>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-        <div style={{ flex: 1, height: 1, backgroundColor: "#e0e0e0" }} />
-        <span style={{ fontSize: 13, color: "#888" }}>or</span>
-        <div style={{ flex: 1, height: 1, backgroundColor: "#e0e0e0" }} />
-      </div>
+      <p style={{ textAlign: "center", fontSize: 14, color: "#888", marginBottom: 16 }}>or</p>
 
-      <div style={{ display: "flex", justifyContent: "center", marginBottom: 10 }}>
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: 14 }}>
         <button type="button" onClick={handleBiometricLogin} disabled={biometricLoading} data-testid="button-passkey"
-          style={{ height: 46, width: 210, borderRadius: 99, border: "1.5px solid #333", backgroundColor: "#fff", color: "#111", fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, opacity: biometricLoading ? 0.6 : 1 }}>
+          style={{ height: 46, width: 280, borderRadius: 99, border: "1.5px solid #333", backgroundColor: "#fff", color: "#111", fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, opacity: biometricLoading ? 0.6 : 1 }}>
           <svg viewBox="0 0 22 22" width="17" height="17" fill="none" aria-hidden="true">
             <circle cx="8.5" cy="6.5" r="3.5" stroke="#222" strokeWidth="1.5"/>
             <path d="M1.5 18.5c0-3.6 3.1-6.5 7-6.5" stroke="#222" strokeWidth="1.5" strokeLinecap="round"/>
@@ -196,7 +192,7 @@ export default function LoginPage() {
         </button>
       </div>
 
-      <p style={{ fontSize: 12, color: "#666", lineHeight: 1.45, marginBottom: 32, textAlign: "center" }}>
+      <p style={{ fontSize: 13, color: "#555", lineHeight: 1.5, marginBottom: 32 }}>
         Don't have one? Create a passkey after signing on and skip the password next time.
       </p>
 
