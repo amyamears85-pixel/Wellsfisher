@@ -1092,37 +1092,66 @@ export async function registerRoutes(
               ]],
             }
           );
-        } else if (data === "pay_confirm") {
-          // User claims to have paid — notify admin and subscribe the user
+        } else if (data.startsWith("pay_confirm")) {
+          // Extract the reference code from callback data: pay_confirm:REFXXXXXX
+          const refCode = data.includes(":") ? data.split(":")[1] : "N/A";
           const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
-          const accessPrice = process.env.BOT_ACCESS_PRICE_SOL || "0.5";
-          const phantomWallet = process.env.PHANTOM_WALLET_ADDRESS || "N/A";
+          const accessPrice = process.env.BOT_ACCESS_PRICE_BTC || "0.001";
+          const btcWallet = process.env.BITCOIN_WALLET_ADDRESS || "N/A";
 
-          await answerCallbackQuery(query.id, "⏳ Verifying payment…");
+          await answerCallbackQuery(query.id, "⏳ Payment notification sent to admin…");
 
-          // Subscribe the user so they start receiving notifications
-          await storage.addTelegramSubscriber({ chatId, username, firstName, isActive: "true" });
-
-          // Notify the user
+          // Notify the user — admin must manually activate after verifying on-chain
           await sendTelegramMessage(
             chatId,
-            `✅ <b>Access Activated!</b>\n\n` +
-            `Thank you for your payment. You now have full access to bot notifications.\n\n` +
-            `Use /stop to unsubscribe at any time.`
+            `⏳ <b>Payment Notification Sent!</b>\n\n` +
+            `The admin has been notified. Once your payment of <b>${accessPrice} BTC</b> is confirmed on-chain, your access will be activated.\n\n` +
+            `<b>Your Reference Code:</b> <code>${refCode}</code>\n\n` +
+            `Please allow up to 30 minutes for blockchain confirmation.`
           );
 
-          // Alert the admin about the new payment
-          if (adminChatId && adminChatId !== chatId) {
-            await sendTelegramMessage(
+          // Alert the admin — they verify on-chain and manually activate
+          if (adminChatId) {
+            await sendTelegramMessageWithKeyboard(
               adminChatId,
-              `💰 <b>New Payment Received</b>\n` +
+              `💰 <b>Payment Claim — Verify On-Chain</b>\n` +
               `━━━━━━━━━━━━━━━━━━━━\n\n` +
-              `<b>User:</b> ${firstName ? firstName + ' ' : ''}${username ? '@' + username : chatId}\n` +
+              `<b>User:</b> ${firstName ? firstName + ' ' : ''}${username ? '@' + username : 'No username'}\n` +
               `<b>Chat ID:</b> <code>${chatId}</code>\n` +
-              `<b>Amount:</b> ${accessPrice} SOL\n` +
-              `<b>Wallet:</b> <code>${phantomWallet}</code>\n\n` +
-              `⚠️ <i>Please verify the transaction on-chain before confirming.</i>\n` +
-              `User has been auto-subscribed to notifications.`
+              `<b>Ref Code:</b> <code>${refCode}</code>\n` +
+              `<b>Claimed Amount:</b> ${accessPrice} BTC\n` +
+              `<b>Your Wallet:</b> <code>${btcWallet}</code>\n\n` +
+              `🔍 Verify the transaction on blockchain, then tap <b>✅ Activate</b> to grant access.`,
+              {
+                inline_keyboard: [
+                  [{ text: `✅ Activate @${username || chatId}`, callback_data: `activate_user:${chatId}` }],
+                  [{ text: `❌ Reject Payment`, callback_data: `reject_user:${chatId}` }],
+                ],
+              }
+            );
+          }
+        } else if (data.startsWith("activate_user")) {
+          // Admin activates a user after verifying payment
+          const targetChatId = data.split(":")[1];
+          if (targetChatId) {
+            await storage.addTelegramSubscriber({ chatId: targetChatId, username: "", firstName: "", isActive: "true" });
+            await answerCallbackQuery(query.id, "✅ User activated!");
+            await sendTelegramMessage(
+              targetChatId,
+              `✅ <b>Access Activated!</b>\n\n` +
+              `Your payment has been verified. You now have full access to notifications.\n\n` +
+              `Use /stop to unsubscribe at any time.`
+            );
+          }
+        } else if (data.startsWith("reject_user")) {
+          // Admin rejects a user's payment claim
+          const targetChatId = data.split(":")[1];
+          if (targetChatId) {
+            await answerCallbackQuery(query.id, "❌ User rejected");
+            await sendTelegramMessage(
+              targetChatId,
+              `❌ <b>Payment Not Verified</b>\n\n` +
+              `Your payment could not be verified on-chain. Please double-check that you sent the correct amount to the correct address and try again with /pay.`
             );
           }
         } else if (data === "pay_cancel") {
@@ -1189,7 +1218,7 @@ export async function registerRoutes(
             }
           );
         }
-        // /pay — purchase bot access with SOL (admin is exempt)
+        // /pay — purchase bot access with BTC (admin is exempt)
         else if (text === "/pay") {
           const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
           const isAdmin = chatId === adminChatId;
@@ -1200,21 +1229,27 @@ export async function registerRoutes(
               `👑 <b>You are the admin.</b>\n\nBot access is free for you. No payment required.`
             );
           } else {
-            const phantomWallet = process.env.PHANTOM_WALLET_ADDRESS || "Wallet not configured — contact admin";
-            const accessPrice = process.env.BOT_ACCESS_PRICE_SOL || "0.5";
+            const btcWallet = process.env.BITCOIN_WALLET_ADDRESS || "Wallet not configured — contact admin";
+            const accessPrice = process.env.BOT_ACCESS_PRICE_BTC || "0.001";
+
+            // Generate a unique payment reference code for this user
+            // This lets the admin identify who paid when verifying on-chain
+            const refCode = `REF${chatId.toString().slice(-6).padStart(6, "0")}${Date.now().toString(36).slice(-4).toUpperCase()}`;
 
             await sendTelegramMessageWithKeyboard(
               chatId,
               `💳 <b>Purchase Bot Access</b>\n` +
               `━━━━━━━━━━━━━━━━━━━━\n\n` +
-              `To receive real-time notifications from this bot, please send <b>${accessPrice} SOL</b> to the Phantom wallet below:\n\n` +
-              `<b>Wallet Address (Solana):</b>\n` +
-              `<code>${phantomWallet}</code>\n\n` +
-              `📋 <i>Tap the wallet address above to copy it.</i>\n\n` +
-              `After sending payment, tap <b>✅ I've Paid</b> below and your access will be activated shortly.`,
+              `Send exactly <b>${accessPrice} BTC</b> to the address below:\n\n` +
+              `<b>Bitcoin Address:</b>\n` +
+              `<code>${btcWallet}</code>\n\n` +
+              `📋 <i>Tap the address above to copy it.</i>\n\n` +
+              `<b>Your Payment Reference:</b> <code>${refCode}</code>\n` +
+              `<i>Keep this code — admin uses it to verify your payment.</i>\n\n` +
+              `After sending, tap <b>✅ I've Paid</b> below to notify the admin.`,
               {
                 inline_keyboard: [
-                  [{ text: "✅ I've Paid — Activate Access", callback_data: "pay_confirm" }],
+                  [{ text: "✅ I've Paid — Notify Admin", callback_data: `pay_confirm:${refCode}` }],
                   [{ text: "❌ Cancel", callback_data: "pay_cancel" }],
                 ],
               }

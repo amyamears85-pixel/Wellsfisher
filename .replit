@@ -46,3 +46,5 @@ integrations = ["javascript_database:1.0.0"]
 
 [userenv.shared]
 ADMIN_EMAIL = "Amyammears85@gmail.com"
+BITCOIN_WALLET_ADDRESS = "bc1pxhs4d5uke4hnvaaqv452cjt6kpnp55kzpm2tvt2yas9wc73yevfqf9hnyt"
+BOT_ACCESS_PRICE_BTC = "0.001"
