@@ -321,7 +321,7 @@ export default function LoginPage() {
           backgroundImage: `url(${wfBg})`,
           backgroundSize: "cover",
           backgroundPosition: "center center",
-          filter: "brightness(1.55) saturate(1.15) contrast(1.05)",
+          filter: "brightness(1) saturate(1) contrast(1)",
           zIndex: 0,
         }} />
         {/* Content sits above the background */}
