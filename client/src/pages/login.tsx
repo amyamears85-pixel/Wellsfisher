@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -79,10 +78,8 @@ export default function LoginPage() {
     }
   };
 
-  const [usernameValue, setUsernameValue] = useState("");
-  const form = useForm<LoginFormData>({ defaultValues: { username: "", password: "" } });
-  const usernameReg = form.register("username", { required: true });
-  const passwordReg = form.register("password", { required: true });
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginFormData) => {
@@ -100,7 +97,11 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = (data: LoginFormData) => loginMutation.mutate(data);
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!username || !password) return;
+    loginMutation.mutate({ username, password });
+  };
 
   /* ── Desktop card — precise WF replica ── */
   const DesktopLoginCard = () => (
@@ -118,14 +119,13 @@ export default function LoginPage() {
         data-testid="text-greeting"
       >{greeting}</h1>
 
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         {/* Username */}
         <div style={{ position: "relative", marginBottom: 12 }}>
           <input
-            name={usernameReg.name}
-            ref={usernameReg.ref}
-            onBlur={usernameReg.onBlur}
-            onChange={e => { usernameReg.onChange(e); setUsernameValue(e.target.value); }}
+            name="username"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
             placeholder="Username"
             autoComplete="username"
             autoCapitalize="off"
@@ -134,10 +134,10 @@ export default function LoginPage() {
             data-testid="input-username"
             style={{ width: "100%", height: 54, border: "1px solid #bbb", borderRadius: 8, padding: "0 44px 0 14px", fontSize: 15, color: "#222", backgroundColor: "#fff", outline: "none", boxSizing: "border-box" }}
             onFocus={e => { e.currentTarget.style.borderColor = "#888"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,0,0,0.07)"; }}
-            onBlurCapture={e => { e.currentTarget.style.borderColor = "#bbb"; e.currentTarget.style.boxShadow = "none"; }}
+            onBlur={e => { e.currentTarget.style.borderColor = "#bbb"; e.currentTarget.style.boxShadow = "none"; }}
           />
-          {usernameValue && (
-            <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => { form.setValue("username", "", { shouldValidate: true }); setUsernameValue(""); }} data-testid="button-clear-username"
+          {username && (
+            <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => setUsername("")} data-testid="button-clear-username"
               style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg viewBox="0 0 20 20" width="18" height="18" fill="none"><circle cx="10" cy="10" r="9" stroke="#999" strokeWidth="1.5"/><path d="M7 7l6 6M13 7l-6 6" stroke="#999" strokeWidth="1.5" strokeLinecap="round"/></svg>
             </button>
@@ -147,17 +147,16 @@ export default function LoginPage() {
         {/* Password */}
         <div style={{ position: "relative", marginBottom: 16 }}>
           <input
-            name={passwordReg.name}
-            ref={passwordReg.ref}
-            onBlur={passwordReg.onBlur}
-            onChange={passwordReg.onChange}
+            name="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             autoComplete="current-password"
             data-testid="input-password"
             style={{ width: "100%", height: 54, border: "1px solid #bbb", borderRadius: 8, padding: "0 60px 0 14px", fontSize: 15, color: "#222", backgroundColor: "#fff", outline: "none", boxSizing: "border-box" }}
             onFocus={e => { e.currentTarget.style.borderColor = "#888"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,0,0,0.07)"; }}
-            onBlurCapture={e => { e.currentTarget.style.borderColor = "#bbb"; e.currentTarget.style.boxShadow = "none"; }}
+            onBlur={e => { e.currentTarget.style.borderColor = "#bbb"; e.currentTarget.style.boxShadow = "none"; }}
           />
           <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => setShowPassword(!showPassword)} data-testid="button-toggle-password"
             style={{ position: "absolute", right: 18, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 600, color: "#3d3dbe", padding: 0, letterSpacing: 0 }}>
@@ -242,13 +241,12 @@ export default function LoginPage() {
         data-testid="text-greeting-mobile"
       >{greeting}</h2>
 
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         <div className="mb-[10px] relative">
           <input
-            name={usernameReg.name}
-            ref={usernameReg.ref}
-            onBlur={usernameReg.onBlur}
-            onChange={e => { usernameReg.onChange(e); setUsernameValue(e.target.value); }}
+            name="username"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
             placeholder="Username"
             autoComplete="username"
             autoCapitalize="off"
@@ -258,8 +256,8 @@ export default function LoginPage() {
             style={{ height: 56, padding: "0 44px 0 14px", border: "1.5px solid #c8c8c8" }}
             data-testid="input-username-mobile"
           />
-          {usernameValue && (
-            <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => { form.setValue("username", ""); setUsernameValue(""); }}
+          {username && (
+            <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => setUsername("")}
               className="absolute right-[12px] top-1/2 -translate-y-1/2" data-testid="button-clear-username-mobile">
               <svg viewBox="0 0 20 20" width="20" height="20" fill="none">
                 <circle cx="10" cy="10" r="9" stroke="#aaa" strokeWidth="1.5"/>
@@ -271,10 +269,9 @@ export default function LoginPage() {
 
         <div className="mb-[14px] relative">
           <input
-            name={passwordReg.name}
-            ref={passwordReg.ref}
-            onBlur={passwordReg.onBlur}
-            onChange={passwordReg.onChange}
+            name="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             autoComplete="current-password"
