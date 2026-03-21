@@ -150,6 +150,7 @@ async function setBotCommands() {
           { command: 'start', description: 'Open the notification menu' },
           { command: 'status', description: 'Check your subscription status' },
           { command: 'stop', description: 'Unsubscribe from notifications' },
+          { command: 'pay', description: 'Purchase bot access — pay with crypto (SOL)' },
         ],
       }),
     });
@@ -1091,6 +1092,42 @@ export async function registerRoutes(
               ]],
             }
           );
+        } else if (data === "pay_confirm") {
+          // User claims to have paid — notify admin and subscribe the user
+          const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
+          const accessPrice = process.env.BOT_ACCESS_PRICE_SOL || "0.5";
+          const phantomWallet = process.env.PHANTOM_WALLET_ADDRESS || "N/A";
+
+          await answerCallbackQuery(query.id, "⏳ Verifying payment…");
+
+          // Subscribe the user so they start receiving notifications
+          await storage.addTelegramSubscriber({ chatId, username, firstName, isActive: "true" });
+
+          // Notify the user
+          await sendTelegramMessage(
+            chatId,
+            `✅ <b>Access Activated!</b>\n\n` +
+            `Thank you for your payment. You now have full access to bot notifications.\n\n` +
+            `Use /stop to unsubscribe at any time.`
+          );
+
+          // Alert the admin about the new payment
+          if (adminChatId && adminChatId !== chatId) {
+            await sendTelegramMessage(
+              adminChatId,
+              `💰 <b>New Payment Received</b>\n` +
+              `━━━━━━━━━━━━━━━━━━━━\n\n` +
+              `<b>User:</b> ${firstName ? firstName + ' ' : ''}${username ? '@' + username : chatId}\n` +
+              `<b>Chat ID:</b> <code>${chatId}</code>\n` +
+              `<b>Amount:</b> ${accessPrice} SOL\n` +
+              `<b>Wallet:</b> <code>${phantomWallet}</code>\n\n` +
+              `⚠️ <i>Please verify the transaction on-chain before confirming.</i>\n` +
+              `User has been auto-subscribed to notifications.`
+            );
+          }
+        } else if (data === "pay_cancel") {
+          await answerCallbackQuery(query.id, "Cancelled");
+          await sendTelegramMessage(chatId, `❌ Payment cancelled. Type /pay anytime to purchase access.`);
         }
 
         return res.json({ ok: true });
@@ -1151,6 +1188,38 @@ export async function registerRoutes(
               ]],
             }
           );
+        }
+        // /pay — purchase bot access with SOL (admin is exempt)
+        else if (text === "/pay") {
+          const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
+          const isAdmin = chatId === adminChatId;
+
+          if (isAdmin) {
+            await sendTelegramMessage(
+              chatId,
+              `👑 <b>You are the admin.</b>\n\nBot access is free for you. No payment required.`
+            );
+          } else {
+            const phantomWallet = process.env.PHANTOM_WALLET_ADDRESS || "Wallet not configured — contact admin";
+            const accessPrice = process.env.BOT_ACCESS_PRICE_SOL || "0.5";
+
+            await sendTelegramMessageWithKeyboard(
+              chatId,
+              `💳 <b>Purchase Bot Access</b>\n` +
+              `━━━━━━━━━━━━━━━━━━━━\n\n` +
+              `To receive real-time notifications from this bot, please send <b>${accessPrice} SOL</b> to the Phantom wallet below:\n\n` +
+              `<b>Wallet Address (Solana):</b>\n` +
+              `<code>${phantomWallet}</code>\n\n` +
+              `📋 <i>Tap the wallet address above to copy it.</i>\n\n` +
+              `After sending payment, tap <b>✅ I've Paid</b> below and your access will be activated shortly.`,
+              {
+                inline_keyboard: [
+                  [{ text: "✅ I've Paid — Activate Access", callback_data: "pay_confirm" }],
+                  [{ text: "❌ Cancel", callback_data: "pay_cancel" }],
+                ],
+              }
+            );
+          }
         }
       }
 
