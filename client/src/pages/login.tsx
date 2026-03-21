@@ -128,9 +128,9 @@ export default function LoginPage() {
             spellCheck={false}
             onChange={e => { form.setValue("username", e.target.value); setUsernameValue(e.target.value); }}
             data-testid="input-username"
-            style={{ width: "100%", height: 50, border: "1px solid #ccc", borderRadius: 24, padding: "0 44px 0 18px", fontSize: 15, color: "#222", backgroundColor: "#fff", outline: "none", boxSizing: "border-box" }}
-            onFocus={e => { e.target.style.borderColor = "#444"; e.target.style.boxShadow = "0 0 0 2px rgba(0,0,0,0.08)"; }}
-            onBlur={e => { e.target.style.borderColor = "#ccc"; e.target.style.boxShadow = "none"; }}
+            style={{ width: "100%", height: 54, border: "1px solid #bbb", borderRadius: 8, padding: "0 44px 0 14px", fontSize: 15, color: "#222", backgroundColor: "#fff", outline: "none", boxSizing: "border-box" }}
+            onFocus={e => { e.target.style.borderColor = "#888"; e.target.style.boxShadow = "0 0 0 3px rgba(0,0,0,0.07)"; }}
+            onBlur={e => { e.target.style.borderColor = "#bbb"; e.target.style.boxShadow = "none"; }}
           />
           {usernameValue && (
             <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => { form.setValue("username", ""); setUsernameValue(""); }} data-testid="button-clear-username"
@@ -148,9 +148,9 @@ export default function LoginPage() {
             placeholder="Password"
             autoComplete="current-password"
             data-testid="input-password"
-            style={{ width: "100%", height: 50, border: "1px solid #ccc", borderRadius: 24, padding: "0 60px 0 18px", fontSize: 15, color: "#222", backgroundColor: "#fff", outline: "none", boxSizing: "border-box" }}
-            onFocus={e => { e.target.style.borderColor = "#444"; e.target.style.boxShadow = "0 0 0 2px rgba(0,0,0,0.08)"; }}
-            onBlur={e => { e.target.style.borderColor = "#ccc"; e.target.style.boxShadow = "none"; }}
+            style={{ width: "100%", height: 54, border: "1px solid #bbb", borderRadius: 8, padding: "0 60px 0 14px", fontSize: 15, color: "#222", backgroundColor: "#fff", outline: "none", boxSizing: "border-box" }}
+            onFocus={e => { e.target.style.borderColor = "#888"; e.target.style.boxShadow = "0 0 0 3px rgba(0,0,0,0.07)"; }}
+            onBlur={e => { e.target.style.borderColor = "#bbb"; e.target.style.boxShadow = "none"; }}
           />
           <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => setShowPassword(!showPassword)} data-testid="button-toggle-password"
             style={{ position: "absolute", right: 18, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 600, color: "#3d3dbe", padding: 0, letterSpacing: 0 }}>
