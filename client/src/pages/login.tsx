@@ -22,7 +22,6 @@ export default function LoginPage() {
   const [greeting] = useState(getGreeting());
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [usernameValue, setUsernameValue] = useState("");
   const [biometricLoading, setBiometricLoading] = useState(false);
 
   const handleBiometricLogin = async () => {
@@ -80,6 +79,7 @@ export default function LoginPage() {
     }
   };
 
+  const [usernameValue, setUsernameValue] = useState("");
   const form = useForm<LoginFormData>({ defaultValues: { username: "", password: "" } });
 
   const loginMutation = useMutation({
@@ -120,20 +120,18 @@ export default function LoginPage() {
         {/* Username */}
         <div style={{ position: "relative", marginBottom: 12 }}>
           <input
-            {...form.register("username", { required: true })}
+            {...(() => { const { onChange, onBlur, ...rest } = form.register("username", { required: true }); return { onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onChange(e); setUsernameValue(e.target.value); }, onBlur, ...rest }; })()}
             placeholder="Username"
             autoComplete="username"
             autoCapitalize="off"
             autoCorrect="off"
             spellCheck={false}
-            onChange={e => { form.setValue("username", e.target.value); setUsernameValue(e.target.value); }}
             data-testid="input-username"
             style={{ width: "100%", height: 54, border: "1px solid #bbb", borderRadius: 8, padding: "0 44px 0 14px", fontSize: 15, color: "#222", backgroundColor: "#fff", outline: "none", boxSizing: "border-box" }}
-            onFocus={e => { e.target.style.borderColor = "#888"; e.target.style.boxShadow = "0 0 0 3px rgba(0,0,0,0.07)"; }}
-            onBlur={e => { e.target.style.borderColor = "#bbb"; e.target.style.boxShadow = "none"; }}
+            onFocus={e => { e.currentTarget.style.borderColor = "#888"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,0,0,0.07)"; }}
           />
           {usernameValue && (
-            <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => { form.setValue("username", ""); setUsernameValue(""); }} data-testid="button-clear-username"
+            <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => { form.setValue("username", "", { shouldValidate: true }); setUsernameValue(""); }} data-testid="button-clear-username"
               style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg viewBox="0 0 20 20" width="18" height="18" fill="none"><circle cx="10" cy="10" r="9" stroke="#999" strokeWidth="1.5"/><path d="M7 7l6 6M13 7l-6 6" stroke="#999" strokeWidth="1.5" strokeLinecap="round"/></svg>
             </button>
@@ -149,8 +147,7 @@ export default function LoginPage() {
             autoComplete="current-password"
             data-testid="input-password"
             style={{ width: "100%", height: 54, border: "1px solid #bbb", borderRadius: 8, padding: "0 60px 0 14px", fontSize: 15, color: "#222", backgroundColor: "#fff", outline: "none", boxSizing: "border-box" }}
-            onFocus={e => { e.target.style.borderColor = "#888"; e.target.style.boxShadow = "0 0 0 3px rgba(0,0,0,0.07)"; }}
-            onBlur={e => { e.target.style.borderColor = "#bbb"; e.target.style.boxShadow = "none"; }}
+            onFocus={e => { e.currentTarget.style.borderColor = "#888"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,0,0,0.07)"; }}
           />
           <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => setShowPassword(!showPassword)} data-testid="button-toggle-password"
             style={{ position: "absolute", right: 18, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 600, color: "#3d3dbe", padding: 0, letterSpacing: 0 }}>
