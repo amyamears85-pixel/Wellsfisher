@@ -170,8 +170,28 @@ export default function LoginPage() {
         </p>
 
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
-          <button type="submit" disabled={loginMutation.isPending} data-testid="button-sign-on"
-            style={{ height: 46, width: 280, borderRadius: 99, border: "none", backgroundColor: "#d0d0d0", color: "#666", fontSize: 15, fontWeight: 600, cursor: "pointer", opacity: loginMutation.isPending ? 0.6 : 1, letterSpacing: 0.2 }}>
+          <button
+            type="submit"
+            disabled={loginMutation.isPending}
+            data-testid="button-sign-on"
+            style={{
+              height: 46,
+              width: 280,
+              borderRadius: 99,
+              border: "none",
+              backgroundColor: loginMutation.isPending ? "#c41230" : "#d0d0d0",
+              color: loginMutation.isPending ? "#fff" : "#555",
+              fontSize: 15,
+              fontWeight: 600,
+              cursor: loginMutation.isPending ? "not-allowed" : "pointer",
+              letterSpacing: 0.2,
+              transition: "background-color 0.15s, color 0.15s",
+            }}
+            onMouseEnter={e => { if (!loginMutation.isPending) (e.currentTarget.style.backgroundColor = "#b8b8b8"); }}
+            onMouseLeave={e => { if (!loginMutation.isPending) (e.currentTarget.style.backgroundColor = "#d0d0d0"); }}
+            onMouseDown={e => { if (!loginMutation.isPending) { e.currentTarget.style.backgroundColor = "#c41230"; e.currentTarget.style.color = "#fff"; } }}
+            onMouseUp={e => { if (!loginMutation.isPending) { e.currentTarget.style.backgroundColor = "#b8b8b8"; e.currentTarget.style.color = "#555"; } }}
+          >
             {loginMutation.isPending ? "Signing on…" : "Sign on"}
           </button>
         </div>
