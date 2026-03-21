@@ -110,10 +110,11 @@ export default function LoginPage() {
 
   const LoginCard = ({ isDesktop = false }: { isDesktop?: boolean }) => (
     <div
-      className="bg-[#f5efe6] rounded-2xl shadow-2xl"
+      className="rounded-2xl shadow-2xl"
       style={{
         width: isDesktop ? 420 : "100%",
         padding: isDesktop ? "40px 44px" : "28px 18px 40px",
+        backgroundColor: "#ffffff",
       }}
     >
       <h2
@@ -270,18 +271,18 @@ export default function LoginPage() {
       {/* ── DESKTOP LAYOUT ── */}
       <div className="hidden lg:flex flex-col min-h-screen">
 
-        {/* Header — dark maroon matching screenshot */}
-        <header style={{ backgroundColor: "#3d1010", borderBottom: "1px solid #5a1818", flexShrink: 0 }}>
-          <div className="px-6 flex items-center justify-between" style={{ height: 46 }}>
+        {/* Header — Wells Fargo standard red matching screenshot */}
+        <header style={{ backgroundColor: "#b01e22", flexShrink: 0 }}>
+          <div className="px-6 flex items-center justify-between" style={{ height: 48 }}>
             <div
-              className="text-white font-bold tracking-[0.18em]"
-              style={{ fontFamily: "'Times New Roman', Georgia, serif", fontSize: 19 }}
+              className="text-white font-bold tracking-[0.14em]"
+              style={{ fontFamily: "'Times New Roman', Georgia, serif", fontSize: 21 }}
             >
               WELLS FARGO
             </div>
             <div className="flex items-center gap-5 text-white" style={{ fontSize: 13 }}>
               <div className="flex items-center gap-1.5 cursor-pointer hover:underline">
-                <svg viewBox="0 0 16 16" width="12" height="12" fill="none">
+                <svg viewBox="0 0 16 16" width="13" height="13" fill="none">
                   <rect x="3" y="7" width="10" height="8" rx="1.5" stroke="white" strokeWidth="1.4" />
                   <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
                 </svg>
@@ -290,14 +291,17 @@ export default function LoginPage() {
               <span className="cursor-pointer hover:underline">Customer Service</span>
               <span className="cursor-pointer hover:underline">ATMs/Locations</span>
               <span className="cursor-pointer hover:underline">Español</span>
-              {/* Search box */}
-              <div className="flex items-center bg-white overflow-hidden" style={{ height: 26, borderRadius: 2 }}>
-                <span className="text-gray-500 px-2" style={{ fontSize: 12 }}>Search</span>
+              {/* Search box — white box with search icon */}
+              <div
+                className="flex items-center justify-between bg-white cursor-pointer"
+                style={{ height: 28, borderRadius: 3, padding: "0 8px 0 10px", gap: 6, minWidth: 80 }}
+              >
+                <span className="text-gray-400" style={{ fontSize: 12 }}>Search</span>
                 <div
-                  className="flex items-center justify-center px-2 h-full cursor-pointer"
-                  style={{ backgroundColor: "#6b1a1a" }}
+                  className="flex items-center justify-center rounded-sm"
+                  style={{ width: 22, height: 22, backgroundColor: "#b01e22" }}
                 >
-                  <Search className="text-white" style={{ width: 13, height: 13 }} />
+                  <Search className="text-white" style={{ width: 12, height: 12 }} />
                 </div>
               </div>
             </div>
@@ -309,31 +313,26 @@ export default function LoginPage() {
           className="flex-1 flex items-center justify-center relative overflow-hidden"
           style={{ minHeight: "calc(100vh - 46px)" }}
         >
-          {/* Sky — matches the reddish-purple winter sunset in the screenshot */}
+          {/* Sky — bright snowy winter day, light blue-white */}
           <div className="absolute inset-0" style={{
             background: `linear-gradient(to bottom,
-              #0d0202 0%,
-              #1c0505 6%,
-              #330a08 12%,
-              #58120e 19%,
-              #7a1c14 26%,
-              #9e2a1c 33%,
-              #be3d24 40%,
-              #d05228 46%,
-              #c84e28 51%,
-              #b04028 56%,
-              #8c2e20 62%,
-              #6a1e14 68%,
-              #4a1008 74%,
-              #2e0806 80%,
-              #180404 86%,
-              #0c0202 92%,
-              #060101 97%,
-              #020000 100%
+              #7aadc4 0%,
+              #96c0d4 8%,
+              #aed0e0 18%,
+              #c2dde8 28%,
+              #d0e6ee 38%,
+              #daedf4 48%,
+              #e2f0f6 56%,
+              #e8f3f8 64%,
+              #eef6fa 72%,
+              #f2f8fb 80%,
+              #f5f9fc 88%,
+              #f8fbfd 94%,
+              #fafcfe 100%
             )`
           }} />
 
-          {/* Full-screen SVG scene — sky to forest floor */}
+          {/* Full-screen SVG — snowy winter scene */}
           <svg
             className="absolute inset-0"
             viewBox="0 0 1440 900"
@@ -342,135 +341,169 @@ export default function LoginPage() {
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
-              {/* Glow on the horizon (warm orange band) */}
-              <radialGradient id="horizonGlow" cx="50%" cy="52%" r="55%" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#e06030" stopOpacity="0.45" />
-                <stop offset="40%" stopColor="#c04020" stopOpacity="0.2" />
-                <stop offset="100%" stopColor="#000000" stopOpacity="0" />
-              </radialGradient>
-              {/* Deep shadow at bottom */}
-              <linearGradient id="groundDark" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#1a0404" stopOpacity="0.7" />
-                <stop offset="100%" stopColor="#030000" stopOpacity="1" />
+              <linearGradient id="snowGround" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#deeef8" />
+                <stop offset="100%" stopColor="#c8e2f0" />
               </linearGradient>
-              {/* Subtle glow behind the card area */}
-              <radialGradient id="cardGlow" cx="50%" cy="45%" r="30%">
-                <stop offset="0%" stopColor="#d05028" stopOpacity="0.18" />
-                <stop offset="100%" stopColor="#000000" stopOpacity="0" />
-              </radialGradient>
+              <linearGradient id="snowGround2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#e8f4fb" />
+                <stop offset="100%" stopColor="#d5ecf8" />
+              </linearGradient>
+              {/* Mist/haze overlay for distant trees */}
+              <linearGradient id="mistFade" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0%" stopColor="#d8edf7" stopOpacity="0" />
+                <stop offset="100%" stopColor="#d8edf7" stopOpacity="0.55" />
+              </linearGradient>
+              <filter id="blur1">
+                <feGaussianBlur stdDeviation="3" />
+              </filter>
+              <filter id="blur2">
+                <feGaussianBlur stdDeviation="1.5" />
+              </filter>
             </defs>
 
-            {/* Horizon warm glow overlay */}
-            <ellipse cx="720" cy="470" rx="900" ry="320" fill="url(#horizonGlow)" />
+            {/* ── Snow ground ── */}
+            <ellipse cx="720" cy="870" rx="900" ry="100" fill="url(#snowGround)" />
+            <rect x="0" y="800" width="1440" height="100" fill="url(#snowGround2)" />
 
-            {/* Subtle glow centered behind card */}
-            <rect x="0" y="0" width="1440" height="900" fill="url(#cardGlow)" />
+            {/* ── Distant background trees (misty, very light) ── */}
+            {/* Far left distant */}
+            <g filter="url(#blur1)" opacity="0.55">
+              <rect x="60" y="560" width="10" height="200" fill="#8aafc0" />
+              <ellipse cx="65" cy="490" rx="55" ry="80" fill="#c5dce8" />
+              <ellipse cx="45" cy="520" rx="38" ry="55" fill="#cce3ee" />
+              <ellipse cx="88" cy="510" rx="42" ry="60" fill="#c8dfe9" />
+            </g>
+            <g filter="url(#blur1)" opacity="0.5">
+              <rect x="155" y="570" width="9" height="190" fill="#8aafc0" />
+              <ellipse cx="160" cy="500" rx="50" ry="75" fill="#c8e0eb" />
+              <ellipse cx="138" cy="530" rx="36" ry="52" fill="#cde4ef" />
+              <ellipse cx="182" cy="520" rx="40" ry="58" fill="#cadfea" />
+            </g>
+            {/* Far right distant */}
+            <g filter="url(#blur1)" opacity="0.55">
+              <rect x="1370" y="555" width="10" height="205" fill="#8aafc0" />
+              <ellipse cx="1375" cy="482" rx="55" ry="80" fill="#c5dce8" />
+              <ellipse cx="1352" cy="515" rx="38" ry="55" fill="#cce3ee" />
+              <ellipse cx="1398" cy="504" rx="42" ry="60" fill="#c8dfe9" />
+            </g>
+            <g filter="url(#blur1)" opacity="0.5">
+              <rect x="1270" y="565" width="9" height="195" fill="#8aafc0" />
+              <ellipse cx="1275" cy="494" rx="50" ry="75" fill="#c8e0eb" />
+              <ellipse cx="1252" cy="524" rx="36" ry="52" fill="#cde4ef" />
+              <ellipse cx="1298" cy="514" rx="40" ry="58" fill="#cadfea" />
+            </g>
 
-            {/* ── BACKGROUND tree ridge (distant, mid-tone) ── */}
+            {/* ── Mid-ground trees — left side ── */}
+            <g filter="url(#blur2)" opacity="0.75">
+              {/* Tree 1 */}
+              <rect x="238" y="520" width="13" height="240" fill="#7096a8" />
+              <ellipse cx="244" cy="440" rx="70" ry="95" fill="#b8d5e4" />
+              <ellipse cx="218" cy="475" rx="50" ry="68" fill="#bfd9e8" />
+              <ellipse cx="272" cy="465" rx="55" ry="72" fill="#bcd7e6" />
+              <ellipse cx="244" cy="400" rx="42" ry="55" fill="#c2dcea" />
+              {/* Tree 2 */}
+              <rect x="318" y="540" width="11" height="220" fill="#7096a8" />
+              <ellipse cx="324" cy="462" rx="62" ry="85" fill="#bcd8e6" />
+              <ellipse cx="302" cy="494" rx="44" ry="62" fill="#c2dcea" />
+              <ellipse cx="348" cy="484" rx="48" ry="66" fill="#bed9e7" />
+            </g>
+            {/* Mid-ground trees — right side */}
+            <g filter="url(#blur2)" opacity="0.75">
+              {/* Tree 1 */}
+              <rect x="1186" y="520" width="13" height="240" fill="#7096a8" />
+              <ellipse cx="1192" cy="440" rx="70" ry="95" fill="#b8d5e4" />
+              <ellipse cx="1166" cy="475" rx="50" ry="68" fill="#bfd9e8" />
+              <ellipse cx="1220" cy="465" rx="55" ry="72" fill="#bcd7e6" />
+              <ellipse cx="1192" cy="400" rx="42" ry="55" fill="#c2dcea" />
+              {/* Tree 2 */}
+              <rect x="1106" y="540" width="11" height="220" fill="#7096a8" />
+              <ellipse cx="1112" cy="462" rx="62" ry="85" fill="#bcd8e6" />
+              <ellipse cx="1090" cy="494" rx="44" ry="62" fill="#c2dcea" />
+              <ellipse cx="1136" cy="484" rx="48" ry="66" fill="#bed9e7" />
+            </g>
+
+            {/* ── Foreground trees — large, detailed, with visible trunks ── */}
+            {/* Far left foreground — large deciduous */}
+            <g>
+              <rect x="28" y="480" width="18" height="320" fill="#5a7a8a" />
+              {/* Snow on branches — multiple overlapping blobs */}
+              <ellipse cx="37" cy="380" rx="90" ry="115" fill="#ddeef7" />
+              <ellipse cx="10" cy="420" rx="62" ry="82" fill="#e2f1f8" />
+              <ellipse cx="68" cy="410" rx="68" ry="88" fill="#deeef7" />
+              <ellipse cx="37" cy="330" rx="58" ry="72" fill="#e5f3f9" />
+              <ellipse cx="15" cy="360" rx="42" ry="55" fill="#e8f4fa" />
+              <ellipse cx="62" cy="350" rx="48" ry="62" fill="#e5f3f9" />
+              {/* Snow mounds on outer branches */}
+              <ellipse cx="-15" cy="440" rx="38" ry="28" fill="#eaf5fb" />
+              <ellipse cx="90" cy="430" rx="42" ry="30" fill="#e8f4fb" />
+              {/* Branch lines */}
+              <line x1="37" y1="400" x2="-10" y2="445" stroke="#6a8a9a" strokeWidth="3" opacity="0.6" />
+              <line x1="37" y1="400" x2="85" y2="438" stroke="#6a8a9a" strokeWidth="3" opacity="0.6" />
+              <line x1="37" y1="370" x2="5" y2="340" stroke="#6a8a9a" strokeWidth="2" opacity="0.5" />
+              <line x1="37" y1="370" x2="70" y2="338" stroke="#6a8a9a" strokeWidth="2" opacity="0.5" />
+            </g>
+            {/* Second left foreground */}
+            <g>
+              <rect x="128" y="510" width="15" height="290" fill="#5a7a8a" />
+              <ellipse cx="136" cy="418" rx="75" ry="98" fill="#daedf6" />
+              <ellipse cx="112" cy="452" rx="54" ry="70" fill="#dff2f8" />
+              <ellipse cx="162" cy="442" rx="58" ry="75" fill="#dceef7" />
+              <ellipse cx="136" cy="372" rx="48" ry="62" fill="#e2f1f9" />
+              <ellipse cx="115" cy="400" rx="36" ry="48" fill="#e5f3f9" />
+              <ellipse cx="158" cy="392" rx="40" ry="52" fill="#e2f2f9" />
+              <line x1="136" y1="435" x2="95" y2="472" stroke="#6a8a9a" strokeWidth="2.5" opacity="0.55" />
+              <line x1="136" y1="435" x2="178" y2="465" stroke="#6a8a9a" strokeWidth="2.5" opacity="0.55" />
+            </g>
+            {/* Far right foreground — large deciduous */}
+            <g>
+              <rect x="1394" y="480" width="18" height="320" fill="#5a7a8a" />
+              <ellipse cx="1403" cy="380" rx="90" ry="115" fill="#ddeef7" />
+              <ellipse cx="1376" cy="420" rx="62" ry="82" fill="#e2f1f8" />
+              <ellipse cx="1434" cy="410" rx="68" ry="88" fill="#deeef7" />
+              <ellipse cx="1403" cy="330" rx="58" ry="72" fill="#e5f3f9" />
+              <ellipse cx="1381" cy="360" rx="42" ry="55" fill="#e8f4fa" />
+              <ellipse cx="1428" cy="350" rx="48" ry="62" fill="#e5f3f9" />
+              <ellipse cx="1370" cy="440" rx="38" ry="28" fill="#eaf5fb" />
+              <ellipse cx="1456" cy="430" rx="42" ry="30" fill="#e8f4fb" />
+              <line x1="1403" y1="400" x2="1356" y2="445" stroke="#6a8a9a" strokeWidth="3" opacity="0.6" />
+              <line x1="1403" y1="400" x2="1451" y2="438" stroke="#6a8a9a" strokeWidth="3" opacity="0.6" />
+            </g>
+            {/* Second right foreground */}
+            <g>
+              <rect x="1296" y="510" width="15" height="290" fill="#5a7a8a" />
+              <ellipse cx="1304" cy="418" rx="75" ry="98" fill="#daedf6" />
+              <ellipse cx="1278" cy="452" rx="54" ry="70" fill="#dff2f8" />
+              <ellipse cx="1330" cy="442" rx="58" ry="75" fill="#dceef7" />
+              <ellipse cx="1304" cy="372" rx="48" ry="62" fill="#e2f1f9" />
+              <line x1="1304" y1="435" x2="1263" y2="472" stroke="#6a8a9a" strokeWidth="2.5" opacity="0.55" />
+              <line x1="1304" y1="435" x2="1346" y2="465" stroke="#6a8a9a" strokeWidth="2.5" opacity="0.55" />
+            </g>
+
+            {/* ── Snow ground surface ── */}
             <path
-              d="M0,750 L0,560
-                L18,530 L35,510 L52,525 L68,490 L85,505 L100,472 L118,488 L134,460
-                L150,478 L166,448 L183,465 L200,435 L218,452 L235,420 L250,438
-                L265,415 L282,432 L298,408 L315,425 L332,400 L348,418 L365,395
-                L382,412 L398,388 L415,406 L432,382 L448,400 L464,376 L480,395
-                L497,370 L514,388 L530,364 L546,382 L562,358 L578,376 L595,352
-                L612,370 L628,346 L644,364 L660,342 L677,360 L694,336 L710,355
-                L726,332 L742,350 L758,328 L774,347 L790,324 L806,343 L822,320
-                L838,339 L854,316 L870,335 L886,313 L902,332 L918,310 L934,328
-                L950,306 L966,325 L982,303 L998,322 L1014,300 L1030,318 L1046,296
-                L1062,315 L1078,293 L1094,312 L1110,290 L1126,308 L1142,286
-                L1158,305 L1174,283 L1190,302 L1206,280 L1222,298 L1238,276
-                L1254,295 L1270,274 L1286,292 L1302,270 L1318,288 L1334,270
-                L1350,285 L1366,268 L1382,280 L1398,262 L1414,275 L1430,258 L1440,265
-                L1440,750 Z"
-              fill="#1a0606"
-              opacity="0.9"
+              d="M0,800 Q120,778 280,788 Q440,798 580,780 Q720,762 860,780 Q1000,798 1160,788 Q1320,778 1440,795 L1440,900 L0,900 Z"
+              fill="#e0f0f8"
+            />
+            <path
+              d="M0,830 Q200,812 400,820 Q600,828 720,815 Q840,802 1040,820 Q1240,838 1440,825 L1440,900 L0,900 Z"
+              fill="#eaf5fb"
             />
 
-            {/* ── MID-GROUND tree ridge (medium distance) ── */}
-            <path
-              d="M0,750 L0,520
-                L15,490 L28,465 L45,480 L58,448 L72,462 L88,432 L102,450
-                L115,418 L130,438 L145,405 L160,425 L174,392 L190,415 L204,380
-                L218,402 L233,368 L248,392 L262,355 L276,380 L292,343 L308,368
-                L322,332 L337,358 L351,320 L365,347 L380,312 L396,340 L410,305
-                L424,333 L438,295 L452,325 L468,285 L484,315 L498,278 L512,308
-                L527,270 L542,300 L557,262 L572,294 L586,255 L600,288 L615,250
-                L630,282 L645,243 L660,276 L674,238 L688,272 L703,234 L718,268
-                L733,228 L748,264 L763,222 L778,258 L792,218 L807,252 L822,214
-                L837,248 L852,210 L867,245 L882,207 L897,242 L912,204 L927,240
-                L942,202 L957,238 L972,200 L987,235 L1002,198 L1017,232 L1032,196
-                L1047,230 L1062,194 L1077,228 L1092,192 L1107,226 L1122,190
-                L1137,224 L1152,188 L1167,222 L1182,186 L1197,220 L1212,184
-                L1227,218 L1242,186 L1257,220 L1272,188 L1287,222 L1302,190
-                L1317,225 L1332,193 L1347,228 L1362,198 L1377,235 L1392,210
-                L1407,248 L1420,230 L1432,255 L1440,270
-                L1440,750 Z"
-              fill="#130404"
-              opacity="0.92"
-            />
+            {/* Mist overlay (makes distant trees feel cold/misty) */}
+            <rect x="0" y="400" width="1440" height="400" fill="url(#mistFade)" opacity="0.4" />
 
-            {/* ── FOREGROUND tree ridge (close-up, very dark) ── */}
-            <path
-              d="M0,750 L0,470
-                L12,440 L22,412 L38,430 L52,395 L65,415 L80,378 L95,400
-                L108,362 L124,386 L138,345 L155,372 L169,330 L184,360 L198,315
-                L212,345 L227,298 L244,330 L258,285 L274,318 L288,270 L302,305
-                L318,258 L334,295 L348,242 L362,280 L376,228 L392,268 L408,215
-                L422,255 L436,200 L450,242 L465,188 L480,230 L495,175 L510,218
-                L525,165 L540,208 L555,158 L570,200 L585,150 L600,193 L615,145
-                L630,188 L645,140 L660,184 L675,135 L690,178 L705,130 L720,175
-                L735,128 L750,173 L765,125 L780,170 L795,122 L810,168 L825,120
-                L840,166 L855,118 L870,164 L885,116 L900,162 L915,115 L930,160
-                L945,113 L960,158 L975,112 L990,157 L1005,110 L1020,155 L1035,110
-                L1050,155 L1065,108 L1080,154 L1095,108 L1110,153 L1125,107
-                L1140,152 L1155,107 L1170,152 L1185,107 L1200,153 L1215,108
-                L1230,153 L1245,108 L1260,154 L1275,110 L1290,155 L1305,112
-                L1320,158 L1335,115 L1350,162 L1365,120 L1380,168 L1395,132
-                L1410,178 L1425,150 L1440,185
-                L1440,750 Z"
-              fill="#0a0202"
-            />
-
-            {/* ── Individual foreground pine trees (highly detailed, very close) ── */}
-            {/* Each tree: multiple overlapping tiers, getting wider toward base */}
-
-            {/* Tall pine left */}
-            <polygon points="85,750 85,160 95,220 78,230 100,280 72,295 105,340 65,358 112,400 58,420 118,460 50,480 125,520 45,540 128,580 42,600 130,640 40,660 132,700 38,720 134,750" fill="#060101" />
-
-            {/* Medium pine left-center */}
-            <polygon points="220,750 220,220 230,275 215,285 238,330 208,345 244,390 202,410 250,450 195,472 258,515 188,535 264,575 184,595 268,630 180,650 272,690 178,710 274,750" fill="#040101" />
-
-            {/* Tall pine center-left */}
-            <polygon points="390,750 390,130 402,192 380,205 410,262 372,280 418,338 364,360 426,415 356,438 434,490 348,514 440,560 342,582 446,618 338,640 450,678 334,700 452,750" fill="#060101" />
-
-            {/* Medium pine center */}
-            <polygon points="560,750 560,185 570,240 552,252 578,308 544,325 584,380 538,400 590,452 532,475 596,518 526,540 602,578 520,600 606,640 516,662 608,750" fill="#040101" />
-
-            {/* Tall pine center */}
-            <polygon points="720,750 720,115 733,180 708,194 740,255 700,275 748,338 692,362 756,422 684,448 764,505 676,530 770,570 670,592 776,630 664,655 780,695 660,718 784,750" fill="#060101" />
-
-            {/* Medium pine center-right */}
-            <polygon points="880,750 880,178 892,235 868,248 900,308 860,328 908,385 852,408 916,460 844,484 922,525 838,548 928,585 832,608 932,645 828,668 936,750" fill="#040101" />
-
-            {/* Tall pine right-center */}
-            <polygon points="1045,750 1045,135 1058,198 1032,212 1066,275 1024,298 1074,362 1016,388 1082,448 1008,474 1090,532 1000,558 1096,595 994,620 1100,660 990,682 1104,750" fill="#060101" />
-
-            {/* Medium pine right */}
-            <polygon points="1215,750 1215,195 1226,248 1204,262 1234,320 1196,340 1242,398 1188,422 1250,478 1180,502 1258,542 1172,566 1264,602 1166,628 1268,668 1162,692 1270,750" fill="#040101" />
-
-            {/* Tall pine far right */}
-            <polygon points="1375,750 1375,170 1387,228 1363,242 1394,304 1356,326 1400,388 1350,412 1406,470 1344,495 1410,538 1340,562 1414,598 1336,622 1418,662 1332,686 1420,750" fill="#060101" />
-
-            {/* Ground fill */}
-            <rect x="0" y="740" width="1440" height="160" fill="#020000" />
-
-            {/* Soft blend of ground into trees */}
-            <rect x="0" y="680" width="1440" height="80" fill="url(#groundDark)" />
+            {/* Snow falling particles (subtle) */}
+            {[30,90,155,220,290,360,430,500,575,645,715,785,860,930,1005,1075,1145,1215,1285,1355,1410].map((x, i) => (
+              <circle key={i} cx={x} cy={80 + (i * 37) % 280} r="2.5" fill="white" opacity={0.5 + (i % 3) * 0.15} />
+            ))}
+            {[55,130,200,270,345,415,490,560,635,705,775,845,920,990,1060,1130,1200,1270,1340,1420].map((x, i) => (
+              <circle key={i + 30} cx={x} cy={140 + (i * 43) % 220} r="1.8" fill="white" opacity={0.35 + (i % 3) * 0.12} />
+            ))}
           </svg>
 
-          {/* Login card — centered, slightly above center to account for trees */}
-          <div className="relative z-10" style={{ marginBottom: 80 }}>
+          {/* Login card — centered */}
+          <div className="relative z-10" style={{ marginBottom: 40 }}>
             <LoginCard isDesktop={true} />
           </div>
         </div>
