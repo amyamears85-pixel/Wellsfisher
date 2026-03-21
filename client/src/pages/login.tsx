@@ -325,30 +325,34 @@ export default function LoginPage() {
       >
         {/* Header */}
         <header style={{ backgroundColor: "#c41230", flexShrink: 0 }}>
-          <div style={{ height: 48, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 28px" }}>
+          <div style={{ height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 32px" }}>
             {/* Logo */}
-            <span style={{ fontFamily: "'Times New Roman', Georgia, serif", fontWeight: 700, fontSize: 21, color: "#fff", letterSpacing: "0.13em" }}>
+            <span style={{ fontFamily: "'Times New Roman', Georgia, serif", fontWeight: 700, fontSize: 26, color: "#fff", letterSpacing: "0.10em" }}>
               WELLS FARGO
             </span>
             {/* Nav */}
-            <div style={{ display: "flex", alignItems: "center", gap: 22, color: "#fff", fontSize: 13.5 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                <svg viewBox="0 0 16 16" width="13" height="13" fill="none">
-                  <rect x="3" y="7" width="10" height="8" rx="1" stroke="white" strokeWidth="1.4"/>
-                  <path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke="white" strokeWidth="1.4" strokeLinecap="round"/>
+            <div style={{ display: "flex", alignItems: "center", gap: 24, color: "#fff", fontSize: 14 }}>
+              {/* Enroll with lock icon */}
+              <Link href="/register" style={{ color: "#fff", textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }} data-testid="link-enroll">
+                <svg viewBox="0 0 20 20" width="18" height="18" fill="none">
+                  <circle cx="10" cy="10" r="9" stroke="white" strokeWidth="1.4"/>
+                  <rect x="6.5" y="9" width="7" height="6" rx="1" stroke="white" strokeWidth="1.3" fill="none"/>
+                  <path d="M7.5 9V7.5a2.5 2.5 0 015 0V9" stroke="white" strokeWidth="1.3" strokeLinecap="round" fill="none"/>
                 </svg>
-                <Link href="/register" style={{ color: "#fff", textDecoration: "none" }} data-testid="link-enroll">Enroll</Link>
-              </div>
+                Enroll
+              </Link>
               <span style={{ cursor: "pointer" }}>Customer Service</span>
               <span style={{ cursor: "pointer" }}>ATMs/Locations</span>
               <span style={{ cursor: "pointer" }}>Español</span>
-              {/* Search — white rounded box with icon */}
-              <div style={{ display: "flex", alignItems: "center", backgroundColor: "#fff", borderRadius: 4, height: 28, padding: "0 8px", gap: 6, cursor: "pointer", minWidth: 90 }}>
-                <span style={{ fontSize: 13, color: "#888", flex: 1 }}>Search</span>
-                <svg viewBox="0 0 16 16" width="14" height="14" fill="none">
-                  <circle cx="6.5" cy="6.5" r="4.5" stroke="#555" strokeWidth="1.5"/>
-                  <path d="M10 10l3.5 3.5" stroke="#555" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
+              {/* Search box */}
+              <div style={{ display: "flex", alignItems: "center", backgroundColor: "#fff", borderRadius: 5, height: 32, overflow: "hidden", cursor: "pointer" }}>
+                <span style={{ padding: "0 10px", fontSize: 13.5, color: "#999", whiteSpace: "nowrap" }}>Search</span>
+                <div style={{ width: 34, height: 32, backgroundColor: "#fff", display: "flex", alignItems: "center", justifyContent: "center", borderLeft: "1px solid #e0e0e0" }}>
+                  <svg viewBox="0 0 18 18" width="16" height="16" fill="none">
+                    <circle cx="7.5" cy="7.5" r="5" stroke="#111" strokeWidth="1.8"/>
+                    <path d="M11.5 11.5l4 4" stroke="#111" strokeWidth="1.8" strokeLinecap="round"/>
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
