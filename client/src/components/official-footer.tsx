@@ -1,67 +1,66 @@
 export function OfficialFooter() {
   return (
-    <footer className="bg-white border-t mt-auto">
-      <div className="px-5 py-6">
-        <div className="space-y-5 text-sm text-gray-700 leading-relaxed">
-          {/* Investment disclaimer box */}
-          <div className="border border-gray-300 p-4">
-            <p className="font-bold text-[#1a1a1a] mb-3">Investment and Insurance Products are:</p>
-            <ul className="space-y-2">
-              <li className="flex items-start gap-2">
-                <span className="text-[#d71e28] font-bold">■</span>
-                <span><strong>Not Insured by the FDIC or Any Federal Government Agency</strong></span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-[#d71e28] font-bold">■</span>
-                <span><strong>Not a Deposit or Other Obligation of, or Guaranteed by, the Bank or Any Bank Affiliate</strong></span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-[#d71e28] font-bold">■</span>
-                <span><strong>Subject to Investment Risks, Including Possible <span className="bg-[#ffcd41]">Loss of the Principal Amount Invested</span></strong></span>
-              </li>
-            </ul>
-          </div>
-
-          <p className="text-gray-700">
-            Deposit products offered by Wells Fargo Bank, N.A. Member FDIC.
-          </p>
-
-          {/* Footer links - 2 column grid */}
-          <div className="grid grid-cols-2 gap-x-8 gap-y-4 py-4 border-t border-b border-gray-200">
-            <a href="#" className="text-gray-700 hover:underline">
-              About Wells Fargo
-            </a>
-            <a href="#" className="text-gray-700 hover:underline">
-              Report Email Fraud
-            </a>
-            <a href="#" className="text-gray-700 hover:underline">
-              Online Access Agreement
-            </a>
-            <a href="#" className="text-gray-700 hover:underline">
-              Security Center
-            </a>
-            <a href="#" className="text-gray-700 hover:underline">
-              Privacy, Cookies, Security & Legal
-            </a>
-            <a href="#" className="text-gray-700 hover:underline">
-              Sitemap
-            </a>
-            <a href="#" className="text-gray-700 hover:underline">
-              Do not sell or share my personal information
-            </a>
-            <a href="#" className="text-gray-700 hover:underline">
-              Give Us Feedback
-            </a>
-            <a href="#" className="text-gray-700 hover:underline">
-              Notice of Data Collection
-            </a>
-          </div>
-
-          <p className="text-gray-600 pt-2">
-            © 1999 - 2026 Wells Fargo. All rights reserved. NMLSR ID 399801
-          </p>
-        </div>
+    <footer className="bg-white border-t border-gray-300 mt-auto">
+      <div className="max-w-5xl mx-auto px-6 py-4">
+        <nav className="flex flex-wrap items-center gap-y-2 text-[13px] text-[#1a5276] mb-3">
+          {[
+            "About Wells Fargo",
+            "Online Access Agreement",
+            "Privacy, Cookies, Security & Legal",
+            "Do not sell or share my personal information",
+            "Notice of Data Collection",
+          ].map((link, i, arr) => (
+            <span key={link} className="flex items-center">
+              <a href="#" className="hover:underline text-[#1a5276]">{link}</a>
+              {i < arr.length - 1 && <span className="mx-2 text-gray-400 select-none">|</span>}
+            </span>
+          ))}
+        </nav>
+        <nav className="flex flex-wrap items-center gap-y-2 text-[13px] text-[#1a5276] mb-4">
+          {[
+            "Report Email Fraud",
+            "Security Center",
+            "Sitemap",
+            "Give Us Feedback",
+          ].map((link, i, arr) => (
+            <span key={link} className="flex items-center">
+              <a href="#" className="hover:underline text-[#1a5276]">{link}</a>
+              {i < arr.length - 1 && <span className="mx-2 text-gray-400 select-none">|</span>}
+            </span>
+          ))}
+        </nav>
+        <p className="text-[12px] text-gray-600">
+          © 1999 - 2026 Wells Fargo. All rights reserved. NMLSR ID 399801
+        </p>
       </div>
     </footer>
+  );
+}
+
+export function DesktopDisclosure() {
+  return (
+    <div className="w-full max-w-[660px] mx-auto px-4 pb-10">
+      <div
+        className="bg-white border border-gray-300 px-5 py-4 mb-4 text-[13.5px] text-[#1a1a1a]"
+        style={{ lineHeight: 1.5 }}
+      >
+        <p className="font-bold mb-2">Investment and Insurance Products are:</p>
+        <ul className="space-y-1.5">
+          {[
+            "Not Insured by the FDIC or Any Federal Government Agency",
+            "Not a Deposit or Other Obligation of, or Guaranteed by, the Bank or Any Bank Affiliate",
+            "Subject to Investment Risks, Including Possible Loss of the Principal Amount Invested",
+          ].map((item) => (
+            <li key={item} className="flex items-start gap-2">
+              <span className="mt-0.5 text-[11px] shrink-0">■</span>
+              <strong>{item}</strong>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <p className="text-[13px] text-[#1a1a1a] px-1">
+        Deposit products offered by Wells Fargo Bank, N.A. Member FDIC.
+      </p>
+    </div>
   );
 }

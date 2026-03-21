@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Search } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { OfficialFooter } from "@/components/official-footer";
+import { OfficialFooter, DesktopDisclosure } from "@/components/official-footer";
 import wfBg from "@assets/IMG_3610_1774119228553.jpeg";
 
 type LoginFormData = {
@@ -317,13 +317,21 @@ export default function LoginPage() {
           </div>
         </header>
 
-        {/* Content area — scrollable, card centered */}
+        {/* Main content — card centered in background */}
         <div
-          className="flex-1 flex items-center justify-center"
-          style={{ minHeight: "calc(100vh - 48px)", padding: "40px 0" }}
+          className="flex items-center justify-center"
+          style={{ minHeight: "calc(100vh - 48px)", padding: "48px 0 0" }}
         >
           <LoginCard isDesktop={true} />
         </div>
+
+        {/* Disclosure box — over background, below card */}
+        <div className="flex justify-center pt-8">
+          <DesktopDisclosure />
+        </div>
+
+        {/* Footer — white background */}
+        <OfficialFooter />
       </div>
 
       {/* ── MOBILE LAYOUT ── */}
