@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Link, useLocation } from "wouter";
 import { OfficialFooter, DesktopDisclosure } from "@/components/official-footer";
-import wfBg from "@assets/IMG_3610_1774119228553.jpeg";
+import wfBg from "@assets/image_1774124438943.png";
 
 type LoginFormData = { username: string; password: string };
 
