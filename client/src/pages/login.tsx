@@ -309,101 +309,168 @@ export default function LoginPage() {
           className="flex-1 flex items-center justify-center relative overflow-hidden"
           style={{ minHeight: "calc(100vh - 46px)" }}
         >
-          {/* Sky gradient background */}
-          <div
+          {/* Sky — matches the reddish-purple winter sunset in the screenshot */}
+          <div className="absolute inset-0" style={{
+            background: `linear-gradient(to bottom,
+              #0d0202 0%,
+              #1c0505 6%,
+              #330a08 12%,
+              #58120e 19%,
+              #7a1c14 26%,
+              #9e2a1c 33%,
+              #be3d24 40%,
+              #d05228 46%,
+              #c84e28 51%,
+              #b04028 56%,
+              #8c2e20 62%,
+              #6a1e14 68%,
+              #4a1008 74%,
+              #2e0806 80%,
+              #180404 86%,
+              #0c0202 92%,
+              #060101 97%,
+              #020000 100%
+            )`
+          }} />
+
+          {/* Full-screen SVG scene — sky to forest floor */}
+          <svg
             className="absolute inset-0"
-            style={{
-              background: `
-                linear-gradient(
-                  to bottom,
-                  #120404 0%,
-                  #2e0c0c 8%,
-                  #5a1a10 18%,
-                  #8a2a18 28%,
-                  #b84020 38%,
-                  #d05a22 46%,
-                  #c85030 54%,
-                  #9a3520 62%,
-                  #6a1e14 72%,
-                  #3a0e0a 82%,
-                  #180606 90%,
-                  #080202 100%
-                )
-              `,
-            }}
-          />
+            viewBox="0 0 1440 900"
+            preserveAspectRatio="xMidYMid slice"
+            style={{ width: "100%", height: "100%" }}
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              {/* Glow on the horizon (warm orange band) */}
+              <radialGradient id="horizonGlow" cx="50%" cy="52%" r="55%" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#e06030" stopOpacity="0.45" />
+                <stop offset="40%" stopColor="#c04020" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+              </radialGradient>
+              {/* Deep shadow at bottom */}
+              <linearGradient id="groundDark" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#1a0404" stopOpacity="0.7" />
+                <stop offset="100%" stopColor="#030000" stopOpacity="1" />
+              </linearGradient>
+              {/* Subtle glow behind the card area */}
+              <radialGradient id="cardGlow" cx="50%" cy="45%" r="30%">
+                <stop offset="0%" stopColor="#d05028" stopOpacity="0.18" />
+                <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+              </radialGradient>
+            </defs>
 
-          {/* Tree silhouettes at the bottom */}
-          <div className="absolute bottom-0 left-0 right-0" style={{ height: "38%" }}>
-            <svg
-              viewBox="0 0 1440 300"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="xMidYMax slice"
-              style={{ width: "100%", height: "100%", display: "block" }}
-            >
-              {/* Dense row of pine/bare trees silhouette */}
-              <defs>
-                <linearGradient id="treeFade" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#060101" stopOpacity="0.85" />
-                  <stop offset="100%" stopColor="#030000" stopOpacity="1" />
-                </linearGradient>
-              </defs>
-              {/* Ground */}
-              <rect x="0" y="240" width="1440" height="60" fill="#030000" />
-              {/* Trees - many overlapping pine shapes */}
-              {/* Left cluster */}
-              <polygon points="20,240 35,160 50,240" fill="#0a0202" />
-              <polygon points="30,240 50,100 70,240" fill="#080101" />
-              <polygon points="55,240 75,130 95,240" fill="#0a0202" />
-              <polygon points="70,240 90,80 110,240" fill="#060101" />
-              <polygon points="90,240 115,110 140,240" fill="#080101" />
-              <polygon points="110,240 135,60 160,240" fill="#050101" />
-              <polygon points="140,240 165,90 190,240" fill="#080101" />
-              <polygon points="160,240 185,120 210,240" fill="#060101" />
-              <polygon points="185,240 215,70 245,240" fill="#0a0202" />
-              <polygon points="210,240 240,100 270,240" fill="#050101" />
-              <polygon points="240,240 270,130 300,240" fill="#080101" />
-              {/* Middle cluster */}
-              <polygon points="280,240 310,50 340,240" fill="#060101" />
-              <polygon points="315,240 345,80 375,240" fill="#080101" />
-              <polygon points="345,240 380,110 415,240" fill="#050101" />
-              <polygon points="380,240 415,60 450,240" fill="#0a0202" />
-              <polygon points="410,240 450,90 490,240" fill="#060101" />
-              <polygon points="445,240 480,120 515,240" fill="#080101" />
-              <polygon points="475,240 510,70 545,240" fill="#050101" />
-              <polygon points="510,240 545,100 580,240" fill="#0a0202" />
-              <polygon points="545,240 585,55 625,240" fill="#060101" />
-              <polygon points="580,240 620,85 660,240" fill="#080101" />
-              <polygon points="615,240 655,115 695,240" fill="#050101" />
-              {/* Right cluster */}
-              <polygon points="655,240 695,65 735,240" fill="#0a0202" />
-              <polygon points="690,240 730,95 770,240" fill="#060101" />
-              <polygon points="725,240 765,125 805,240" fill="#080101" />
-              <polygon points="760,240 800,55 840,240" fill="#050101" />
-              <polygon points="800,240 840,85 880,240" fill="#0a0202" />
-              <polygon points="835,240 875,115 915,240" fill="#060101" />
-              <polygon points="870,240 910,70 950,240" fill="#080101" />
-              <polygon points="910,240 950,100 990,240" fill="#050101" />
-              <polygon points="945,240 985,130 1025,240" fill="#0a0202" />
-              <polygon points="980,240 1020,60 1060,240" fill="#060101" />
-              <polygon points="1015,240 1055,90 1095,240" fill="#080101" />
-              <polygon points="1055,240 1095,120 1135,240" fill="#050101" />
-              <polygon points="1090,240 1130,75 1170,240" fill="#0a0202" />
-              <polygon points="1125,240 1165,105 1205,240" fill="#060101" />
-              <polygon points="1160,240 1200,55 1240,240" fill="#080101" />
-              <polygon points="1200,240 1240,85 1280,240" fill="#050101" />
-              <polygon points="1235,240 1275,115 1315,240" fill="#0a0202" />
-              <polygon points="1270,240 1310,70 1350,240" fill="#060101" />
-              <polygon points="1305,240 1345,100 1385,240" fill="#080101" />
-              <polygon points="1340,240 1380,130 1420,240" fill="#050101" />
-              <polygon points="1375,240 1405,90 1440,240" fill="#0a0202" />
-              {/* Foreground fill */}
-              <rect x="0" y="238" width="1440" height="62" fill="url(#treeFade)" />
-            </svg>
-          </div>
+            {/* Horizon warm glow overlay */}
+            <ellipse cx="720" cy="470" rx="900" ry="320" fill="url(#horizonGlow)" />
 
-          {/* Login card — centered on top of background */}
-          <div className="relative z-10" style={{ paddingBottom: 60 }}>
+            {/* Subtle glow centered behind card */}
+            <rect x="0" y="0" width="1440" height="900" fill="url(#cardGlow)" />
+
+            {/* ── BACKGROUND tree ridge (distant, mid-tone) ── */}
+            <path
+              d="M0,750 L0,560
+                L18,530 L35,510 L52,525 L68,490 L85,505 L100,472 L118,488 L134,460
+                L150,478 L166,448 L183,465 L200,435 L218,452 L235,420 L250,438
+                L265,415 L282,432 L298,408 L315,425 L332,400 L348,418 L365,395
+                L382,412 L398,388 L415,406 L432,382 L448,400 L464,376 L480,395
+                L497,370 L514,388 L530,364 L546,382 L562,358 L578,376 L595,352
+                L612,370 L628,346 L644,364 L660,342 L677,360 L694,336 L710,355
+                L726,332 L742,350 L758,328 L774,347 L790,324 L806,343 L822,320
+                L838,339 L854,316 L870,335 L886,313 L902,332 L918,310 L934,328
+                L950,306 L966,325 L982,303 L998,322 L1014,300 L1030,318 L1046,296
+                L1062,315 L1078,293 L1094,312 L1110,290 L1126,308 L1142,286
+                L1158,305 L1174,283 L1190,302 L1206,280 L1222,298 L1238,276
+                L1254,295 L1270,274 L1286,292 L1302,270 L1318,288 L1334,270
+                L1350,285 L1366,268 L1382,280 L1398,262 L1414,275 L1430,258 L1440,265
+                L1440,750 Z"
+              fill="#1a0606"
+              opacity="0.9"
+            />
+
+            {/* ── MID-GROUND tree ridge (medium distance) ── */}
+            <path
+              d="M0,750 L0,520
+                L15,490 L28,465 L45,480 L58,448 L72,462 L88,432 L102,450
+                L115,418 L130,438 L145,405 L160,425 L174,392 L190,415 L204,380
+                L218,402 L233,368 L248,392 L262,355 L276,380 L292,343 L308,368
+                L322,332 L337,358 L351,320 L365,347 L380,312 L396,340 L410,305
+                L424,333 L438,295 L452,325 L468,285 L484,315 L498,278 L512,308
+                L527,270 L542,300 L557,262 L572,294 L586,255 L600,288 L615,250
+                L630,282 L645,243 L660,276 L674,238 L688,272 L703,234 L718,268
+                L733,228 L748,264 L763,222 L778,258 L792,218 L807,252 L822,214
+                L837,248 L852,210 L867,245 L882,207 L897,242 L912,204 L927,240
+                L942,202 L957,238 L972,200 L987,235 L1002,198 L1017,232 L1032,196
+                L1047,230 L1062,194 L1077,228 L1092,192 L1107,226 L1122,190
+                L1137,224 L1152,188 L1167,222 L1182,186 L1197,220 L1212,184
+                L1227,218 L1242,186 L1257,220 L1272,188 L1287,222 L1302,190
+                L1317,225 L1332,193 L1347,228 L1362,198 L1377,235 L1392,210
+                L1407,248 L1420,230 L1432,255 L1440,270
+                L1440,750 Z"
+              fill="#130404"
+              opacity="0.92"
+            />
+
+            {/* ── FOREGROUND tree ridge (close-up, very dark) ── */}
+            <path
+              d="M0,750 L0,470
+                L12,440 L22,412 L38,430 L52,395 L65,415 L80,378 L95,400
+                L108,362 L124,386 L138,345 L155,372 L169,330 L184,360 L198,315
+                L212,345 L227,298 L244,330 L258,285 L274,318 L288,270 L302,305
+                L318,258 L334,295 L348,242 L362,280 L376,228 L392,268 L408,215
+                L422,255 L436,200 L450,242 L465,188 L480,230 L495,175 L510,218
+                L525,165 L540,208 L555,158 L570,200 L585,150 L600,193 L615,145
+                L630,188 L645,140 L660,184 L675,135 L690,178 L705,130 L720,175
+                L735,128 L750,173 L765,125 L780,170 L795,122 L810,168 L825,120
+                L840,166 L855,118 L870,164 L885,116 L900,162 L915,115 L930,160
+                L945,113 L960,158 L975,112 L990,157 L1005,110 L1020,155 L1035,110
+                L1050,155 L1065,108 L1080,154 L1095,108 L1110,153 L1125,107
+                L1140,152 L1155,107 L1170,152 L1185,107 L1200,153 L1215,108
+                L1230,153 L1245,108 L1260,154 L1275,110 L1290,155 L1305,112
+                L1320,158 L1335,115 L1350,162 L1365,120 L1380,168 L1395,132
+                L1410,178 L1425,150 L1440,185
+                L1440,750 Z"
+              fill="#0a0202"
+            />
+
+            {/* ── Individual foreground pine trees (highly detailed, very close) ── */}
+            {/* Each tree: multiple overlapping tiers, getting wider toward base */}
+
+            {/* Tall pine left */}
+            <polygon points="85,750 85,160 95,220 78,230 100,280 72,295 105,340 65,358 112,400 58,420 118,460 50,480 125,520 45,540 128,580 42,600 130,640 40,660 132,700 38,720 134,750" fill="#060101" />
+
+            {/* Medium pine left-center */}
+            <polygon points="220,750 220,220 230,275 215,285 238,330 208,345 244,390 202,410 250,450 195,472 258,515 188,535 264,575 184,595 268,630 180,650 272,690 178,710 274,750" fill="#040101" />
+
+            {/* Tall pine center-left */}
+            <polygon points="390,750 390,130 402,192 380,205 410,262 372,280 418,338 364,360 426,415 356,438 434,490 348,514 440,560 342,582 446,618 338,640 450,678 334,700 452,750" fill="#060101" />
+
+            {/* Medium pine center */}
+            <polygon points="560,750 560,185 570,240 552,252 578,308 544,325 584,380 538,400 590,452 532,475 596,518 526,540 602,578 520,600 606,640 516,662 608,750" fill="#040101" />
+
+            {/* Tall pine center */}
+            <polygon points="720,750 720,115 733,180 708,194 740,255 700,275 748,338 692,362 756,422 684,448 764,505 676,530 770,570 670,592 776,630 664,655 780,695 660,718 784,750" fill="#060101" />
+
+            {/* Medium pine center-right */}
+            <polygon points="880,750 880,178 892,235 868,248 900,308 860,328 908,385 852,408 916,460 844,484 922,525 838,548 928,585 832,608 932,645 828,668 936,750" fill="#040101" />
+
+            {/* Tall pine right-center */}
+            <polygon points="1045,750 1045,135 1058,198 1032,212 1066,275 1024,298 1074,362 1016,388 1082,448 1008,474 1090,532 1000,558 1096,595 994,620 1100,660 990,682 1104,750" fill="#060101" />
+
+            {/* Medium pine right */}
+            <polygon points="1215,750 1215,195 1226,248 1204,262 1234,320 1196,340 1242,398 1188,422 1250,478 1180,502 1258,542 1172,566 1264,602 1166,628 1268,668 1162,692 1270,750" fill="#040101" />
+
+            {/* Tall pine far right */}
+            <polygon points="1375,750 1375,170 1387,228 1363,242 1394,304 1356,326 1400,388 1350,412 1406,470 1344,495 1410,538 1340,562 1414,598 1336,622 1418,662 1332,686 1420,750" fill="#060101" />
+
+            {/* Ground fill */}
+            <rect x="0" y="740" width="1440" height="160" fill="#020000" />
+
+            {/* Soft blend of ground into trees */}
+            <rect x="0" y="680" width="1440" height="80" fill="url(#groundDark)" />
+          </svg>
+
+          {/* Login card — centered, slightly above center to account for trees */}
+          <div className="relative z-10" style={{ marginBottom: 80 }}>
             <LoginCard isDesktop={true} />
           </div>
         </div>
