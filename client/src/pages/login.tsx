@@ -81,6 +81,8 @@ export default function LoginPage() {
 
   const [usernameValue, setUsernameValue] = useState("");
   const form = useForm<LoginFormData>({ defaultValues: { username: "", password: "" } });
+  const usernameReg = form.register("username", { required: true });
+  const passwordReg = form.register("password", { required: true });
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginFormData) => {
@@ -120,7 +122,10 @@ export default function LoginPage() {
         {/* Username */}
         <div style={{ position: "relative", marginBottom: 12 }}>
           <input
-            {...(() => { const { onChange, onBlur, ...rest } = form.register("username", { required: true }); return { onChange: (e: React.ChangeEvent<HTMLInputElement>) => { onChange(e); setUsernameValue(e.target.value); }, onBlur, ...rest }; })()}
+            name={usernameReg.name}
+            ref={usernameReg.ref}
+            onBlur={usernameReg.onBlur}
+            onChange={e => { usernameReg.onChange(e); setUsernameValue(e.target.value); }}
             placeholder="Username"
             autoComplete="username"
             autoCapitalize="off"
@@ -129,6 +134,7 @@ export default function LoginPage() {
             data-testid="input-username"
             style={{ width: "100%", height: 54, border: "1px solid #bbb", borderRadius: 8, padding: "0 44px 0 14px", fontSize: 15, color: "#222", backgroundColor: "#fff", outline: "none", boxSizing: "border-box" }}
             onFocus={e => { e.currentTarget.style.borderColor = "#888"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,0,0,0.07)"; }}
+            onBlurCapture={e => { e.currentTarget.style.borderColor = "#bbb"; e.currentTarget.style.boxShadow = "none"; }}
           />
           {usernameValue && (
             <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => { form.setValue("username", "", { shouldValidate: true }); setUsernameValue(""); }} data-testid="button-clear-username"
@@ -141,13 +147,17 @@ export default function LoginPage() {
         {/* Password */}
         <div style={{ position: "relative", marginBottom: 16 }}>
           <input
-            {...form.register("password", { required: true })}
+            name={passwordReg.name}
+            ref={passwordReg.ref}
+            onBlur={passwordReg.onBlur}
+            onChange={passwordReg.onChange}
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             autoComplete="current-password"
             data-testid="input-password"
             style={{ width: "100%", height: 54, border: "1px solid #bbb", borderRadius: 8, padding: "0 60px 0 14px", fontSize: 15, color: "#222", backgroundColor: "#fff", outline: "none", boxSizing: "border-box" }}
             onFocus={e => { e.currentTarget.style.borderColor = "#888"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(0,0,0,0.07)"; }}
+            onBlurCapture={e => { e.currentTarget.style.borderColor = "#bbb"; e.currentTarget.style.boxShadow = "none"; }}
           />
           <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => setShowPassword(!showPassword)} data-testid="button-toggle-password"
             style={{ position: "absolute", right: 18, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 600, color: "#3d3dbe", padding: 0, letterSpacing: 0 }}>
@@ -235,13 +245,15 @@ export default function LoginPage() {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="mb-[10px] relative">
           <input
-            {...form.register("username", { required: true })}
+            name={usernameReg.name}
+            ref={usernameReg.ref}
+            onBlur={usernameReg.onBlur}
+            onChange={e => { usernameReg.onChange(e); setUsernameValue(e.target.value); }}
             placeholder="Username"
             autoComplete="username"
             autoCapitalize="off"
             autoCorrect="off"
             spellCheck={false}
-            onChange={e => { form.setValue("username", e.target.value); setUsernameValue(e.target.value); }}
             className="w-full text-[16px] text-gray-800 placeholder-gray-400 bg-white rounded-[12px] focus:outline-none"
             style={{ height: 56, padding: "0 44px 0 14px", border: "1.5px solid #c8c8c8" }}
             data-testid="input-username-mobile"
@@ -259,7 +271,10 @@ export default function LoginPage() {
 
         <div className="mb-[14px] relative">
           <input
-            {...form.register("password", { required: true })}
+            name={passwordReg.name}
+            ref={passwordReg.ref}
+            onBlur={passwordReg.onBlur}
+            onChange={passwordReg.onChange}
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             autoComplete="current-password"
