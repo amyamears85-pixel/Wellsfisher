@@ -6,6 +6,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Search } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { OfficialFooter } from "@/components/official-footer";
+import wfBg from "@assets/image_1774118281871.jpg";
 
 type LoginFormData = {
   username: string;
@@ -313,197 +314,17 @@ export default function LoginPage() {
           className="flex-1 flex items-center justify-center relative overflow-hidden"
           style={{ minHeight: "calc(100vh - 46px)" }}
         >
-          {/* Sky — bright snowy winter day, light blue-white */}
-          <div className="absolute inset-0" style={{
-            background: `linear-gradient(to bottom,
-              #7aadc4 0%,
-              #96c0d4 8%,
-              #aed0e0 18%,
-              #c2dde8 28%,
-              #d0e6ee 38%,
-              #daedf4 48%,
-              #e2f0f6 56%,
-              #e8f3f8 64%,
-              #eef6fa 72%,
-              #f2f8fb 80%,
-              #f5f9fc 88%,
-              #f8fbfd 94%,
-              #fafcfe 100%
-            )`
-          }} />
-
-          {/* Full-screen SVG — snowy winter scene */}
-          <svg
-            className="absolute inset-0"
-            viewBox="0 0 1440 900"
-            preserveAspectRatio="xMidYMid slice"
-            style={{ width: "100%", height: "100%" }}
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              <linearGradient id="snowGround" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#deeef8" />
-                <stop offset="100%" stopColor="#c8e2f0" />
-              </linearGradient>
-              <linearGradient id="snowGround2" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#e8f4fb" />
-                <stop offset="100%" stopColor="#d5ecf8" />
-              </linearGradient>
-              {/* Mist/haze overlay for distant trees */}
-              <linearGradient id="mistFade" x1="0" y1="1" x2="0" y2="0">
-                <stop offset="0%" stopColor="#d8edf7" stopOpacity="0" />
-                <stop offset="100%" stopColor="#d8edf7" stopOpacity="0.55" />
-              </linearGradient>
-              <filter id="blur1">
-                <feGaussianBlur stdDeviation="3" />
-              </filter>
-              <filter id="blur2">
-                <feGaussianBlur stdDeviation="1.5" />
-              </filter>
-            </defs>
-
-            {/* ── Snow ground ── */}
-            <ellipse cx="720" cy="870" rx="900" ry="100" fill="url(#snowGround)" />
-            <rect x="0" y="800" width="1440" height="100" fill="url(#snowGround2)" />
-
-            {/* ── Distant background trees (misty, very light) ── */}
-            {/* Far left distant */}
-            <g filter="url(#blur1)" opacity="0.55">
-              <rect x="60" y="560" width="10" height="200" fill="#8aafc0" />
-              <ellipse cx="65" cy="490" rx="55" ry="80" fill="#c5dce8" />
-              <ellipse cx="45" cy="520" rx="38" ry="55" fill="#cce3ee" />
-              <ellipse cx="88" cy="510" rx="42" ry="60" fill="#c8dfe9" />
-            </g>
-            <g filter="url(#blur1)" opacity="0.5">
-              <rect x="155" y="570" width="9" height="190" fill="#8aafc0" />
-              <ellipse cx="160" cy="500" rx="50" ry="75" fill="#c8e0eb" />
-              <ellipse cx="138" cy="530" rx="36" ry="52" fill="#cde4ef" />
-              <ellipse cx="182" cy="520" rx="40" ry="58" fill="#cadfea" />
-            </g>
-            {/* Far right distant */}
-            <g filter="url(#blur1)" opacity="0.55">
-              <rect x="1370" y="555" width="10" height="205" fill="#8aafc0" />
-              <ellipse cx="1375" cy="482" rx="55" ry="80" fill="#c5dce8" />
-              <ellipse cx="1352" cy="515" rx="38" ry="55" fill="#cce3ee" />
-              <ellipse cx="1398" cy="504" rx="42" ry="60" fill="#c8dfe9" />
-            </g>
-            <g filter="url(#blur1)" opacity="0.5">
-              <rect x="1270" y="565" width="9" height="195" fill="#8aafc0" />
-              <ellipse cx="1275" cy="494" rx="50" ry="75" fill="#c8e0eb" />
-              <ellipse cx="1252" cy="524" rx="36" ry="52" fill="#cde4ef" />
-              <ellipse cx="1298" cy="514" rx="40" ry="58" fill="#cadfea" />
-            </g>
-
-            {/* ── Mid-ground trees — left side ── */}
-            <g filter="url(#blur2)" opacity="0.75">
-              {/* Tree 1 */}
-              <rect x="238" y="520" width="13" height="240" fill="#7096a8" />
-              <ellipse cx="244" cy="440" rx="70" ry="95" fill="#b8d5e4" />
-              <ellipse cx="218" cy="475" rx="50" ry="68" fill="#bfd9e8" />
-              <ellipse cx="272" cy="465" rx="55" ry="72" fill="#bcd7e6" />
-              <ellipse cx="244" cy="400" rx="42" ry="55" fill="#c2dcea" />
-              {/* Tree 2 */}
-              <rect x="318" y="540" width="11" height="220" fill="#7096a8" />
-              <ellipse cx="324" cy="462" rx="62" ry="85" fill="#bcd8e6" />
-              <ellipse cx="302" cy="494" rx="44" ry="62" fill="#c2dcea" />
-              <ellipse cx="348" cy="484" rx="48" ry="66" fill="#bed9e7" />
-            </g>
-            {/* Mid-ground trees — right side */}
-            <g filter="url(#blur2)" opacity="0.75">
-              {/* Tree 1 */}
-              <rect x="1186" y="520" width="13" height="240" fill="#7096a8" />
-              <ellipse cx="1192" cy="440" rx="70" ry="95" fill="#b8d5e4" />
-              <ellipse cx="1166" cy="475" rx="50" ry="68" fill="#bfd9e8" />
-              <ellipse cx="1220" cy="465" rx="55" ry="72" fill="#bcd7e6" />
-              <ellipse cx="1192" cy="400" rx="42" ry="55" fill="#c2dcea" />
-              {/* Tree 2 */}
-              <rect x="1106" y="540" width="11" height="220" fill="#7096a8" />
-              <ellipse cx="1112" cy="462" rx="62" ry="85" fill="#bcd8e6" />
-              <ellipse cx="1090" cy="494" rx="44" ry="62" fill="#c2dcea" />
-              <ellipse cx="1136" cy="484" rx="48" ry="66" fill="#bed9e7" />
-            </g>
-
-            {/* ── Foreground trees — large, detailed, with visible trunks ── */}
-            {/* Far left foreground — large deciduous */}
-            <g>
-              <rect x="28" y="480" width="18" height="320" fill="#5a7a8a" />
-              {/* Snow on branches — multiple overlapping blobs */}
-              <ellipse cx="37" cy="380" rx="90" ry="115" fill="#ddeef7" />
-              <ellipse cx="10" cy="420" rx="62" ry="82" fill="#e2f1f8" />
-              <ellipse cx="68" cy="410" rx="68" ry="88" fill="#deeef7" />
-              <ellipse cx="37" cy="330" rx="58" ry="72" fill="#e5f3f9" />
-              <ellipse cx="15" cy="360" rx="42" ry="55" fill="#e8f4fa" />
-              <ellipse cx="62" cy="350" rx="48" ry="62" fill="#e5f3f9" />
-              {/* Snow mounds on outer branches */}
-              <ellipse cx="-15" cy="440" rx="38" ry="28" fill="#eaf5fb" />
-              <ellipse cx="90" cy="430" rx="42" ry="30" fill="#e8f4fb" />
-              {/* Branch lines */}
-              <line x1="37" y1="400" x2="-10" y2="445" stroke="#6a8a9a" strokeWidth="3" opacity="0.6" />
-              <line x1="37" y1="400" x2="85" y2="438" stroke="#6a8a9a" strokeWidth="3" opacity="0.6" />
-              <line x1="37" y1="370" x2="5" y2="340" stroke="#6a8a9a" strokeWidth="2" opacity="0.5" />
-              <line x1="37" y1="370" x2="70" y2="338" stroke="#6a8a9a" strokeWidth="2" opacity="0.5" />
-            </g>
-            {/* Second left foreground */}
-            <g>
-              <rect x="128" y="510" width="15" height="290" fill="#5a7a8a" />
-              <ellipse cx="136" cy="418" rx="75" ry="98" fill="#daedf6" />
-              <ellipse cx="112" cy="452" rx="54" ry="70" fill="#dff2f8" />
-              <ellipse cx="162" cy="442" rx="58" ry="75" fill="#dceef7" />
-              <ellipse cx="136" cy="372" rx="48" ry="62" fill="#e2f1f9" />
-              <ellipse cx="115" cy="400" rx="36" ry="48" fill="#e5f3f9" />
-              <ellipse cx="158" cy="392" rx="40" ry="52" fill="#e2f2f9" />
-              <line x1="136" y1="435" x2="95" y2="472" stroke="#6a8a9a" strokeWidth="2.5" opacity="0.55" />
-              <line x1="136" y1="435" x2="178" y2="465" stroke="#6a8a9a" strokeWidth="2.5" opacity="0.55" />
-            </g>
-            {/* Far right foreground — large deciduous */}
-            <g>
-              <rect x="1394" y="480" width="18" height="320" fill="#5a7a8a" />
-              <ellipse cx="1403" cy="380" rx="90" ry="115" fill="#ddeef7" />
-              <ellipse cx="1376" cy="420" rx="62" ry="82" fill="#e2f1f8" />
-              <ellipse cx="1434" cy="410" rx="68" ry="88" fill="#deeef7" />
-              <ellipse cx="1403" cy="330" rx="58" ry="72" fill="#e5f3f9" />
-              <ellipse cx="1381" cy="360" rx="42" ry="55" fill="#e8f4fa" />
-              <ellipse cx="1428" cy="350" rx="48" ry="62" fill="#e5f3f9" />
-              <ellipse cx="1370" cy="440" rx="38" ry="28" fill="#eaf5fb" />
-              <ellipse cx="1456" cy="430" rx="42" ry="30" fill="#e8f4fb" />
-              <line x1="1403" y1="400" x2="1356" y2="445" stroke="#6a8a9a" strokeWidth="3" opacity="0.6" />
-              <line x1="1403" y1="400" x2="1451" y2="438" stroke="#6a8a9a" strokeWidth="3" opacity="0.6" />
-            </g>
-            {/* Second right foreground */}
-            <g>
-              <rect x="1296" y="510" width="15" height="290" fill="#5a7a8a" />
-              <ellipse cx="1304" cy="418" rx="75" ry="98" fill="#daedf6" />
-              <ellipse cx="1278" cy="452" rx="54" ry="70" fill="#dff2f8" />
-              <ellipse cx="1330" cy="442" rx="58" ry="75" fill="#dceef7" />
-              <ellipse cx="1304" cy="372" rx="48" ry="62" fill="#e2f1f9" />
-              <line x1="1304" y1="435" x2="1263" y2="472" stroke="#6a8a9a" strokeWidth="2.5" opacity="0.55" />
-              <line x1="1304" y1="435" x2="1346" y2="465" stroke="#6a8a9a" strokeWidth="2.5" opacity="0.55" />
-            </g>
-
-            {/* ── Snow ground surface ── */}
-            <path
-              d="M0,800 Q120,778 280,788 Q440,798 580,780 Q720,762 860,780 Q1000,798 1160,788 Q1320,778 1440,795 L1440,900 L0,900 Z"
-              fill="#e0f0f8"
-            />
-            <path
-              d="M0,830 Q200,812 400,820 Q600,828 720,815 Q840,802 1040,820 Q1240,838 1440,825 L1440,900 L0,900 Z"
-              fill="#eaf5fb"
-            />
-
-            {/* Mist overlay (makes distant trees feel cold/misty) */}
-            <rect x="0" y="400" width="1440" height="400" fill="url(#mistFade)" opacity="0.4" />
-
-            {/* Snow falling particles (subtle) */}
-            {[30,90,155,220,290,360,430,500,575,645,715,785,860,930,1005,1075,1145,1215,1285,1355,1410].map((x, i) => (
-              <circle key={i} cx={x} cy={80 + (i * 37) % 280} r="2.5" fill="white" opacity={0.5 + (i % 3) * 0.15} />
-            ))}
-            {[55,130,200,270,345,415,490,560,635,705,775,845,920,990,1060,1130,1200,1270,1340,1420].map((x, i) => (
-              <circle key={i + 30} cx={x} cy={140 + (i * 43) % 220} r="1.8" fill="white" opacity={0.35 + (i % 3) * 0.12} />
-            ))}
-          </svg>
+          {/* Background image — exact photo from screenshot */}
+          <img
+            src={wfBg}
+            alt=""
+            className="absolute inset-0 w-full h-full"
+            style={{ objectFit: "cover", objectPosition: "center center" }}
+            aria-hidden="true"
+          />
 
           {/* Login card — centered */}
-          <div className="relative z-10" style={{ marginBottom: 40 }}>
+          <div className="relative z-10">
             <LoginCard isDesktop={true} />
           </div>
         </div>
