@@ -270,7 +270,15 @@ export default function LoginPage() {
   return (
     <>
       {/* ── DESKTOP LAYOUT ── */}
-      <div className="hidden lg:flex flex-col min-h-screen">
+      <div
+        className="hidden lg:flex flex-col min-h-screen"
+        style={{
+          backgroundImage: `url(${wfBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center top",
+          backgroundAttachment: "fixed",
+        }}
+      >
 
         {/* Header — Wells Fargo standard red matching screenshot */}
         <header style={{ backgroundColor: "#b01e22", flexShrink: 0 }}>
@@ -309,25 +317,12 @@ export default function LoginPage() {
           </div>
         </header>
 
-        {/* Full-page background with centered card */}
+        {/* Content area — scrollable, card centered */}
         <div
-          className="flex-1 flex items-center justify-center relative overflow-hidden"
-          style={{ minHeight: "calc(100vh - 46px)" }}
+          className="flex-1 flex items-center justify-center"
+          style={{ minHeight: "calc(100vh - 48px)", padding: "40px 0" }}
         >
-          {/* Mountain lake background */}
-          <img
-            src={wfBg}
-            alt=""
-            className="absolute inset-0 w-full h-full"
-            style={{ objectFit: "cover", objectPosition: "center center" }}
-            aria-hidden="true"
-          />
-          
-
-          {/* Login card — centered */}
-          <div className="relative z-10">
-            <LoginCard isDesktop={true} />
-          </div>
+          <LoginCard isDesktop={true} />
         </div>
       </div>
 
