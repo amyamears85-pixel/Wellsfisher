@@ -100,32 +100,21 @@ export default function LoginPage() {
 
   const onSubmit = (data: LoginFormData) => loginMutation.mutate(data);
 
-  /* ── Shared login card ── */
-  const LoginCard = ({ isDesktop = false }: { isDesktop?: boolean }) => (
+  /* ── Desktop card — precise WF replica ── */
+  const DesktopLoginCard = () => (
     <div
       style={{
-        width: isDesktop ? 380 : "100%",
+        width: 380,
         backgroundColor: "#fff",
         borderRadius: 12,
         boxShadow: "0 4px 24px rgba(0,0,0,0.18)",
-        padding: isDesktop ? "36px 40px 32px" : "28px 20px 36px",
+        padding: "36px 40px 32px",
       }}
     >
-      {/* Greeting */}
       <h1
-        style={{
-          fontFamily: "Georgia, 'Times New Roman', serif",
-          fontSize: isDesktop ? 30 : 28,
-          fontWeight: 400,
-          color: "#111",
-          textAlign: "center",
-          marginBottom: 24,
-          lineHeight: 1.15,
-        }}
+        style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 30, fontWeight: 400, color: "#111", textAlign: "center", marginBottom: 24, lineHeight: 1.15 }}
         data-testid="text-greeting"
-      >
-        {greeting}
-      </h1>
+      >{greeting}</h1>
 
       <form onSubmit={form.handleSubmit(onSubmit)}>
         {/* Username */}
@@ -137,35 +126,16 @@ export default function LoginPage() {
             autoCapitalize="off"
             autoCorrect="off"
             spellCheck={false}
-            onChange={(e) => { form.setValue("username", e.target.value); setUsernameValue(e.target.value); }}
+            onChange={e => { form.setValue("username", e.target.value); setUsernameValue(e.target.value); }}
             data-testid="input-username"
-            style={{
-              width: "100%",
-              height: 48,
-              border: "1px solid #b0b0b0",
-              borderRadius: 4,
-              padding: "0 40px 0 12px",
-              fontSize: 15,
-              color: "#222",
-              backgroundColor: "#fff",
-              outline: "none",
-              boxSizing: "border-box",
-            }}
+            style={{ width: "100%", height: 48, border: "1px solid #b0b0b0", borderRadius: 4, padding: "0 40px 0 12px", fontSize: 15, color: "#222", backgroundColor: "#fff", outline: "none", boxSizing: "border-box" }}
             onFocus={e => e.target.style.borderColor = "#5a5a5a"}
             onBlur={e => e.target.style.borderColor = "#b0b0b0"}
           />
           {usernameValue && (
-            <button
-              type="button"
-              onMouseDown={e => e.preventDefault()}
-              onClick={() => { form.setValue("username", ""); setUsernameValue(""); }}
-              data-testid="button-clear-username"
-              style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
-            >
-              <svg viewBox="0 0 20 20" width="18" height="18" fill="none">
-                <circle cx="10" cy="10" r="9" stroke="#999" strokeWidth="1.5"/>
-                <path d="M7 7l6 6M13 7l-6 6" stroke="#999" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+            <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => { form.setValue("username", ""); setUsernameValue(""); }} data-testid="button-clear-username"
+              style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+              <svg viewBox="0 0 20 20" width="18" height="18" fill="none"><circle cx="10" cy="10" r="9" stroke="#999" strokeWidth="1.5"/><path d="M7 7l6 6M13 7l-6 6" stroke="#999" strokeWidth="1.5" strokeLinecap="round"/></svg>
             </button>
           )}
         </div>
@@ -178,109 +148,44 @@ export default function LoginPage() {
             placeholder="Password"
             autoComplete="current-password"
             data-testid="input-password"
-            style={{
-              width: "100%",
-              height: 48,
-              border: "1px solid #b0b0b0",
-              borderRadius: 4,
-              padding: "0 52px 0 12px",
-              fontSize: 15,
-              color: "#222",
-              backgroundColor: "#fff",
-              outline: "none",
-              boxSizing: "border-box",
-            }}
+            style={{ width: "100%", height: 48, border: "1px solid #b0b0b0", borderRadius: 4, padding: "0 52px 0 12px", fontSize: 15, color: "#222", backgroundColor: "#fff", outline: "none", boxSizing: "border-box" }}
             onFocus={e => e.target.style.borderColor = "#5a5a5a"}
             onBlur={e => e.target.style.borderColor = "#b0b0b0"}
           />
-          <button
-            type="button"
-            onMouseDown={e => e.preventDefault()}
-            onClick={() => setShowPassword(!showPassword)}
-            data-testid="button-toggle-password"
-            style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 600, color: "#1964b5", padding: 0 }}
-          >
+          <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => setShowPassword(!showPassword)} data-testid="button-toggle-password"
+            style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 600, color: "#1964b5", padding: 0 }}>
             {showPassword ? "Hide" : "Show"}
           </button>
         </div>
 
         {/* Save username */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-          <input
-            type="checkbox"
-            id="saveUsername"
-            checked={saveUsername}
-            onChange={e => setSaveUsername(e.target.checked)}
-            data-testid="checkbox-save-username"
-            style={{ width: 15, height: 15, cursor: "pointer", accentColor: "#c41230" }}
-          />
-          <label htmlFor="saveUsername" style={{ fontSize: 14, color: "#222", cursor: "pointer", userSelect: "none" }}>
-            Save username
-          </label>
+          <input type="checkbox" id="saveUsernameDesktop" checked={saveUsername} onChange={e => setSaveUsername(e.target.checked)} data-testid="checkbox-save-username"
+            style={{ width: 15, height: 15, cursor: "pointer", accentColor: "#c41230" }} />
+          <label htmlFor="saveUsernameDesktop" style={{ fontSize: 14, color: "#222", cursor: "pointer", userSelect: "none" }}>Save username</label>
         </div>
 
-        {/* Security note */}
         <p style={{ fontSize: 12, color: "#666", lineHeight: 1.45, marginBottom: 22 }}>
           To help keep your account secure, save your username only on devices that aren't used by other people.
         </p>
 
-        {/* Sign on button */}
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 14 }}>
-          <button
-            type="submit"
-            disabled={loginMutation.isPending}
-            data-testid="button-sign-on"
-            style={{
-              height: 44,
-              width: 200,
-              borderRadius: 99,
-              border: "none",
-              backgroundColor: "#c5c5c5",
-              color: "#777",
-              fontSize: 15,
-              fontWeight: 600,
-              cursor: "pointer",
-              opacity: loginMutation.isPending ? 0.6 : 1,
-              letterSpacing: "0.01em",
-            }}
-          >
+          <button type="submit" disabled={loginMutation.isPending} data-testid="button-sign-on"
+            style={{ height: 44, width: 200, borderRadius: 99, border: "none", backgroundColor: "#c5c5c5", color: "#777", fontSize: 15, fontWeight: 600, cursor: "pointer", opacity: loginMutation.isPending ? 0.6 : 1 }}>
             {loginMutation.isPending ? "Signing on…" : "Sign on"}
           </button>
         </div>
       </form>
 
-      {/* OR divider */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
         <div style={{ flex: 1, height: 1, backgroundColor: "#ddd" }} />
         <span style={{ fontSize: 13, color: "#888" }}>or</span>
         <div style={{ flex: 1, height: 1, backgroundColor: "#ddd" }} />
       </div>
 
-      {/* Passkey button */}
       <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-        <button
-          type="button"
-          onClick={handleBiometricLogin}
-          disabled={biometricLoading}
-          data-testid="button-passkey"
-          style={{
-            height: 44,
-            width: 200,
-            borderRadius: 99,
-            border: "1.5px solid #222",
-            backgroundColor: "#fff",
-            color: "#111",
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 7,
-            opacity: biometricLoading ? 0.6 : 1,
-          }}
-        >
-          {/* Person+key icon */}
+        <button type="button" onClick={handleBiometricLogin} disabled={biometricLoading} data-testid="button-passkey"
+          style={{ height: 44, width: 200, borderRadius: 99, border: "1.5px solid #222", backgroundColor: "#fff", color: "#111", fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, opacity: biometricLoading ? 0.6 : 1 }}>
           <svg viewBox="0 0 22 22" width="17" height="17" fill="none" aria-hidden="true">
             <circle cx="8.5" cy="6.5" r="3.5" stroke="#222" strokeWidth="1.5"/>
             <path d="M1.5 18.5c0-3.6 3.1-6.5 7-6.5" stroke="#222" strokeWidth="1.5" strokeLinecap="round"/>
@@ -291,19 +196,118 @@ export default function LoginPage() {
         </button>
       </div>
 
-      {/* Passkey help text */}
       <p style={{ fontSize: 11.5, color: "#666", lineHeight: 1.45, marginBottom: 28, textAlign: "center" }}>
         Don't have one? Create a passkey after signing on and skip the password next time.
       </p>
 
-      {/* Forgot link */}
       <div style={{ textAlign: "center" }}>
-        <Link
-          href="/forgot-password"
-          data-testid="link-forgot"
-          style={{ fontSize: 13.5, color: "#1964b5", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4 }}
-        >
+        <Link href="/forgot-password" data-testid="link-forgot"
+          style={{ fontSize: 13.5, color: "#1964b5", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4 }}>
           <span style={{ fontSize: 13 }}>→</span>
+          Forgot username or password?
+        </Link>
+      </div>
+    </div>
+  );
+
+  /* ── Mobile card — original rounded style ── */
+  const MobileLoginCard = () => (
+    <div>
+      <h2
+        className="font-normal text-[#111] text-center leading-none mb-7"
+        style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontSize: 32 }}
+        data-testid="text-greeting-mobile"
+      >{greeting}</h2>
+
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="mb-[10px] relative">
+          <input
+            {...form.register("username", { required: true })}
+            placeholder="Username"
+            autoComplete="username"
+            autoCapitalize="off"
+            autoCorrect="off"
+            spellCheck={false}
+            onChange={e => { form.setValue("username", e.target.value); setUsernameValue(e.target.value); }}
+            className="w-full text-[16px] text-gray-800 placeholder-gray-400 bg-white rounded-[12px] focus:outline-none"
+            style={{ height: 56, padding: "0 44px 0 14px", border: "1.5px solid #c8c8c8" }}
+            data-testid="input-username-mobile"
+          />
+          {usernameValue && (
+            <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => { form.setValue("username", ""); setUsernameValue(""); }}
+              className="absolute right-[12px] top-1/2 -translate-y-1/2" data-testid="button-clear-username-mobile">
+              <svg viewBox="0 0 20 20" width="20" height="20" fill="none">
+                <circle cx="10" cy="10" r="9" stroke="#aaa" strokeWidth="1.5"/>
+                <path d="M7 7l6 6M13 7l-6 6" stroke="#aaa" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </button>
+          )}
+        </div>
+
+        <div className="mb-[14px] relative">
+          <input
+            {...form.register("password", { required: true })}
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            autoComplete="current-password"
+            className="w-full text-[16px] text-gray-800 placeholder-gray-400 bg-white rounded-[12px] focus:outline-none"
+            style={{ height: 56, padding: "0 56px 0 14px", border: "1.5px solid #c8c8c8" }}
+            data-testid="input-password-mobile"
+          />
+          <button type="button" onMouseDown={e => e.preventDefault()} onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-[14px] top-1/2 -translate-y-1/2 text-[#4338ca] text-[15px] font-medium" data-testid="button-toggle-password-mobile">
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
+
+        <div className="flex items-center gap-[10px] mb-[8px]">
+          <div className="w-[18px] h-[18px] flex-shrink-0 border border-gray-500 flex items-center justify-center cursor-pointer bg-white"
+            style={{ borderRadius: 3 }} onClick={() => setSaveUsername(!saveUsername)} data-testid="checkbox-save-username-mobile">
+            {saveUsername && (
+              <svg viewBox="0 0 12 12" className="w-3 h-3" fill="none">
+                <path d="M2 6l3 3 5-5" stroke="#333" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            )}
+          </div>
+          <label className="text-[15px] text-gray-800 cursor-pointer select-none" onClick={() => setSaveUsername(!saveUsername)}>Save username</label>
+        </div>
+
+        <p className="text-[12.5px] text-gray-500 leading-[1.45] mb-[28px]">
+          To help keep your account secure, save your username only on devices that aren't used by other people.
+        </p>
+
+        <div className="flex justify-center mb-[14px]">
+          <button type="submit" disabled={loginMutation.isPending} data-testid="button-sign-on-mobile"
+            className="rounded-full text-[16px] font-medium transition-colors disabled:opacity-60"
+            style={{ height: 50, width: 220, backgroundColor: "#d0d0d0", color: "#888" }}>
+            {loginMutation.isPending ? "Signing on…" : "Sign on"}
+          </button>
+        </div>
+      </form>
+
+      <p className="text-center text-[14px] text-gray-600 mb-[14px]">or</p>
+
+      <div className="flex justify-center mb-[14px]">
+        <button type="button" onClick={handleBiometricLogin} disabled={biometricLoading} data-testid="button-passkey-mobile"
+          className="rounded-full bg-white text-[15px] font-medium text-gray-900 flex items-center justify-center gap-[7px] hover:bg-gray-50 transition-colors disabled:opacity-60"
+          style={{ height: 50, width: 220, border: "1.5px solid #222" }}>
+          <svg viewBox="0 0 20 20" width="19" height="19" fill="none" aria-hidden="true">
+            <circle cx="8" cy="6" r="3.5" stroke="#333" strokeWidth="1.4"/>
+            <path d="M1.5 17c0-3.3 2.9-6 6.5-6" stroke="#333" strokeWidth="1.4" strokeLinecap="round"/>
+            <circle cx="15" cy="13.5" r="2.5" stroke="#333" strokeWidth="1.4"/>
+            <path d="M17 15l1.5 1.5M18.5 15.5L17 17" stroke="#333" strokeWidth="1.3" strokeLinecap="round"/>
+          </svg>
+          {biometricLoading ? "Authenticating…" : "Use a passkey"}
+        </button>
+      </div>
+
+      <p className="text-[12.5px] text-gray-600 leading-[1.45] mb-[36px]">
+        Don't have one? Create a passkey after signing on and skip the password next time.
+      </p>
+
+      <div className="flex items-center justify-center gap-[5px]">
+        <span className="text-[#4b3f9e] text-[15px]">→</span>
+        <Link href="/forgot-password" className="text-[#4b3f9e] text-[15px] hover:underline" data-testid="link-forgot-mobile">
           Forgot username or password?
         </Link>
       </div>
@@ -357,7 +361,7 @@ export default function LoginPage() {
 
         {/* Card area */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 46px)", padding: "48px 0 0" }}>
-          <LoginCard isDesktop={true} />
+          {DesktopLoginCard()}
         </div>
 
         {/* Disclosure */}
@@ -390,7 +394,7 @@ export default function LoginPage() {
         <div className="h-[3px] bg-[#ffcd41]" />
         <main className="flex-1 bg-white overflow-y-auto">
           <div className="px-[18px] pt-7 pb-10">
-            <LoginCard isDesktop={false} />
+            {MobileLoginCard()}
           </div>
         </main>
         <OfficialFooter />
