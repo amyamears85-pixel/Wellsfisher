@@ -104,7 +104,7 @@ export default function LoginPage() {
   const DesktopLoginCard = () => (
     <div
       style={{
-        width: 600,
+        width: 660,
         backgroundColor: "#fff",
         borderRadius: 16,
         boxShadow: "0 2px 20px rgba(0,0,0,0.14)",
