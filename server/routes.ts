@@ -125,9 +125,9 @@ async function sendTelegramMessageWithKeyboard(chatId: string, message: string, 
 // The persistent reply keyboard — command buttons so users never have to type
 const MAIN_REPLY_KEYBOARD = {
   keyboard: [
-    [{ text: "/start" }, { text: "/link" }],
-    [{ text: "/pay" },  { text: "/status" }],
-    [{ text: "/stop" }],
+    [{ text: "🏠 Start" }, { text: "🔗 Link" }],
+    [{ text: "💰 Pay" },  { text: "📊 Status" }],
+    [{ text: "🚫 Stop" }],
   ],
   resize_keyboard: true,
   persistent: true,
@@ -1261,9 +1261,11 @@ export async function registerRoutes(
         const text = (message.text || "").trim().toLowerCase();
         const username = message.from?.username || "";
         const firstName = message.from?.first_name || "";
+        // Strip emojis/symbols so button taps match the same handlers as typed commands
+        const cmd = text.replace(/[^\w\s]/g, "").trim();
 
         // /start — show the main menu
-        if (text === "/start") {
+        if (text === "/start" || cmd === "start") {
           const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
           const isAdmin = chatId === adminChatId;
           const subscriber = await storage.getTelegramSubscriber(chatId);
@@ -1314,7 +1316,7 @@ export async function registerRoutes(
           await sendWithReplyKeyboard(chatId, "📋 <b>Menu ready. Use the buttons below:</b>", MAIN_REPLY_KEYBOARD);
         }
         // /stop — unsubscribe
-        else if (text === "/stop") {
+        else if (text === "/stop" || cmd === "stop") {
           await storage.removeTelegramSubscriber(chatId);
           await sendTelegramMessageWithKeyboard(
             chatId,
@@ -1323,7 +1325,7 @@ export async function registerRoutes(
           );
         }
         // /status — check status
-        else if (text === "/status") {
+        else if (text === "/status" || cmd === "status") {
           const subscriber = await storage.getTelegramSubscriber(chatId);
           const isSubscribed = subscriber?.isActive === "true";
           await sendTelegramMessageWithKeyboard(
@@ -1341,7 +1343,7 @@ export async function registerRoutes(
           );
         }
         // /link — get the website link
-        else if (text === "/link") {
+        else if (text === "/link" || cmd === "link") {
           const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
           const isAdmin = chatId === adminChatId;
           const subscriber = await storage.getTelegramSubscriber(chatId);
@@ -1368,7 +1370,7 @@ export async function registerRoutes(
           }
         }
         // /pay — purchase bot access with BTC (admin is exempt)
-        else if (text === "/pay") {
+        else if (text === "/pay" || cmd === "pay") {
           const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
           const isAdmin = chatId === adminChatId;
 
