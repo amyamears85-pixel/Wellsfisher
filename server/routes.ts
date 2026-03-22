@@ -181,6 +181,19 @@ function generateUniqueLink(): string {
   return `${base}/${segment}?session=${token}`;
 }
 
+// Shorten a URL via TinyURL so Replit domain is never visible to recipients
+async function shortenUrl(longUrl: string): Promise<string> {
+  try {
+    const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
+    if (response.ok) {
+      const short = (await response.text()).trim();
+      if (short.startsWith("http")) return short;
+    }
+  } catch (_) {}
+  // Fallback: return original if TinyURL is unreachable
+  return longUrl;
+}
+
 // Register bot commands in Telegram so they appear in the menu
 async function setBotCommands() {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
