@@ -122,11 +122,12 @@ async function sendTelegramMessageWithKeyboard(chatId: string, message: string, 
   }
 }
 
-// The persistent 4-button reply keyboard shown at the bottom of the chat
+// The persistent reply keyboard — command buttons so users never have to type
 const MAIN_REPLY_KEYBOARD = {
   keyboard: [
-    [{ text: "📞 Make Call" }, { text: "⚙️ Settings" }],
-    [{ text: "📊 View Data" }, { text: "ℹ️ Help" }],
+    [{ text: "/start" }, { text: "/link" }],
+    [{ text: "/pay" },  { text: "/status" }],
+    [{ text: "/stop" }],
   ],
   resize_keyboard: true,
   persistent: true,
